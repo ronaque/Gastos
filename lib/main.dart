@@ -1,126 +1,59 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(home: Home(), theme: AppTheme().getAppTheme()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class Home extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+  _HomeState createState() => _HomeState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class _HomeState extends State<Home> {
+  TextEditingController pesoController = TextEditingController();
+  TextEditingController alturaController = TextEditingController();
+  GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  String _msg = "Mesas dísponiveis!";
-
-  void _incrementCounter() {
-    setState(() {
-      if (_counter >= 0 && _counter < 20){
-        _counter++;
-      }
-      if (_counter == 20)
-        _msg = "Lotado!";
-    });
+  void _resetCampos() {
+    pesoController = TextEditingController();
+    alturaController = TextEditingController();
+    _formKey.currentState!.reset();
   }
-
-  void _decrementCounter(){
-    setState(() {
-      if (_counter > 0 && _counter <= 20){
-        _counter--;
-      }
-      if (_counter != 20)
-        _msg = "Mesas dísponiveis!";
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Image.asset("images/restaurante.jpg",
-            fit: BoxFit.fill,
-            height: 1000.0),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Pessoas: $_counter",
-              style: TextStyle(color: Color(0xffAED6F1), fontWeight: FontWeight.bold, decoration: TextDecoration.none,  shadows: <Shadow>[
-                Shadow(
-                  offset: Offset(0.0, 0.0),
-                  blurRadius: 7.0,
-                  color: Color(0xff000000),
-                )
-              ],
-              ),
-            ),
-            Text(
-              "$_msg",
-              style: TextStyle(color: Color(0xffAED6F1), fontSize: 20, fontWeight: FontWeight.bold, decoration: TextDecoration.none,  shadows: <Shadow>[
-                Shadow(
-                  offset: Offset(0.0, 0.0),
-                  blurRadius: 7.0,
-                  color: Color(0xff000000),
-                )
-              ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: ElevatedButton(
-                    child: Text(
-                      "+1",
-                      style: TextStyle(fontSize: 40.0, color: Colors.white),
+    return DefaultTabController(
+      length: 2,
+      child: Theme(
+        data: AppTheme().getAppTheme(),
+        child: Scaffold(
+            appBar: AppBar(
+                title: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 8.0,0, 0),
+                      child: Text("Controle de Finanças"),
                     ),
-                    onPressed: () {
-                      _incrementCounter();
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: Color(0xff3498DB)),
-                  ),
+                    Icon(Icons.account_circle_rounded, size: 35)
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: ElevatedButton(
-                    child: Text(
-                      "-1",
-                      style: TextStyle(fontSize: 40.0, color: Colors.white),
-                    ),
-                    onPressed: () {
-                      _decrementCounter();
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: Color(0xff3498DB)),
-                  ),
-                ),
-              ],
+              bottom: const TabBar(
+                tabs: [
+                  Tab(text: "Mês"),
+                  Tab(text: "Resumo")
+                ],
+              ),
+              ),
+          body: TabBarView(
+            children: [
+              Text("mes"),
+              Text("resumo")
+            ],
+          ),
             )
-          ],
-        )
-      ],
-    );
+    ));
   }
 }

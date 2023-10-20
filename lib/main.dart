@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/perfil.dart';
 import 'package:gastos/theme.dart';
 
 void main() {
@@ -12,14 +13,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  TextEditingController pesoController = TextEditingController();
-  TextEditingController alturaController = TextEditingController();
-  GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
-  void _resetCampos() {
-    pesoController = TextEditingController();
-    alturaController = TextEditingController();
-    _formKey.currentState!.reset();
+  void _abrirPerfil() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil()));
   }
 
   @override
@@ -30,14 +26,17 @@ class _HomeState extends State<Home> {
         data: AppTheme().getAppTheme(),
         child: Scaffold(
             appBar: AppBar(
-                title: const Row(
+                title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 8.0,0, 0),
                       child: Text("Controle de Finanças"),
                     ),
-                    Icon(Icons.account_circle_rounded, size: 35)
+                    IconButton(
+                        onPressed: _abrirPerfil,
+                        icon: Icon(Icons.account_circle_rounded, size: 35)
+                    )
                   ],
                 ),
               bottom: const TabBar(

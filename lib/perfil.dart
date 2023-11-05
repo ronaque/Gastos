@@ -13,8 +13,10 @@ class Perfil extends StatefulWidget {
 class _PerfilState extends State<Perfil> {
   TextEditingController _nomeController = TextEditingController();
   TextEditingController _salarioController = TextEditingController();
+  TextEditingController _tagController = TextEditingController();
   File? _image;
   List<Widget> tags = [Icon(Icons.local_gas_station), Icon(Icons.restaurant), Icon(Icons.paid)];
+  List<String> newTags = [];
 
   void _nomeChange(String value) {
     if (value.isEmpty) {
@@ -44,7 +46,7 @@ class _PerfilState extends State<Perfil> {
     return null;
   }
 
-  Widget getTagsWidgets(){
+  Widget getDefaultTagsWidgets(){
     List<Widget> tagWidgets = [];
     for (var tag in tags) {
       final padding = Padding(
@@ -54,7 +56,36 @@ class _PerfilState extends State<Perfil> {
       tagWidgets.add(padding);
     }
     return Row(children: tagWidgets);
-}
+  }
+
+  Widget getNewTagsWidgets(){
+    List<Widget> tagWidgets = [];
+    for (var tag in newTags) {
+      final padding = Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            tag.substring(0, 1).toUpperCase() + tag.substring(1),
+            style: TextStyle(fontSize: 16), // Ajuste o tamanho da fonte conforme desejado
+          ),
+        ),
+      );
+      tagWidgets.add(padding);
+      print("tag $tag");
+    }
+    return Row(children: tagWidgets);
+  }
+
+  void adicionarTag(String newTag){
+    setState(() {
+      newTags.add(newTag);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,13 +174,63 @@ class _PerfilState extends State<Perfil> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      getTagsWidgets(),
+                      getDefaultTagsWidgets(),
+                    ],
+                  )
+              ),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ElevatedButton(
+                          onPressed: () {
+                            _displayDialog(context);
+                          },
+                          child: const Icon(Icons.add, color: Color(0xff0D47A1))
+                      ),
+                      getNewTagsWidgets(),
                     ],
                   )
               ),
             ],
           ),
         ));
+  }
+
+  _displayDialog(BuildContext context) async {
+    String? newTag = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Adicionar Tag'),
+          content: TextField(
+            controller: _tagController,
+            onChanged: (value) {
+              // Você pode adicionar validações ou manipular o valor conforme necessário
+            },
+            decoration: const InputDecoration(hintText: 'Digite a nova tag'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Adicionar'),
+              onPressed: () {
+                if (_tagController.text.isNotEmpty) {
+                  setState(() {
+                    newTags.add( _tagController.text);
+                  });
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    print('sai do dialogo');
+    print('newTag: $_tagController');
+    _tagController.clear();
   }
 
   CircleAvatar defaultAvatar() {

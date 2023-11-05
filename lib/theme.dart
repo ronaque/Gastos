@@ -37,15 +37,17 @@ class AppTheme {
         scaffoldBackgroundColor: grayColors[50],
         textTheme: GoogleFonts.sourceSerif4TextTheme(),
         tabBarTheme: TabBarTheme(
-            dividerColor: grayColors[50],
-            labelColor: grayColors[900],
-            unselectedLabelColor: grayColors[50],
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: BoxDecoration(
-              border: Border(left: BorderSide(color: Color(0xff1565C0)), right: BorderSide(color: Color(0xff1565C0)), top: BorderSide(color: Color(0xff1565C0)), bottom: BorderSide.none),
-              color: grayColors[50]
-            ),
-
+          dividerColor: grayColors[50],
+          labelColor: grayColors[900],
+          unselectedLabelColor: grayColors[50],
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicator: BoxDecoration(
+              border: Border(
+                  left: BorderSide(color: Color(0xff1565C0)),
+                  right: BorderSide(color: Color(0xff1565C0)),
+                  top: BorderSide(color: Color(0xff1565C0)),
+                  bottom: BorderSide.none),
+              color: grayColors[50]),
         ),
         appBarTheme: AppBarTheme(
             backgroundColor: blueColors[500],
@@ -55,9 +57,18 @@ class AppTheme {
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 height: 0.06),
-          iconTheme: IconThemeData(color: blueColors[900])
-        ),
-      iconTheme: IconThemeData(color: blueColors[900])
+            iconTheme: IconThemeData(color: blueColors[900])),
+        iconTheme: IconThemeData(color: blueColors[900], size: 30),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: blueColors[100],
+                textStyle: GoogleFonts.sourceSerif4(
+                    color: grayColors[50],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    height: 0.06),
+                )
+        )
     );
   }
 }

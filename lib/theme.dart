@@ -57,7 +57,7 @@ class AppTheme {
                 height: 0.06),
           iconTheme: IconThemeData(color: blueColors[900])
         ),
-      iconTheme: IconThemeData(color: blueColors[900])
+      iconTheme: IconThemeData(color: blueColors[900], size: 30),
     );
   }
 }

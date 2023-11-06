@@ -56,6 +56,9 @@ class _FinanceAppState extends State<FinanceApp>
               Tab(text: 'Mês'),
               Tab(text: 'Resumo'),
             ],
+            labelColor:
+                Colors.black, // Cor do texto da aba ativa (Mês ou Resumo)
+            unselectedLabelColor: Colors.grey, // Cor do texto das abas inativas
           ),
           Expanded(
             child: TabBarView(
@@ -65,8 +68,11 @@ class _FinanceAppState extends State<FinanceApp>
                 ListView(
                   children: [
                     // Exemplo de registro de movimentação financeira
-                    FinanceEntry(isExpense: true, amount: -50.0),
-                    FinanceEntry(isExpense: false, amount: 100.0),
+                    FinanceEntry(amount: -50.0, textOrIcon: 'Popcorn'),
+                    FinanceEntry(amount: 100.0, textOrIcon: 'Money'),
+                    FinanceEntry(amount: -50.0, textOrIcon: 'Car'),
+                    FinanceEntry(amount: 100.0, textOrIcon: 'Food'),
+                    FinanceEntry(amount: 100.0, textOrIcon: 'Academia'),
                   ],
                 ),
 
@@ -77,6 +83,41 @@ class _FinanceAppState extends State<FinanceApp>
               ],
             ),
           ),
+          Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  border: Border.all(color: Colors.blue, width: 1.0),
+                ),
+                height: 80.0,
+                //width: 200.0,
+                margin: EdgeInsets.only(left: 16.0, bottom: 16),
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Saldo: \$1000.00',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              Spacer(), // Este widget faz com que o botão seja alinhado à direita.
+
+              Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    // Adicione uma nova transação aqui.
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -84,15 +125,35 @@ class _FinanceAppState extends State<FinanceApp>
 }
 
 class FinanceEntry extends StatelessWidget {
-  final bool isExpense;
   final double amount;
+  final String textOrIcon;
 
-  FinanceEntry({required this.isExpense, required this.amount});
+  FinanceEntry({required this.amount, required this.textOrIcon});
+
+  Widget _buildIconOrText(String textOrIcon) {
+    switch (textOrIcon) {
+      case 'Popcorn':
+        return Icon(Icons.local_dining, color: Colors.blue, size: 30.0);
+      case 'Money':
+        return Icon(Icons.attach_money, color: Colors.blue, size: 30.0);
+      case 'Car':
+        return Icon(Icons.directions_car, color: Colors.blue, size: 30.0);
+      case 'Food':
+        return Icon(Icons.restaurant, color: Colors.blue, size: 30.0);
+      default:
+        return Text(
+          textOrIcon,
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 18.0,
+          ),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Color amountColor = isExpense ? Colors.red : Colors.green;
-    String transactionType = isExpense ? 'Gasto' : 'Ganho';
+    Color amountColor = amount < 0 ? Colors.red : Colors.green;
 
     return Container(
       margin: EdgeInsets.all(8.0),
@@ -111,10 +172,18 @@ class FinanceEntry extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(transactionType),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(color: amountColor),
+          Row(
+            children: [
+              Text(
+                '\$${amount.toStringAsFixed(2)}',
+                style: TextStyle(color: amountColor),
+              ),
+              SizedBox(width: 8.0),
+              _buildIconOrText(textOrIcon),
+            ],
+          ),
+          Expanded(
+            child: Container(),
           ),
         ],
       ),

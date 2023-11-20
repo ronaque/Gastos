@@ -8,17 +8,73 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: FinanceApp(),
+      initialRoute: '/login', // Defina a tela de login como rota inicial
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/main': (context) => MainScreen(),
+      },
     );
   }
 }
 
-class FinanceApp extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   @override
-  _FinanceAppState createState() => _FinanceAppState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.attach_money,
+                size: 64.0,
+                color: Colors.green,
+              ),
+              SizedBox(height: 20.0),
+              Text(
+                'MobiFin',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20.0),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                ),
+              ),
+              SizedBox(height: 10.0),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                ),
+              ),
+              SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Quando o botão "Entrar" é pressionado, navegue para a tela principal
+                  Navigator.pushReplacementNamed(context, '/main');
+                },
+                child: Text('Entrar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _FinanceAppState extends State<FinanceApp>
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 

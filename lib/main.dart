@@ -1,10 +1,11 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/perfil.dart';
 import 'package:gastos/theme.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'resumo.dart';
+import 'mes.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ;
@@ -32,27 +33,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  File? _imageFile;
+  Image? image;
   List<FinanceEntry> transactions = [];
-  List<_ChartData> data = [
-    _ChartData('Jan', 12, 15),
-    _ChartData('Fev', 15, 30),
-    _ChartData('Mar', 30, 6.4),
-    _ChartData('Abr', 6.4, 14),
-    _ChartData('Mai', 14, 16),
-    _ChartData('Jun', 16, 45),
-    _ChartData('Jul', 45, 23),
-    _ChartData('Ago', 23, 25),
-    _ChartData('Set', 25, 10),
-    _ChartData('Out', 10, 5),
-    _ChartData('Nov', 5, 19),
-    _ChartData('Dez', 19, 12),
-  ];
-  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
   late TabController _tabController;
-
-  void _abrirPerfil() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil()));
-  }
 
   @override
   void initState() {
@@ -60,10 +44,78 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  Future<void> loadImage() async {
+    try {
+      print('loadImage');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? testeImage = prefs.getString('test_image');
+      if (testeImage == null) {
+        print('testeImage null');
+        return;
+      }
+      else{
+        String filePath = '$testeImage';
+        print('testeImage: $testeImage');
+        _imageFile = File(filePath);
+        setState(() {
+          image = Image.file(_imageFile!);
+        });
+      }
+    } catch (e) {
+      print('Erro ao carregar a imagem: $e');
+    }
+  }
+
+  void _abrirPerfil() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil())).then((value) => loadImage());
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  CircleAvatar defaultAvatar() {
+    return const CircleAvatar(
+        radius: 64, backgroundImage: AssetImage("images/user.png"));
+  }
+
+  CircleAvatar profileAvatar() {
+    if (image == null){
+      return const CircleAvatar(
+          radius: 64, backgroundImage: AssetImage("images/user.png"));
+    }
+    return CircleAvatar(
+        radius: 64, backgroundImage: image?.image);
+  }
+
+  Future<double> getSalario() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? salarioSalvo = prefs.getDouble('salario');
+    if (salarioSalvo == null) {
+      return 0;
+    }
+    return salarioSalvo;
+  }
+
+  Widget getSaldoTexto() {
+    return FutureBuilder(
+      future: getSalario(),
+      builder: (context, AsyncSnapshot<double> snapshot) {
+        if (snapshot.hasData) {
+          return Text(
+            'Saldo: \$${snapshot.data}',
+            style: TextStyle(color: Colors.black),
+          );
+        } else {
+          return const Text(
+            'Saldo: \$0.0',
+            style: TextStyle(color: Colors.black),
+          );
+        }
+      },
+    );
   }
 
   void _exibirModalAdicionarTransacao(BuildContext context) {
@@ -95,7 +147,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         title: Text('MobiFin'),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
+            icon: image != null ? profileAvatar() : defaultAvatar(),
             onPressed: _abrirPerfil,
           ),
         ],
@@ -117,19 +169,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               controller: _tabController,
               children: [
                 // Conteúdo da aba "Mês"
-                ListView(
-                  children: [
-                    // Exemplo de registro de movimentação financeira
-                    FinanceEntry(amount: -50.0, textOrIcon: 'Popcorn'),
-                    FinanceEntry(amount: 100.0, textOrIcon: 'Money'),
-                    FinanceEntry(amount: -50.0, textOrIcon: 'Car'),
-                    FinanceEntry(amount: 100.0, textOrIcon: 'Food'),
-                    FinanceEntry(amount: 100.0, textOrIcon: 'Academia'),
-                  ],
-                ),
+                returnMesDisplay(context),
 
                 // Conteúdo da aba "Resumo"
-                _resumoDisplay(context),
+                returnResumoDisplay(context),
               ],
             ),
           ),
@@ -138,7 +181,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                     bottomLeft: Radius.circular(10),
@@ -150,13 +193,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 //width: 200.0,
                 margin: EdgeInsets.only(left: 16.0, bottom: 16),
                 padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Saldo: \$1000.00',
-                  style: TextStyle(color: Colors.black),
-                ),
+                child: getSaldoTexto(),
               ),
               Spacer(), // Este widget faz com que o botão seja alinhado à direita.
-
               Align(
                 alignment: Alignment.bottomRight,
                 child: FloatingActionButton(
@@ -173,194 +212,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
     );
   }
-
-  _resumoDisplay(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          // !! Tabela mensal !!
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 50, 0, 20),
-            decoration:
-                BoxDecoration(border: Border.all(color: Color(0xff0D47A1))),
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: const Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Icon(Icons.navigate_before),
-                      Text("Julho"),
-                      Icon(Icons.navigate_next),
-                    ],
-                  ),
-                ),
-                Divider(color: Color(0xff0D47A1)),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                  child: Row(
-                    children: <Widget>[Text("Gasto: R\$1000,00")],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                  child: Row(
-                    children: <Widget>[Text("Economizado: R\$ 0,00")],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // !! Gráfico mensal !!
-          Container(
-            height: MediaQuery.of(context).size.width *
-                0.8, // Defina a altura desejada para o PieChart
-            child: PieChart(
-              PieChartData(
-                sections: [
-                  PieChartSectionData(
-                    color: Colors.red,
-                    value: 40,
-                    title: "Comida",
-                    radius: 50,
-                  ),
-                  PieChartSectionData(
-                    color: Colors.blue,
-                    value: 60,
-                    title: "Bebida",
-                    radius: 50,
-                  ),
-                ],
-                centerSpaceRadius: MediaQuery.of(context).size.width * 0.2,
-              ),
-              swapAnimationCurve: Curves.linear,
-              swapAnimationDuration: Duration(milliseconds: 150),
-            ),
-          ),
-          // !! Tabela anual !!
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 50, 0, 20),
-            decoration:
-                BoxDecoration(border: Border.all(color: Color(0xff0D47A1))),
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Icon(Icons.navigate_before),
-                  Text("2023"),
-                  Icon(Icons.navigate_next),
-                ],
-              ),
-            ),
-          ),
-          // !! Gráfico anual !!
-          Container(
-            height: MediaQuery.of(context).size.width * 0.8,
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                primaryYAxis:
-                    NumericAxis(minimum: 0, maximum: 40, interval: 10),
-                tooltipBehavior: _tooltip,
-                series: <ChartSeries<_ChartData, String>>[
-                  BarSeries<_ChartData, String>(
-                      dataSource: data,
-                      xValueMapper: (_ChartData data, _) => data.x,
-                      yValueMapper: (_ChartData data, _) => data.y,
-                      name: 'Gold',
-                      color: Colors.greenAccent),
-                  BarSeries<_ChartData, String>(
-                      dataSource: data,
-                      xValueMapper: (_ChartData data, _) => data.x,
-                      yValueMapper: (_ChartData data, _) => data.y2,
-                      name: 'Gold',
-                      color: Colors.redAccent)
-                ]),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class FinanceEntry extends StatelessWidget {
-  final double amount;
-  final String textOrIcon;
-
-  FinanceEntry({required this.amount, required this.textOrIcon});
-
-  Widget _buildIconOrText(String textOrIcon) {
-    switch (textOrIcon) {
-      case 'Popcorn':
-        return Icon(Icons.local_dining, color: Colors.blue, size: 30.0);
-      case 'Money':
-        return Icon(Icons.attach_money, color: Colors.blue, size: 30.0);
-      case 'Car':
-        return Icon(Icons.directions_car, color: Colors.blue, size: 30.0);
-      case 'Food':
-        return Icon(Icons.restaurant, color: Colors.blue, size: 30.0);
-      default:
-        return Text(
-          textOrIcon,
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 18.0,
-          ),
-        );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color amountColor = amount < 0 ? Colors.red : Colors.green;
-
-    return Container(
-      margin: EdgeInsets.all(8.0),
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            offset: Offset(0, 2),
-            blurRadius: 6.0,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(
-                '\$${amount.toStringAsFixed(2)}',
-                style: TextStyle(color: amountColor),
-              ),
-              SizedBox(width: 8.0),
-              _buildIconOrText(textOrIcon),
-            ],
-          ),
-          Expanded(
-            child: Container(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ChartData {
-  _ChartData(this.x, this.y, this.y2);
-
-  final String x;
-  final double y;
-  final double y2;
-}
 
 class AdicionarTransacaoModal extends StatefulWidget {
   final Function(double amount, String textOrIcon) onTransacaoSalva;
@@ -481,4 +334,5 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+
 }

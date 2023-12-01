@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gastos/perfil.dart';
-import 'package:gastos/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Widget returnResumoDisplay(context){
   TooltipBehavior _tooltip = TooltipBehavior(enable: true);

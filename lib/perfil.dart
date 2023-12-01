@@ -21,20 +21,23 @@ class _PerfilState extends State<Perfil> {
 
   void _nomeChange(String value) {
     if (value.isEmpty) {
-      return;
+      _nomeController.text = '';
     }
-
-    _nomeController.text = value;
+    else {
+      _nomeController.text = value;
+    }
+    print('nome: $_nomeController.text');
+    saveNome(_nomeController.text);
   }
 
   void _salarioChange(String value) {
     if (value.isEmpty) {
-      return;
+      _salarioController.text = '0';
+    } else {
+      _salarioController.text = value;
     }
-
-    _salarioController.text = value;
-    print('salario: $value');
-    saveSalario(value);
+    print('salario: $_salarioController.text');
+    saveSalario(_salarioController.text);
   }
 
   Future _selecionarImagem() async {
@@ -51,9 +54,16 @@ class _PerfilState extends State<Perfil> {
 
   Future<void> saveSalario(String salario) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setDouble('salario', double.parse(_salarioController.text));
+    prefs.setDouble('salario', double.parse(salario));
     double? salarioSalvo = prefs.getDouble('salario');
     print('salario salvo: $salarioSalvo');
+  }
+
+  Future<void> saveNome(String nome) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('nome', nome);
+    String? nomeSalvo = prefs.getString('nome');
+    print('nome salvo: $nomeSalvo');
   }
 
   Widget getDefaultTagsWidgets(){

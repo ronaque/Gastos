@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/perfil.dart';
 import 'package:gastos/theme.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'resumo.dart';
-
+import 'mes.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ;
@@ -73,7 +71,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             style: TextStyle(color: Colors.black),
           );
         } else {
-          return Text(
+          return const Text(
             'Saldo: \$0.0',
             style: TextStyle(color: Colors.black),
           );
@@ -133,16 +131,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               controller: _tabController,
               children: [
                 // Conteúdo da aba "Mês"
-                ListView(
-                  children: [
-                    // Exemplo de registro de movimentação financeira
-                    FinanceEntry(amount: -50.0, textOrIcon: 'Popcorn'),
-                    FinanceEntry(amount: 100.0, textOrIcon: 'Money'),
-                    FinanceEntry(amount: -50.0, textOrIcon: 'Car'),
-                    FinanceEntry(amount: 100.0, textOrIcon: 'Food'),
-                    FinanceEntry(amount: 100.0, textOrIcon: 'Academia'),
-                  ],
-                ),
+                returnMesDisplay(context),
 
                 // Conteúdo da aba "Resumo"
                 returnResumoDisplay(context),
@@ -154,7 +143,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                     bottomLeft: Radius.circular(10),
@@ -169,7 +158,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: getSaldoTexto(),
               ),
               Spacer(), // Este widget faz com que o botão seja alinhado à direita.
-
               Align(
                 alignment: Alignment.bottomRight,
                 child: FloatingActionButton(
@@ -181,75 +169,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-
-}
-
-class FinanceEntry extends StatelessWidget {
-  final double amount;
-  final String textOrIcon;
-
-  FinanceEntry({required this.amount, required this.textOrIcon});
-
-  Widget _buildIconOrText(String textOrIcon) {
-    switch (textOrIcon) {
-      case 'Popcorn':
-        return Icon(Icons.local_dining, color: Colors.blue, size: 30.0);
-      case 'Money':
-        return Icon(Icons.attach_money, color: Colors.blue, size: 30.0);
-      case 'Car':
-        return Icon(Icons.directions_car, color: Colors.blue, size: 30.0);
-      case 'Food':
-        return Icon(Icons.restaurant, color: Colors.blue, size: 30.0);
-      default:
-        return Text(
-          textOrIcon,
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 18.0,
-          ),
-        );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color amountColor = amount < 0 ? Colors.red : Colors.green;
-
-    return Container(
-      margin: EdgeInsets.all(8.0),
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            offset: Offset(0, 2),
-            blurRadius: 6.0,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(
-                '\$${amount.toStringAsFixed(2)}',
-                style: TextStyle(color: amountColor),
-              ),
-              SizedBox(width: 8.0),
-              _buildIconOrText(textOrIcon),
-            ],
-          ),
-          Expanded(
-            child: Container(),
           ),
         ],
       ),

@@ -54,6 +54,7 @@ dev_dependencies:
   path_provider: ^2.1.1
   fl_chart: ^0.64.0
   syncfusion_flutter_charts: ^23.1.44
+  shared_preferences: ^2.2.2
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

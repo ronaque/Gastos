@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Perfil extends StatefulWidget {
   @override
@@ -32,6 +33,8 @@ class _PerfilState extends State<Perfil> {
     }
 
     _salarioController.text = value;
+    print('salario: $value');
+    saveSalario(value);
   }
 
   Future _selecionarImagem() async {
@@ -44,6 +47,13 @@ class _PerfilState extends State<Perfil> {
       _image = File(file.path);
     });
     return null;
+  }
+
+  Future<void> saveSalario(String salario) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('salario', double.parse(_salarioController.text));
+    double? salarioSalvo = prefs.getDouble('salario');
+    print('salario salvo: $salarioSalvo');
   }
 
   Widget getDefaultTagsWidgets(){

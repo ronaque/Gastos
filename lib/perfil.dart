@@ -5,51 +5,86 @@ import 'package:flutter/material.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:path_provider/path_provider.dart';
 class Perfil extends StatefulWidget {
   @override
   _PerfilState createState() => _PerfilState();
 }
 
 class _PerfilState extends State<Perfil> {
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _salarioController = TextEditingController();
   TextEditingController _tagController = TextEditingController();
-  File? _image;
+  File? _imageFile;
+  Image? image;
   List<Widget> tags = [Icon(Icons.local_gas_station), Icon(Icons.restaurant), Icon(Icons.paid)];
   List<String> newTags = [];
 
+  @override
+  void initState() {
+    super.initState();
+    loadImage();
+  }
+
   void _nomeChange(String value) {
     if (value.isEmpty) {
-      _nomeController.text = '';
+      value = '';
     }
     else {
-      _nomeController.text = value;
+      value = value;
     }
-    print('nome: $_nomeController.text');
-    saveNome(_nomeController.text);
+    print('nome: $value');
+    saveNome(value);
   }
 
   void _salarioChange(String value) {
     if (value.isEmpty) {
-      _salarioController.text = '0';
+      value = '0';
     } else {
-      _salarioController.text = value;
+      value = value.replaceAll(RegExp(r'[R\$]'), '');
     }
-    print('salario: $_salarioController.text');
-    saveSalario(_salarioController.text);
+    print('salario: $value');
+    saveSalario(value);
   }
 
-  Future _selecionarImagem() async {
+  Future<void> loadImage() async {
+    try {
+      print('loadImage');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? testeImage = prefs.getString('test_image');
+      if (testeImage == null) {
+        print('testeImage null');
+        return;
+      }
+      else{
+        String filePath = '$testeImage';
+        print('testeImage: $testeImage');
+        _imageFile = File(filePath);
+        setState(() {
+          image = Image.file(_imageFile!);
+        });
+      }
+    } catch (e) {
+      print('Erro ao carregar a imagem: $e');
+    }
+  }
+
+  Future<void> _selecionarImagem() async {
     final file = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (file == null) {
       return;
     }
 
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String appDocumentsPath = appDocumentsDirectory.path;
+
+    await file.saveTo('$appDocumentsPath/minha_imagem.jpg');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('test_image', '$appDocumentsPath/minha_imagem.jpg');
+
+    _imageFile = File(file.path);
     setState(() {
-      _image = File(file.path);
+      image = Image.file(_imageFile!);
     });
-    return null;
+    return;
   }
 
   Future<void> saveSalario(String salario) async {
@@ -64,6 +99,71 @@ class _PerfilState extends State<Perfil> {
     prefs.setString('nome', nome);
     String? nomeSalvo = prefs.getString('nome');
     print('nome salvo: $nomeSalvo');
+  }
+
+  Future<String> getSalario() async{
+    final prefs = await SharedPreferences.getInstance();
+    double? salarioSalvo = prefs.getDouble('salario');
+    print('salario salvo recuperado: $salarioSalvo');
+    if (salarioSalvo == null) {
+      return 'R\$0.0';
+    }
+    String salarioSalvoString = salarioSalvo.toString();
+    return 'R\$$salarioSalvoString';
+  }
+
+  Future<String> getNome() async{
+    final prefs = await SharedPreferences.getInstance();
+    String? nomeSalvo = prefs.getString('nome');
+    print('nome salvo recuperado: $nomeSalvo');
+    if (nomeSalvo == null) {
+      return 'Nome do Usuário';
+    }
+    return nomeSalvo;
+  }
+
+  Widget getSalarioTextField() {
+    return FutureBuilder(
+      future: getSalario(),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          return TextFormField(
+            initialValue: snapshot.data,
+            onChanged: (value) => _salarioChange(value),
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+                border: OutlineInputBorder()),
+          );
+        } else {
+          return const Text(
+            'Saldo: \$0.0',
+            style: TextStyle(color: Colors.black),
+          );
+        }
+      },
+    );
+  }
+
+  Widget getNomeTextField() {
+    return FutureBuilder(
+      future: getNome(),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          return TextFormField(
+            initialValue: snapshot.data,
+            onChanged: (value) => _nomeChange(value),
+            keyboardType: TextInputType.name,
+            decoration: InputDecoration(
+                border: OutlineInputBorder()),
+          );
+        } else {
+          return const Text(
+            'Saldo: \$0.0',
+            style: TextStyle(color: Colors.black),
+          );
+        }
+      },
+    );
   }
 
   Widget getDefaultTagsWidgets(){
@@ -134,7 +234,7 @@ class _PerfilState extends State<Perfil> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Stack(children: <Widget>[
-                        _image != null ? profileAvatar() : defaultAvatar(),
+                        image != null ? profileAvatar() : defaultAvatar(),
                         Positioned(
                           bottom: -10,
                           left: 80,
@@ -147,37 +247,27 @@ class _PerfilState extends State<Perfil> {
                   )),
               Padding(
                   padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                  child: Row(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Text("Nome:"),
                       SizedBox(
                           width: 250,
-                          child: TextField(
-                            onChanged: (value) => _nomeChange(value),
-                            keyboardType: TextInputType.name,
-                            controller: _nomeController,
-                            decoration: const InputDecoration(
-                                labelText: "Nome do Usuário",
-                                border: OutlineInputBorder()),
-                          )),
+                          child: getNomeTextField()),
                     ],
                   )),
               Padding(
                   padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                  child: Row(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Text("Salário:"),
                       SizedBox(
                           width: 250,
-                          child: TextField(
-                              onChanged: (value) => _salarioChange(value),
-                              keyboardType: TextInputType.number,
-                              controller: _salarioController,
-                              decoration: const InputDecoration(
-                                  labelText: "Salário",
-                                  border: OutlineInputBorder(),
-                                  prefixStyle: TextStyle(color: Colors.black),
-                                  prefixText: "R\$ "))),
+                          child: getSalarioTextField(),
+                      ),
                     ],
                   )),
               const Padding(
@@ -259,8 +349,12 @@ class _PerfilState extends State<Perfil> {
   }
 
   CircleAvatar profileAvatar() {
+    if (image == null){
+      return const CircleAvatar(
+          radius: 64, backgroundImage: AssetImage("images/user.png"));
+    }
     return CircleAvatar(
-        radius: 64, backgroundImage: FileImage(_image!));
+        radius: 64, backgroundImage: image?.image);
   }
 
 }

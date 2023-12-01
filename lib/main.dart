@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/perfil.dart';
@@ -32,13 +33,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  File? _imageFile;
+  Image? image;
   List<FinanceEntry> transactions = [];
-
   late TabController _tabController;
-
-  void _abrirPerfil() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil()));
-  }
 
   @override
   void initState() {
@@ -46,10 +44,50 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  Future<void> loadImage() async {
+    try {
+      print('loadImage');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? testeImage = prefs.getString('test_image');
+      if (testeImage == null) {
+        print('testeImage null');
+        return;
+      }
+      else{
+        String filePath = '$testeImage';
+        print('testeImage: $testeImage');
+        _imageFile = File(filePath);
+        setState(() {
+          image = Image.file(_imageFile!);
+        });
+      }
+    } catch (e) {
+      print('Erro ao carregar a imagem: $e');
+    }
+  }
+
+  void _abrirPerfil() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil())).then((value) => loadImage());
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  CircleAvatar defaultAvatar() {
+    return const CircleAvatar(
+        radius: 64, backgroundImage: AssetImage("images/user.png"));
+  }
+
+  CircleAvatar profileAvatar() {
+    if (image == null){
+      return const CircleAvatar(
+          radius: 64, backgroundImage: AssetImage("images/user.png"));
+    }
+    return CircleAvatar(
+        radius: 64, backgroundImage: image?.image);
   }
 
   Future<double> getSalario() async {
@@ -109,7 +147,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         title: Text('MobiFin'),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
+            icon: image != null ? profileAvatar() : defaultAvatar(),
             onPressed: _abrirPerfil,
           ),
         ],
@@ -296,4 +334,5 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+
 }

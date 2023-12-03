@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget returnMesDisplay(context){
+Widget returnMesDisplay(context) {
   return ListView(
     children: [
       // Exemplo de registro de movimentação financeira
@@ -60,7 +60,6 @@ class FinanceEntry extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
@@ -69,12 +68,12 @@ class FinanceEntry extends StatelessWidget {
                 style: TextStyle(color: amountColor),
               ),
               SizedBox(width: 8.0),
-              _buildIconOrText(textOrIcon),
             ],
           ),
           Expanded(
             child: Container(),
           ),
+          _buildIconOrText(textOrIcon),
         ],
       ),
     );

@@ -56,35 +56,40 @@ class _PerfilState extends State<Perfil> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Alterar PIN'),
-          content: Column(
-            children: [
-              TextField(
-                controller: _pinController,
-                keyboardType: TextInputType.number,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Salvar'),
-              onPressed: () {
-                // Adicione lógica para salvar o novo PIN
-                if (_pinController.text.length == 4) {
-                  savePin(_pinController.text);
-                  Navigator.of(context).pop();
-                } else {
-                  // Exiba uma mensagem de erro se o PIN não tiver 4 dígitos
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('O PIN deve ter 4 dígitos.'),
-                    ),
-                  );
-                }
-              },
+          content: Container(
+            height: 150, // Ajuste a altura conforme necessário
+            child: Column(
+              children: [
+                TextField(
+                  controller: _pinController,
+                  keyboardType: TextInputType.number,
+                  obscureText: true,
+                  decoration:
+                      InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_pinController.text.length == 4) {
+                      savePin(_pinController.text);
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('O PIN deve ter 4 dígitos.'),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('Salvar'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    elevation: 5, // Adiciona sombra
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -340,8 +345,11 @@ class _PerfilState extends State<Perfil> {
                           onPressed: () {
                             _displayDialog(context);
                           },
-                          child:
-                              const Icon(Icons.add, color: Color(0xff0D47A1))),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            elevation: 5, // Adiciona sombra
+                          ),
+                          child: const Icon(Icons.add, color: Colors.white)),
                       getNewTagsWidgets(),
                     ],
                   )),
@@ -349,7 +357,17 @@ class _PerfilState extends State<Perfil> {
                 onPressed: () {
                   _displayChangePinDialog(context);
                 },
-                child: const Text('Alterar PIN'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  elevation: 5, // Adiciona sombra
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Alterar PIN',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ],
           ),

@@ -305,6 +305,8 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 }
 
 class LoginPage extends StatelessWidget {
+  final TextEditingController pinController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -329,22 +331,40 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 50.0),
               TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                ),
-              ),
-              SizedBox(height: 10.0),
-              TextField(
+                controller: pinController,
+                keyboardType: TextInputType.number,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Senha',
+                  labelText: 'PIN (4 dígitos)',
                 ),
               ),
               SizedBox(height: 50.0),
               ElevatedButton(
                 onPressed: () {
-                  // Quando o botão "Entrar" é pressionado, navegue para a tela principal
-                  Navigator.pushReplacementNamed(context, '/main');
+                  // Verificar se o PIN fornecido é válido (exemplo: "0000")
+                  if (pinController.text == '0000') {
+                    // Navegar para a tela principal se o PIN for válido
+                    Navigator.pushReplacementNamed(context, '/main');
+                  } else {
+                    // Exibir mensagem de erro se o PIN for inválido
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Erro'),
+                          content: Text('PIN inválido. Tente novamente.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 child: Container(
                   width: double.infinity, // Largura máxima possível

@@ -341,30 +341,7 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 50.0),
               ElevatedButton(
                 onPressed: () {
-                  // Verificar se o PIN fornecido é válido (exemplo: "0000")
-                  if (pinController.text == '0000') {
-                    // Navegar para a tela principal se o PIN for válido
-                    Navigator.pushReplacementNamed(context, '/main');
-                  } else {
-                    // Exibir mensagem de erro se o PIN for inválido
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Erro'),
-                          content: Text('PIN inválido. Tente novamente.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                  authenticateUser(pinController.text, context);
                 },
                 child: Container(
                   width: double.infinity, // Largura máxima possível
@@ -377,6 +354,51 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> authenticateUser(String enteredPin, BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? savedPin = prefs.getString('pin');
+
+    if (savedPin == null) {
+      // Se a senha nunca foi alterada, aceitar a senha padrão "0000"
+      if (enteredPin == '0000') {
+        // Navegar para a tela principal
+        Navigator.pushReplacementNamed(context, '/main');
+      } else {
+        // Senha inválida
+        showInvalidPinDialog(context);
+      }
+    } else {
+      // Senha já foi alterada, verificar com a senha salva
+      if (enteredPin == savedPin) {
+        // Senha válida, navegar para a tela principal
+        Navigator.pushReplacementNamed(context, '/main');
+      } else {
+        // Senha inválida
+        showInvalidPinDialog(context);
+      }
+    }
+  }
+
+  void showInvalidPinDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Erro'),
+          content: Text('PIN inválido. Tente novamente.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
+
 class Perfil extends StatefulWidget {
   @override
   _PerfilState createState() => _PerfilState();
@@ -13,9 +14,14 @@ class Perfil extends StatefulWidget {
 
 class _PerfilState extends State<Perfil> {
   TextEditingController _tagController = TextEditingController();
+  TextEditingController _pinController = TextEditingController();
   File? _imageFile;
   Image? image;
-  List<Widget> tags = [Icon(Icons.local_gas_station), Icon(Icons.restaurant), Icon(Icons.paid)];
+  List<Widget> tags = [
+    Icon(Icons.local_gas_station),
+    Icon(Icons.restaurant),
+    Icon(Icons.paid)
+  ];
   List<String> newTags = [];
 
   @override
@@ -27,8 +33,7 @@ class _PerfilState extends State<Perfil> {
   void _nomeChange(String value) {
     if (value.isEmpty) {
       value = '';
-    }
-    else {
+    } else {
       value = value;
     }
     print('nome: $value');
@@ -45,6 +50,52 @@ class _PerfilState extends State<Perfil> {
     saveSalario(value);
   }
 
+  _displayChangePinDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alterar PIN'),
+          content: Column(
+            children: [
+              TextField(
+                controller: _pinController,
+                keyboardType: TextInputType.number,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Salvar'),
+              onPressed: () {
+                // Adicione lógica para salvar o novo PIN
+                if (_pinController.text.length == 4) {
+                  savePin(_pinController.text);
+                  Navigator.of(context).pop();
+                } else {
+                  // Exiba uma mensagem de erro se o PIN não tiver 4 dígitos
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('O PIN deve ter 4 dígitos.'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> savePin(String pin) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('pin', pin);
+    print('PIN salvo: $pin');
+  }
+
   Future<void> loadImage() async {
     try {
       print('loadImage');
@@ -53,8 +104,7 @@ class _PerfilState extends State<Perfil> {
       if (testeImage == null) {
         print('testeImage null');
         return;
-      }
-      else{
+      } else {
         String filePath = '$testeImage';
         print('testeImage: $testeImage');
         _imageFile = File(filePath);
@@ -101,7 +151,7 @@ class _PerfilState extends State<Perfil> {
     print('nome salvo: $nomeSalvo');
   }
 
-  Future<String> getSalario() async{
+  Future<String> getSalario() async {
     final prefs = await SharedPreferences.getInstance();
     double? salarioSalvo = prefs.getDouble('salario');
     print('salario salvo recuperado: $salarioSalvo');
@@ -112,7 +162,7 @@ class _PerfilState extends State<Perfil> {
     return 'R\$$salarioSalvoString';
   }
 
-  Future<String> getNome() async{
+  Future<String> getNome() async {
     final prefs = await SharedPreferences.getInstance();
     String? nomeSalvo = prefs.getString('nome');
     print('nome salvo recuperado: $nomeSalvo');
@@ -131,8 +181,7 @@ class _PerfilState extends State<Perfil> {
             initialValue: snapshot.data,
             onChanged: (value) => _salarioChange(value),
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(border: OutlineInputBorder()),
           );
         } else {
           return const Text(
@@ -153,8 +202,7 @@ class _PerfilState extends State<Perfil> {
             initialValue: snapshot.data,
             onChanged: (value) => _nomeChange(value),
             keyboardType: TextInputType.name,
-            decoration: InputDecoration(
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(border: OutlineInputBorder()),
           );
         } else {
           return const Text(
@@ -166,19 +214,17 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
-  Widget getDefaultTagsWidgets(){
+  Widget getDefaultTagsWidgets() {
     List<Widget> tagWidgets = [];
     for (var tag in tags) {
-      final padding = Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: tag
-      );
+      final padding =
+          Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: tag);
       tagWidgets.add(padding);
     }
     return Row(children: tagWidgets);
   }
 
-  Widget getNewTagsWidgets(){
+  Widget getNewTagsWidgets() {
     List<Widget> tagWidgets = [];
     for (var tag in newTags) {
       final padding = Padding(
@@ -191,7 +237,8 @@ class _PerfilState extends State<Perfil> {
           ),
           child: Text(
             tag.substring(0, 1).toUpperCase() + tag.substring(1),
-            style: TextStyle(fontSize: 16), // Ajuste o tamanho da fonte conforme desejado
+            style: TextStyle(
+                fontSize: 16), // Ajuste o tamanho da fonte conforme desejado
           ),
         ),
       );
@@ -201,7 +248,7 @@ class _PerfilState extends State<Perfil> {
     return Row(children: tagWidgets);
   }
 
-  void adicionarTag(String newTag){
+  void adicionarTag(String newTag) {
     setState(() {
       newTags.add(newTag);
     });
@@ -252,9 +299,7 @@ class _PerfilState extends State<Perfil> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text("Nome:"),
-                      SizedBox(
-                          width: 250,
-                          child: getNomeTextField()),
+                      SizedBox(width: 250, child: getNomeTextField()),
                     ],
                   )),
               Padding(
@@ -265,8 +310,8 @@ class _PerfilState extends State<Perfil> {
                     children: <Widget>[
                       Text("Salário:"),
                       SizedBox(
-                          width: 250,
-                          child: getSalarioTextField(),
+                        width: 250,
+                        child: getSalarioTextField(),
                       ),
                     ],
                   )),
@@ -277,8 +322,7 @@ class _PerfilState extends State<Perfil> {
                     children: <Widget>[
                       Text("Tags"),
                     ],
-                  )
-              ),
+                  )),
               Padding(
                   padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Row(
@@ -286,8 +330,7 @@ class _PerfilState extends State<Perfil> {
                     children: <Widget>[
                       getDefaultTagsWidgets(),
                     ],
-                  )
-              ),
+                  )),
               Padding(
                   padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Row(
@@ -297,11 +340,16 @@ class _PerfilState extends State<Perfil> {
                           onPressed: () {
                             _displayDialog(context);
                           },
-                          child: const Icon(Icons.add, color: Color(0xff0D47A1))
-                      ),
+                          child:
+                              const Icon(Icons.add, color: Color(0xff0D47A1))),
                       getNewTagsWidgets(),
                     ],
-                  )
+                  )),
+              ElevatedButton(
+                onPressed: () {
+                  _displayChangePinDialog(context);
+                },
+                child: const Text('Alterar PIN'),
               ),
             ],
           ),
@@ -327,7 +375,7 @@ class _PerfilState extends State<Perfil> {
               onPressed: () {
                 if (_tagController.text.isNotEmpty) {
                   setState(() {
-                    newTags.add( _tagController.text);
+                    newTags.add(_tagController.text);
                   });
                 }
                 Navigator.of(context).pop();
@@ -349,12 +397,10 @@ class _PerfilState extends State<Perfil> {
   }
 
   CircleAvatar profileAvatar() {
-    if (image == null){
+    if (image == null) {
       return const CircleAvatar(
           radius: 64, backgroundImage: AssetImage("images/user.png"));
     }
-    return CircleAvatar(
-        radius: 64, backgroundImage: image?.image);
+    return CircleAvatar(radius: 64, backgroundImage: image?.image);
   }
-
 }

@@ -106,12 +106,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         if (snapshot.hasData) {
           return Text(
             'Saldo: \$${snapshot.data}',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           );
         } else {
           return const Text(
             'Saldo: \$0.0',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           );
         }
       },
@@ -144,7 +144,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MobiFin'),
+        title: Row(
+          children: [
+            Icon(
+              Icons.attach_money,
+              color: Colors.white,
+            ),
+            SizedBox(
+                width: 8.0), // Adicione algum espaço entre o ícone e o texto
+            Text(
+              'MobiFin',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: image != null ? profileAvatar() : defaultAvatar(),
@@ -180,7 +195,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.blue,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
@@ -188,8 +203,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     bottomRight: Radius.circular(10),
                   ),
                   border: Border.all(color: Colors.blue, width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey, // Cor da sombra
+                      offset: Offset(
+                          0, 2), // Deslocamento da sombra (eixo X, eixo Y)
+                      blurRadius: 6.0, // Raio de desfoque da sombra
+                    ),
+                  ],
                 ),
-                height: 80.0,
+                height: 50.0,
                 //width: 200.0,
                 margin: EdgeInsets.only(left: 16.0, bottom: 16),
                 padding: EdgeInsets.all(16.0),

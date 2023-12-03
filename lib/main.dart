@@ -6,6 +6,7 @@ import 'package:gastos/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'resumo.dart';
 import 'mes.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ;
@@ -52,8 +53,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       if (testeImage == null) {
         print('testeImage null');
         return;
-      }
-      else{
+      } else {
         String filePath = '$testeImage';
         print('testeImage: $testeImage');
         _imageFile = File(filePath);
@@ -67,7 +67,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   void _abrirPerfil() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil())).then((value) => loadImage());
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil()))
+        .then((value) => loadImage());
   }
 
   @override
@@ -82,12 +83,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   CircleAvatar profileAvatar() {
-    if (image == null){
+    if (image == null) {
       return const CircleAvatar(
           radius: 64, backgroundImage: AssetImage("images/user.png"));
     }
-    return CircleAvatar(
-        radius: 64, backgroundImage: image?.image);
+    return CircleAvatar(radius: 64, backgroundImage: image?.image);
   }
 
   Future<double> getSalario() async {
@@ -198,12 +198,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Spacer(), // Este widget faz com que o botão seja alinhado à direita.
               Align(
                 alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    _exibirModalAdicionarTransacao(context);
-                    // Adicione uma nova transação aqui.
-                  },
-                  child: Icon(Icons.add),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      _exibirModalAdicionarTransacao(context);
+                      // Adicione uma nova transação aqui.
+                    },
+                    child: Icon(Icons.add),
+                  ),
                 ),
               ),
             ],
@@ -213,7 +216,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 }
-
 
 class AdicionarTransacaoModal extends StatefulWidget {
   final Function(double amount, String textOrIcon) onTransacaoSalva;
@@ -334,5 +336,4 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-
 }

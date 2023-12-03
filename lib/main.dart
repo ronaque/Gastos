@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gastos/perfil.dart';
 import 'package:gastos/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'resumo.dart';
 import 'mes.dart';
 
@@ -118,28 +119,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  void _exibirModalAdicionarTransacao(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return AdicionarTransacaoModal(
-          onTransacaoSalva: (double amount, String textOrIcon) {
-            FinanceEntry novaTransacao = FinanceEntry(
-              amount: amount,
-              textOrIcon: textOrIcon,
-            );
-            print('Nova Transação - Valor: $amount, Tag: $textOrIcon');
-            setState(() {
-              transactions.add(novaTransacao);
-            });
-            print("TESTE");
-            Navigator.pop(context);
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,6 +163,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               controller: _tabController,
               children: [
                 // Conteúdo da aba "Mês"
+                //_buildMesContent(context),
                 returnMesDisplay(context),
 
                 // Conteúdo da aba "Resumo"
@@ -191,117 +171,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                  border: Border.all(color: Colors.blue, width: 1.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey, // Cor da sombra
-                      offset: Offset(
-                          0, 2), // Deslocamento da sombra (eixo X, eixo Y)
-                      blurRadius: 6.0, // Raio de desfoque da sombra
-                    ),
-                  ],
-                ),
-                height: 50.0,
-                //width: 200.0,
-                margin: EdgeInsets.only(left: 16.0, bottom: 16),
-                padding: EdgeInsets.all(16.0),
-                child: getSaldoTexto(),
-              ),
-              Spacer(), // Este widget faz com que o botão seja alinhado à direita.
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      _exibirModalAdicionarTransacao(context);
-                      // Adicione uma nova transação aqui.
-                    },
-                    child: Icon(Icons.add),
-                  ),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
 }
 
-class AdicionarTransacaoModal extends StatefulWidget {
-  final Function(double amount, String textOrIcon) onTransacaoSalva;
-
-  AdicionarTransacaoModal({required this.onTransacaoSalva});
-
-  @override
-  _AdicionarTransacaoModalState createState() =>
-      _AdicionarTransacaoModalState();
-}
-
-class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
-  late TextEditingController amountController;
-  late TextEditingController textOrIconController;
-
-  @override
-  void initState() {
-    super.initState();
-    amountController = TextEditingController();
-    textOrIconController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    amountController.dispose();
-    textOrIconController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Adicionar Transação'),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: amountController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: 'Valor'),
-          ),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: textOrIconController,
-            decoration: InputDecoration(labelText: 'Tag'),
-          ),
-          SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: () {
-              double amount = double.tryParse(amountController.text) ?? 0.0;
-              String textOrIcon = textOrIconController.text ?? 'Popcorn';
-
-              widget.onTransacaoSalva(amount, textOrIcon);
-              Navigator.pop(context);
-            },
-            child: Text('Salvar'),
-          ),
-        ],
+Widget _buildMesContent(BuildContext context) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MesScreen()),
+          );
+        },
+        child: Text('Ir para Mês'),
       ),
-    );
-  }
+    ],
+  );
 }
 
 class LoginPage extends StatelessWidget {

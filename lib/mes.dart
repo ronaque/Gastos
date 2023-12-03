@@ -1,79 +1,341 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Widget returnMesDisplay(context) {
-  return ListView(
-    children: [
-      // Exemplo de registro de movimentação financeira
-      FinanceEntry(amount: -50.0, textOrIcon: 'Popcorn'),
-      FinanceEntry(amount: 100.0, textOrIcon: 'Money'),
-      FinanceEntry(amount: -50.0, textOrIcon: 'Car'),
-      FinanceEntry(amount: 100.0, textOrIcon: 'Food'),
-      FinanceEntry(amount: 100.0, textOrIcon: 'Academia'),
-    ],
-  );
+  return MesScreen();
 }
 
-class FinanceEntry extends StatelessWidget {
+class FinanceEntry {
   final double amount;
-  final String textOrIcon;
+  final String category;
 
-  FinanceEntry({required this.amount, required this.textOrIcon});
+  FinanceEntry({required this.amount, required this.category});
 
-  Widget _buildIconOrText(String textOrIcon) {
-    switch (textOrIcon) {
-      case 'Popcorn':
-        return Icon(Icons.local_dining, color: Colors.blue, size: 30.0);
-      case 'Money':
-        return Icon(Icons.attach_money, color: Colors.blue, size: 30.0);
-      case 'Car':
-        return Icon(Icons.directions_car, color: Colors.blue, size: 30.0);
-      case 'Food':
-        return Icon(Icons.restaurant, color: Colors.blue, size: 30.0);
-      default:
-        return Text(
-          textOrIcon,
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 18.0,
-          ),
-        );
+  Map<String, dynamic> toJson() {
+    return {
+      'amount': amount,
+      'category': category,
+    };
+  }
+
+  factory FinanceEntry.fromJson(Map<String, dynamic> json) {
+    return FinanceEntry(
+      amount: json['amount'],
+      category: json['category'],
+    );
+  }
+}
+
+class FinanceManager {
+  static const String keyTransactions = 'transactions';
+
+  Future<void> addTransaction(FinanceEntry transaction) async {
+    final transactions = await loadTransactions();
+    transactions.add(transaction);
+    await saveTransactions(transactions);
+  }
+
+  Future<List<FinanceEntry>> loadTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final transactionsJson = prefs.getStringList(keyTransactions);
+
+    if (transactionsJson != null) {
+      return transactionsJson
+          .map((json) => FinanceEntry.fromJson(jsonDecode(json)))
+          .toList();
     }
+
+    return [];
+  }
+
+  Future<void> saveTransactions(List<FinanceEntry> transactions) async {
+    final prefs = await SharedPreferences.getInstance();
+    final transactionsJson = transactions
+        .map((transaction) => jsonEncode(transaction.toJson()))
+        .toList();
+    prefs.setStringList(keyTransactions, transactionsJson);
+  }
+}
+
+class MesScreen extends StatefulWidget {
+  @override
+  _MesScreenState createState() => _MesScreenState();
+}
+
+class _MesScreenState extends State<MesScreen> {
+  final FinanceManager financeManager = FinanceManager();
+
+  Future<double> getSalario() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? salarioSalvo = prefs.getDouble('salario');
+    if (salarioSalvo == null) {
+      return 0;
+    }
+    return salarioSalvo;
+  }
+
+  Widget getSaldoTexto() {
+    return FutureBuilder(
+      future: getSalario(),
+      builder: (context, AsyncSnapshot<double> snapshot) {
+        if (snapshot.hasData) {
+          return Text(
+            'Saldo: \$${snapshot.data}',
+            style: TextStyle(color: Colors.white),
+          );
+        } else {
+          return const Text(
+            'Saldo: \$0.0',
+            style: TextStyle(color: Colors.white),
+          );
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    Color amountColor = amount < 0 ? Colors.red : Colors.green;
+    return Scaffold(
+      body: _buildBody(),
+    );
+  }
 
-    return Container(
-      margin: EdgeInsets.all(8.0),
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            offset: Offset(0, 2),
-            blurRadius: 6.0,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Row(
+  Widget _buildBody() {
+    return FutureBuilder<List<FinanceEntry>>(
+      future: financeManager.loadTransactions(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Column(
             children: [
-              Text(
-                '\$${amount.toStringAsFixed(2)}',
-                style: TextStyle(color: amountColor),
+              SizedBox(height: 20.0),
+              const Text('Nenhuma transação encontrada.'),
+              _buildTransactionList(snapshot.data!),
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                      border: Border.all(color: Colors.blue, width: 1.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0, 2),
+                          blurRadius: 6.0,
+                        ),
+                      ],
+                    ),
+                    height: 50.0,
+                    //width: 200.0,
+                    margin: EdgeInsets.only(left: 16.0, bottom: 16),
+                    padding: EdgeInsets.all(16.0),
+                    child: getSaldoTexto(),
+                  ),
+                  const Spacer(),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          _exibirModalAdicionarTransacao(context);
+                        },
+                        child: const Icon(Icons.add),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        } else {
+          return Column(
+            children: [
+              SizedBox(height: 20.0),
+              _buildTransactionList(snapshot.data!),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                          border: Border.all(color: Colors.blue, width: 1.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(
+                                0,
+                                2,
+                              ),
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                        ),
+                        height: 50.0,
+                        margin: EdgeInsets.only(left: 16.0, bottom: 16),
+                        padding: EdgeInsets.all(16.0),
+                        child: getSaldoTexto(),
+                      ),
+                      Spacer(),
+                      FloatingActionButton(
+                        onPressed: () {
+                          _exibirModalAdicionarTransacao(context);
+                        },
+                        child: Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  void _exibirModalAdicionarTransacao(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return AdicionarTransacaoModal(
+          onTransacaoSalva: (double amount, String category) async {
+            FinanceEntry novaTransacao =
+                FinanceEntry(amount: amount, category: category);
+            await financeManager.addTransaction(novaTransacao);
+            Navigator.pop(context);
+
+            setState(() {});
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildTransactionList(List<FinanceEntry> transactions) {
+    return Column(
+      children: transactions.map((transaction) {
+        return Container(
+          margin: EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                offset: Offset(0, 2),
+                blurRadius: 6.0,
               ),
-              SizedBox(width: 8.0),
             ],
           ),
-          Expanded(
-            child: Container(),
+          child: Row(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    '\$${transaction.amount.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: transaction.amount < 0 ? Colors.red : Colors.green,
+                    ),
+                  ),
+                  SizedBox(width: 8.0),
+                ],
+              ),
+              Expanded(
+                child: Container(),
+              ),
+              Text(
+                transaction.category,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 18.0,
+                ),
+              ),
+            ],
           ),
-          _buildIconOrText(textOrIcon),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class AdicionarTransacaoModal extends StatefulWidget {
+  final Function(double amount, String category) onTransacaoSalva;
+
+  AdicionarTransacaoModal({required this.onTransacaoSalva});
+
+  @override
+  _AdicionarTransacaoModalState createState() =>
+      _AdicionarTransacaoModalState();
+}
+
+class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
+  late TextEditingController amountController;
+  late TextEditingController categoryController;
+
+  @override
+  void initState() {
+    super.initState();
+    amountController = TextEditingController();
+    categoryController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    categoryController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Adicionar Transação'),
+          SizedBox(height: 16.0),
+          TextField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(labelText: 'Valor'),
+          ),
+          SizedBox(height: 16.0),
+          TextField(
+            controller: categoryController,
+            decoration: InputDecoration(labelText: 'Categoria'),
+          ),
+          SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () {
+              double amount = double.tryParse(amountController.text) ?? 0.0;
+              String category = categoryController.text;
+              widget.onTransacaoSalva(amount, category);
+            },
+            child: Text('Salvar'),
+          ),
         ],
       ),
     );

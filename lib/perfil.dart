@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/Model/Tag.dart';
+import 'package:gastos/ModelHelper/DatabaseHelper.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,12 +19,13 @@ class _PerfilState extends State<Perfil> {
   TextEditingController _pinController = TextEditingController();
   File? _imageFile;
   Image? image;
+  DatabaseHelper databaseHelper = DatabaseHelper();
   List<Widget> tags = [
     Icon(Icons.local_gas_station),
     Icon(Icons.restaurant),
     Icon(Icons.paid)
   ];
-  List<String> newTags = [];
+  // List<Tag> newTags = [];
 
   @override
   void initState() {
@@ -229,9 +232,10 @@ class _PerfilState extends State<Perfil> {
     return Row(children: tagWidgets);
   }
 
-  Widget getNewTagsWidgets() {
+  Future<Widget> getDBTagsTexts() async {
     List<Widget> tagWidgets = [];
-    for (var tag in newTags) {
+    List<Tag> dbTags = await databaseHelper.getAllTags();
+    for (var tag in dbTags) {
       final padding = Padding(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: Container(
@@ -241,8 +245,9 @@ class _PerfilState extends State<Perfil> {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            tag.substring(0, 1).toUpperCase() + tag.substring(1),
-            style: TextStyle(fontSize: 16),
+            tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
+            style: TextStyle(
+                fontSize: 16), // Ajuste o tamanho da fonte conforme desejado
           ),
         ),
       );
@@ -252,10 +257,28 @@ class _PerfilState extends State<Perfil> {
     return Row(children: tagWidgets);
   }
 
-  void adicionarTag(String newTag) {
-    setState(() {
-      newTags.add(newTag);
-    });
+  Widget getDBTags() {
+    return FutureBuilder(
+      future: getDBTagsTexts(),
+      builder: (context, AsyncSnapshot<Widget> snapshot) {
+        if (snapshot.hasData) {
+          return snapshot.data!;
+        } else {
+          return const Text(
+            'Saldo: \$0.0',
+            style: TextStyle(color: Colors.black),
+          );
+        }
+      },
+    );
+  }
+
+  void adicionarTag(String newTagName) {
+    Tag newTag = Tag(name: newTagName);
+    databaseHelper.insertTag(newTag);
+    // setState(() {
+    //   newTags.add(newTag);
+    // });
   }
 
   @override
@@ -280,7 +303,7 @@ class _PerfilState extends State<Perfil> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -297,7 +320,7 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +330,7 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +343,7 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -342,31 +365,28 @@ class _PerfilState extends State<Perfil> {
                     children: <Widget>[
                       ElevatedButton(
                           onPressed: () {
-                            _displayDialog(context);
+                            _displayNewTagDialog(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             elevation: 5,
                           ),
                           child: const Icon(Icons.add, color: Colors.white)),
-                      getNewTagsWidgets(),
+                      getDBTags(),
                     ],
-                  )),
+                  )
+              ),
               ElevatedButton(
                 onPressed: () {
                   _displayChangePinDialog(context);
                 },
                 style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                   backgroundColor: Colors.blue,
                   elevation: 5,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Alterar PIN',
-                    style: TextStyle(color: Colors.white),
+                child: Text('Alterar PIN', style: TextStyle(color: Colors.white),
                   ),
-                ),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -395,7 +415,7 @@ class _PerfilState extends State<Perfil> {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
-  _displayDialog(BuildContext context) async {
+  _displayNewTagDialog(BuildContext context) async {
     String? newTag = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
@@ -403,17 +423,17 @@ class _PerfilState extends State<Perfil> {
           title: Text('Adicionar Tag'),
           content: TextField(
             controller: _tagController,
-            onChanged: (value) {},
-            decoration: const InputDecoration(hintText: 'Digite a nova tag'),
+            onChanged: (value) {
+              // Você pode adicionar validações ou manipular o valor conforme necessário
+            },
+            decoration: const InputDecoration(hintText: 'Digite o nome da nova tag'),
           ),
           actions: <Widget>[
             TextButton(
               child: const Text('Adicionar'),
               onPressed: () {
                 if (_tagController.text.isNotEmpty) {
-                  setState(() {
-                    newTags.add(_tagController.text);
-                  });
+                  adicionarTag(_tagController.text);
                 }
                 Navigator.of(context).pop();
               },

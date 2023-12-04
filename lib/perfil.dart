@@ -233,28 +233,44 @@ class _PerfilState extends State<Perfil> {
   }
 
   Future<Widget> getDBTagsTexts() async {
-    List<Widget> tagWidgets = [];
     List<Tag> dbTags = await databaseHelper.getAllTags();
-    for (var tag in dbTags) {
-      final padding = Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5),
-        child: Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
-            style: TextStyle(
-                fontSize: 16), // Ajuste o tamanho da fonte conforme desejado
-          ),
-        ),
-      );
-      tagWidgets.add(padding);
-      print("tag $tag");
-    }
-    return Row(children: tagWidgets);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(dbTags.length, (index) {
+          final tag = dbTags[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Container(
+              height: MediaQuery.of(context).size.width * 0.12,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      databaseHelper.deleteTagByName(tag.name!);
+                      setState(() {});
+                    },
+                    icon: Icon(Icons.close),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
   }
 
   Widget getDBTags() {
@@ -265,7 +281,7 @@ class _PerfilState extends State<Perfil> {
           return snapshot.data!;
         } else {
           return const Text(
-            'Saldo: \$0.0',
+            'Erro ao carregar as tags',
             style: TextStyle(color: Colors.black),
           );
         }
@@ -273,12 +289,11 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
+
   void adicionarTag(String newTagName) {
     Tag newTag = Tag(name: newTagName);
     databaseHelper.insertTag(newTag);
-    // setState(() {
-    //   newTags.add(newTag);
-    // });
+    setState(() {});
   }
 
   @override
@@ -303,7 +318,7 @@ class _PerfilState extends State<Perfil> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -320,7 +335,7 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +345,7 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,8 +357,8 @@ class _PerfilState extends State<Perfil> {
                       ),
                     ],
                   )),
-              const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -351,15 +366,18 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       getDefaultTagsWidgets(),
                     ],
-                  )),
+                  )
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                      child: getDBTags()),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -372,7 +390,6 @@ class _PerfilState extends State<Perfil> {
                             elevation: 5,
                           ),
                           child: const Icon(Icons.add, color: Colors.white)),
-                      getDBTags(),
                     ],
                   )
               ),
@@ -449,15 +466,15 @@ class _PerfilState extends State<Perfil> {
   }
 
   CircleAvatar defaultAvatar() {
-    return const CircleAvatar(
-        radius: 64, backgroundImage: AssetImage("images/user.png"));
+    return CircleAvatar(
+        radius: MediaQuery.of(context).size.width * 0.1, backgroundImage: AssetImage("images/user.png"));
   }
 
   CircleAvatar profileAvatar() {
     if (image == null) {
-      return const CircleAvatar(
-          radius: 64, backgroundImage: AssetImage("images/user.png"));
+      return CircleAvatar(
+          radius: MediaQuery.of(context).size.width * 0.1, backgroundImage: AssetImage("images/user.png"));
     }
-    return CircleAvatar(radius: 64, backgroundImage: image?.image);
+    return CircleAvatar(radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: image?.image);
   }
 }

@@ -60,7 +60,7 @@ class _PerfilState extends State<Perfil> {
         return AlertDialog(
           title: Text('Alterar PIN'),
           content: Container(
-            height: 150, // Ajuste a altura conforme necessário
+            height: 150,
             child: Column(
               children: [
                 TextField(
@@ -87,7 +87,7 @@ class _PerfilState extends State<Perfil> {
                   child: Text('Salvar'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    elevation: 5, // Adiciona sombra
+                    elevation: 5,
                   ),
                 ),
               ],
@@ -369,7 +369,7 @@ class _PerfilState extends State<Perfil> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            elevation: 5, // Adiciona sombra
+                            elevation: 5,
                           ),
                           child: const Icon(Icons.add, color: Colors.white)),
                       getDBTags(),
@@ -383,14 +383,36 @@ class _PerfilState extends State<Perfil> {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                   backgroundColor: Colors.blue,
-                  elevation: 5, // Adiciona sombra
+                  elevation: 5,
                 ),
                 child: Text('Alterar PIN', style: TextStyle(color: Colors.white),
                   ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  _sair();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  elevation: 5,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.logout, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ));
+  }
+
+  void _sair() {
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   _displayNewTagDialog(BuildContext context) async {

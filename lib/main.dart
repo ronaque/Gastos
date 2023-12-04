@@ -151,22 +151,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           TabBar(
             controller: _tabController,
             tabs: [
-              Tab(text: 'Mês'),
-              Tab(text: 'Resumo'),
+              Tab(
+                  child: Row(
+                children: [
+                  SizedBox(width: 35),
+                  Text(_getMonth()),
+                  SizedBox(width: 5),
+                  Icon(Icons.calendar_month),
+                ],
+              )),
+              Tab(
+                  child: Row(
+                children: [
+                  SizedBox(width: 35),
+                  Text('Resumo'),
+                  SizedBox(width: 5),
+                  Icon(Icons.summarize),
+                ],
+              )),
             ],
-            labelColor:
-                Colors.black, // Cor do texto da aba ativa (Mês ou Resumo)
-            unselectedLabelColor: Colors.grey, // Cor do texto das abas inativas
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.grey,
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                // Conteúdo da aba "Mês"
-                //_buildMesContent(context),
                 returnMesDisplay(context),
-
-                // Conteúdo da aba "Resumo"
                 returnResumoDisplay(context),
               ],
             ),
@@ -177,21 +188,40 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 }
 
-Widget _buildMesContent(BuildContext context) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MesScreen()),
-          );
-        },
-        child: Text('Ir para Mês'),
-      ),
-    ],
-  );
+String _getMonth() {
+  DateTime now = DateTime.now();
+  return '${_getMonthName(now.month)}';
+}
+
+String _getMonthName(int month) {
+  switch (month) {
+    case 1:
+      return 'Janeiro';
+    case 2:
+      return 'Fevereiro';
+    case 3:
+      return 'Março';
+    case 4:
+      return 'Abril';
+    case 5:
+      return 'Maio';
+    case 6:
+      return 'Junho';
+    case 7:
+      return 'Julho';
+    case 8:
+      return 'Agosto';
+    case 9:
+      return 'Setembro';
+    case 10:
+      return 'Outubro';
+    case 11:
+      return 'Novembro';
+    case 12:
+      return 'Dezembro';
+    default:
+      return '';
+  }
 }
 
 class LoginPage extends StatelessWidget {
@@ -240,6 +270,18 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  _exibirModalInfoPIN(context);
+                },
+                child: Text(
+                  'Não tem um PIN?',
+                  style: TextStyle(
+                    color: Colors.blue, // ou a cor desejada
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -285,6 +327,29 @@ class LoginPage extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _exibirModalInfoPIN(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Informação sobre o PIN'),
+          content: Text(
+            'Se você nunca alterou seu PIN, o valor padrão é 0000. '
+            'Após desbloquear o app é possível alterar seu PIN na tela de perfil.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Fechar'),
             ),
           ],
         );

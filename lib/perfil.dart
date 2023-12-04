@@ -147,9 +147,14 @@ class _PerfilState extends State<Perfil> {
 
   Future<void> saveSalario(String salario) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setDouble('salario', double.parse(salario));
-    double? salarioSalvo = prefs.getDouble('salario');
-    print('salario salvo: $salarioSalvo');
+
+    if (RegExp(r'^\d+(\.\d+)?$').hasMatch(salario)) {
+      prefs.setDouble('salario', double.parse(salario));
+      double? salarioSalvo = prefs.getDouble('salario');
+      print('salario salvo: $salarioSalvo');
+    } else {
+      print('Formato de salário inválido');
+    }
   }
 
   Future<void> saveNome(String nome) async {
@@ -254,7 +259,8 @@ class _PerfilState extends State<Perfil> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
+                    tag.name!.substring(0, 1).toUpperCase() +
+                        tag.name!.substring(1),
                     style: TextStyle(fontSize: 16),
                   ),
                   IconButton(
@@ -289,7 +295,6 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
-
   void adicionarTag(String newTagName) {
     Tag newTag = Tag(name: newTagName);
     databaseHelper.insertTag(newTag);
@@ -318,7 +323,8 @@ class _PerfilState extends State<Perfil> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -335,7 +341,8 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +352,8 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,7 +366,8 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -366,18 +375,21 @@ class _PerfilState extends State<Perfil> {
                     ],
                   )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       getDefaultTagsWidgets(),
                     ],
-                  )
-              ),
-              Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                      child: getDBTags()),
+                  )),
               Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  child: getDBTags()),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -391,8 +403,7 @@ class _PerfilState extends State<Perfil> {
                           ),
                           child: const Icon(Icons.add, color: Colors.white)),
                     ],
-                  )
-              ),
+                  )),
               ElevatedButton(
                 onPressed: () {
                   _displayChangePinDialog(context);
@@ -402,8 +413,10 @@ class _PerfilState extends State<Perfil> {
                   backgroundColor: Colors.blue,
                   elevation: 5,
                 ),
-                child: Text('Alterar PIN', style: TextStyle(color: Colors.white),
-                  ),
+                child: Text(
+                  'Alterar PIN',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -443,7 +456,8 @@ class _PerfilState extends State<Perfil> {
             onChanged: (value) {
               // Você pode adicionar validações ou manipular o valor conforme necessário
             },
-            decoration: const InputDecoration(hintText: 'Digite o nome da nova tag'),
+            decoration:
+                const InputDecoration(hintText: 'Digite o nome da nova tag'),
           ),
           actions: <Widget>[
             TextButton(
@@ -467,14 +481,18 @@ class _PerfilState extends State<Perfil> {
 
   CircleAvatar defaultAvatar() {
     return CircleAvatar(
-        radius: MediaQuery.of(context).size.width * 0.1, backgroundImage: AssetImage("images/user.png"));
+        radius: MediaQuery.of(context).size.width * 0.1,
+        backgroundImage: AssetImage("images/user.png"));
   }
 
   CircleAvatar profileAvatar() {
     if (image == null) {
       return CircleAvatar(
-          radius: MediaQuery.of(context).size.width * 0.1, backgroundImage: AssetImage("images/user.png"));
+          radius: MediaQuery.of(context).size.width * 0.1,
+          backgroundImage: AssetImage("images/user.png"));
     }
-    return CircleAvatar(radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: image?.image);
+    return CircleAvatar(
+        radius: MediaQuery.of(context).size.width * 0.18,
+        backgroundImage: image?.image);
   }
 }

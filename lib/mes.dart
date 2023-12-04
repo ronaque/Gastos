@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gastos/Model/Tag.dart';
+import 'package:gastos/ModelHelper/DatabaseHelper.dart';
 
 Widget returnMesDisplay(context) {
   return MesScreen();
@@ -291,8 +293,16 @@ class AdicionarTransacaoModal extends StatefulWidget {
 }
 
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Tag> dbTags = [];
   late TextEditingController amountController;
   late TextEditingController categoryController;
+  List<String> categories = [
+    'Categoria 1',
+    'Categoria 2',
+    'Categoria 3'
+  ]; // Adicione suas categorias aqui
+  String selectedCategory = 'Academia';
 
   @override
   void initState() {
@@ -306,6 +316,43 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     amountController.dispose();
     categoryController.dispose();
     super.dispose();
+  }
+
+  Future<Widget> getDBTagsTexts() async {
+    List<Tag> dbTags = await databaseHelper.getAllTags();
+
+    return DropdownButtonFormField<String>(
+      value: selectedCategory,
+      items: dbTags.map((tag) {
+        return DropdownMenuItem<String>(
+          value: tag.name,
+          child: Text(tag.name.toString()),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          selectedCategory = value ??
+              'Academia'; // Define uma categoria padrão caso o valor seja nulo
+        });
+      },
+      decoration: InputDecoration(labelText: 'Categoria'),
+    );
+  }
+
+  Widget getDBTags() {
+    return FutureBuilder(
+      future: getDBTagsTexts(),
+      builder: (context, AsyncSnapshot<Widget> snapshot) {
+        if (snapshot.hasData) {
+          return snapshot.data!;
+        } else {
+          return const Text(
+            'Erro ao carregar as tags',
+            style: TextStyle(color: Colors.black),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -323,10 +370,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
             decoration: InputDecoration(labelText: 'Valor'),
           ),
           SizedBox(height: 16.0),
-          TextField(
-            controller: categoryController,
-            decoration: InputDecoration(labelText: 'Categoria'),
-          ),
+          getDBTags(),
           SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {

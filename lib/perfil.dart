@@ -57,7 +57,7 @@ class _PerfilState extends State<Perfil> {
         return AlertDialog(
           title: Text('Alterar PIN'),
           content: Container(
-            height: 150, // Ajuste a altura conforme necessário
+            height: 150,
             child: Column(
               children: [
                 TextField(
@@ -84,7 +84,7 @@ class _PerfilState extends State<Perfil> {
                   child: Text('Salvar'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    elevation: 5, // Adiciona sombra
+                    elevation: 5,
                   ),
                 ),
               ],
@@ -242,8 +242,7 @@ class _PerfilState extends State<Perfil> {
           ),
           child: Text(
             tag.substring(0, 1).toUpperCase() + tag.substring(1),
-            style: TextStyle(
-                fontSize: 16), // Ajuste o tamanho da fonte conforme desejado
+            style: TextStyle(fontSize: 16),
           ),
         ),
       );
@@ -347,7 +346,7 @@ class _PerfilState extends State<Perfil> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            elevation: 5, // Adiciona sombra
+                            elevation: 5,
                           ),
                           child: const Icon(Icons.add, color: Colors.white)),
                       getNewTagsWidgets(),
@@ -359,7 +358,7 @@ class _PerfilState extends State<Perfil> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  elevation: 5, // Adiciona sombra
+                  elevation: 5,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -369,9 +368,31 @@ class _PerfilState extends State<Perfil> {
                   ),
                 ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  _sair();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  elevation: 5,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.logout, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ));
+  }
+
+  void _sair() {
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   _displayDialog(BuildContext context) async {
@@ -382,9 +403,7 @@ class _PerfilState extends State<Perfil> {
           title: Text('Adicionar Tag'),
           content: TextField(
             controller: _tagController,
-            onChanged: (value) {
-              // Você pode adicionar validações ou manipular o valor conforme necessário
-            },
+            onChanged: (value) {},
             decoration: const InputDecoration(hintText: 'Digite a nova tag'),
           ),
           actions: <Widget>[

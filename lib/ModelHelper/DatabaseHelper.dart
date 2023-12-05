@@ -44,7 +44,7 @@ class DatabaseHelper {
       CREATE TABLE gastos(
         id INTEGER PRIMARY KEY,
         date TEXT,
-        quantity INTEGER,
+        quantity REAL,
         tag_id INTEGER,
         FOREIGN KEY(tag_id) REFERENCES tags(id)
       )

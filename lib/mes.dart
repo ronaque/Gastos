@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/views/adicionar_transacao.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gastos/Model/Tag.dart';
-import 'package:gastos/ModelHelper/DatabaseHelper.dart';
 
 Widget returnMesDisplay(context) {
   return MesScreen();
@@ -72,15 +71,6 @@ class _MesScreenState extends State<MesScreen> {
   Future<double> getSalario() async {
     final prefs = await SharedPreferences.getInstance();
     final transactionsJson = prefs.getStringList('transactions');
-    /*
-    print(transactionsJson);
-    double? salarioTmp = 0;
-    if (transactionsJson != null) {
-      for (int i = 0; i < transactionsJson.length; i++) {
-        salarioTmp = salarioTmp + transactionsJson[i].
-      }
-    }
-    */
     double salarioTmp = 0;
     List<FinanceEntry> transactionsTmp = [];
     if (transactionsJson != null) {
@@ -91,9 +81,6 @@ class _MesScreenState extends State<MesScreen> {
     for (int i = 0; i < transactionsTmp.length; i++) {
       salarioTmp = salarioTmp + transactionsTmp[i].amount;
     }
-    //print('salarioTmp:');
-    //print(salarioTmp);
-
     double? salarioSalvo = prefs.getDouble('salario');
     if (salarioSalvo == null) {
       return 0;
@@ -121,6 +108,24 @@ class _MesScreenState extends State<MesScreen> {
     );
   }
 
+  Widget getCategoryTextOrIcon(String category) {
+    if (category == 'gasolina') {
+      return Icon(Icons.local_gas_station);
+    } else if (category == 'comida') {
+      return Icon(Icons.restaurant);
+    } else if (category == 'gasto') {
+      return Icon(Icons.paid);
+    } else {
+      return Text(
+          category,
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 18.0,
+          ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,6 +135,7 @@ class _MesScreenState extends State<MesScreen> {
           _exibirModalAdicionarTransacao(context);
         },
         child: Icon(Icons.add),
+        backgroundColor: Color(0xB02196F3),
       ),
     );
   }
@@ -171,12 +177,12 @@ class _MesScreenState extends State<MesScreen> {
           left: 16.0,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Color(0xB02196F3),
               borderRadius: BorderRadius.circular(10.0),
               border: Border.all(color: Colors.blue, width: 1.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey,
+                  color: Color(0x019E9E9E),
                   offset: Offset(0, 2),
                   blurRadius: 6.0,
                 ),
@@ -224,13 +230,7 @@ class _MesScreenState extends State<MesScreen> {
                   ],
                 ),
                 Expanded(child: Container()),
-                Text(
-                  transaction.category,
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18.0,
-                  ),
-                ),
+                getCategoryTextOrIcon(transaction.category),
               ],
             ),
           );
@@ -254,119 +254,6 @@ class _MesScreenState extends State<MesScreen> {
           },
         );
       },
-    );
-  }
-}
-
-class AdicionarTransacaoModal extends StatefulWidget {
-  final Function(double amount, String category) onTransacaoSalva;
-
-  AdicionarTransacaoModal({required this.onTransacaoSalva});
-
-  @override
-  _AdicionarTransacaoModalState createState() =>
-      _AdicionarTransacaoModalState();
-}
-
-class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
-  DatabaseHelper databaseHelper = DatabaseHelper();
-  List<Tag> dbTags = [];
-  late TextEditingController amountController;
-  late TextEditingController categoryController;
-  List<String> categories = [
-    'Escolha uma Tag',
-    'Gasolina',
-    'Comida'
-  ]; // Adicione suas categorias aqui
-  String selectedCategory = 'Escolha uma Tag';
-
-  @override
-  void initState() {
-    super.initState();
-    amountController = TextEditingController();
-    categoryController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    amountController.dispose();
-    categoryController.dispose();
-    super.dispose();
-  }
-
-  Future<Widget> getDBTagsTexts() async {
-    //List<Tag> dbTagsTmp = ["", ""];
-    Tag newTag = Tag(name: "Escolha uma Tag");
-    List<Tag> dbTagsTmp = [];
-    dbTagsTmp.add(newTag);
-
-    List<Tag> dbTags = await databaseHelper.getAllTags();
-    if (dbTags.isEmpty)
-      dbTags = dbTagsTmp;
-    else {
-      dbTags.insert(0, newTag);
-    }
-    return DropdownButtonFormField<String>(
-      value: selectedCategory,
-      items: dbTags.map((tag) {
-        return DropdownMenuItem<String>(
-          value: tag.name,
-          child: Text(tag.name.toString()),
-        );
-      }).toList(),
-      onChanged: (String? value) {
-        setState(() {
-          selectedCategory = value ?? 'Escolha uma Tag';
-          categoryController.text = value.toString();
-        });
-      },
-      decoration: InputDecoration(labelText: 'Tag'),
-    );
-  }
-
-  Widget getDBTags() {
-    return FutureBuilder(
-      future: getDBTagsTexts(),
-      builder: (context, AsyncSnapshot<Widget> snapshot) {
-        if (snapshot.hasData) {
-          return snapshot.data!;
-        } else {
-          return const Text(
-            'Erro ao carregar as tags',
-            style: TextStyle(color: Colors.black),
-          );
-        }
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Adicionar Transação'),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: amountController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: 'Valor'),
-          ),
-          SizedBox(height: 16.0),
-          getDBTags(),
-          SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: () {
-              double amount = double.tryParse(amountController.text) ?? 0.0;
-              String category = categoryController.text;
-              widget.onTransacaoSalva(amount, category);
-            },
-            child: Text('Salvar'),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -56,7 +56,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Adicionar Transação'),
+          Text('Adicionar Transação', style: Theme.of(context).textTheme.headline6),
           SizedBox(height: 16.0),
           TextField(
             controller: amountController,

@@ -48,8 +48,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         image = resultImage;
       });
     });
-    super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    super.initState();
   }
 
   void _abrirPerfil() async {

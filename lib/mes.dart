@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gastos/mes.dart';
 import 'package:gastos/views/adicionar_transacao.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gastos/Model/Tag.dart';
-import 'package:gastos/ModelHelper/DatabaseHelper.dart';
 
 Widget returnMesDisplay(context) {
   return MesScreen();
@@ -111,6 +108,24 @@ class _MesScreenState extends State<MesScreen> {
     );
   }
 
+  Widget getCategoryTextOrIcon(String category) {
+    if (category == 'gasolina') {
+      return Icon(Icons.local_gas_station);
+    } else if (category == 'comida') {
+      return Icon(Icons.restaurant);
+    } else if (category == 'gasto') {
+      return Icon(Icons.paid);
+    } else {
+      return Text(
+          category,
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 18.0,
+          ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,6 +135,7 @@ class _MesScreenState extends State<MesScreen> {
           _exibirModalAdicionarTransacao(context);
         },
         child: Icon(Icons.add),
+        backgroundColor: Color(0xB02196F3),
       ),
     );
   }
@@ -161,12 +177,12 @@ class _MesScreenState extends State<MesScreen> {
           left: 16.0,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Color(0xB02196F3),
               borderRadius: BorderRadius.circular(10.0),
               border: Border.all(color: Colors.blue, width: 1.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey,
+                  color: Color(0x019E9E9E),
                   offset: Offset(0, 2),
                   blurRadius: 6.0,
                 ),
@@ -214,13 +230,7 @@ class _MesScreenState extends State<MesScreen> {
                   ],
                 ),
                 Expanded(child: Container()),
-                Text(
-                  transaction.category,
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 18.0,
-                  ),
-                ),
+                getCategoryTextOrIcon(transaction.category),
               ],
             ),
           );

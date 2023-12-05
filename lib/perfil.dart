@@ -22,11 +22,11 @@ class _PerfilState extends State<Perfil> {
   File? _imageFile;
   Image? image;
   DatabaseHelper databaseHelper = DatabaseHelper();
-  List<Widget> tags = [
-    Icon(Icons.local_gas_station),
-    Icon(Icons.restaurant),
-    Icon(Icons.paid)
-  ];
+  Map<String, Widget> tags = {
+    'gasolina' : Icon(Icons.local_gas_station),
+    'comida' : Icon(Icons.restaurant),
+    'gasto' : Icon(Icons.paid)
+  };
   // List<Tag> newTags = [];
 
   @override
@@ -188,7 +188,7 @@ class _PerfilState extends State<Perfil> {
 
   Widget getDefaultTagsWidgets() {
     List<Widget> tagWidgets = [];
-    for (var tag in tags) {
+    for (var tag in tags.values) {
       final padding =
           Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: tag);
       tagWidgets.add(padding);
@@ -482,14 +482,14 @@ class _PerfilState extends State<Perfil> {
 
   CircleAvatar defaultAvatar() {
     return CircleAvatar(
-        radius: MediaQuery.of(context).size.width * 0.1,
+        radius: MediaQuery.of(context).size.width * 0.18,
         backgroundImage: AssetImage("images/user.png"));
   }
 
   CircleAvatar profileAvatar() {
     if (image == null) {
       return CircleAvatar(
-          radius: MediaQuery.of(context).size.width * 0.1,
+          radius: MediaQuery.of(context).size.width * 0.18,
           backgroundImage: AssetImage("images/user.png"));
     }
     return CircleAvatar(

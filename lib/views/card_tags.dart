@@ -16,6 +16,7 @@ class CardTags extends StatefulWidget{
 class _CardTagsState extends State<CardTags>{
   DatabaseHelper databaseHelper = DatabaseHelper();
 
+
   getClicadoBoxColor(String tag) {
     if (widget.getClicado() == tag) {
       return Colors.blue;
@@ -71,6 +72,7 @@ class _CardTagsState extends State<CardTags>{
     );
   }
 
+
   Widget getDBTags() {
     return FutureBuilder(
       future: getDBTagsTexts(),
@@ -87,10 +89,111 @@ class _CardTagsState extends State<CardTags>{
     );
   }
 
+  getGasolinaIconColor(){
+    if(widget.getClicado() == 'gasolina'){
+      return Icon(Icons.local_gas_station, color: Colors.white,);
+    }else{
+      return Icon(Icons.local_gas_station);
+    }
+  }
+  getComidaIconColor(){
+    if(widget.getClicado() == 'comida'){
+      return Icon(Icons.restaurant, color: Colors.white,);
+    }else{
+      return Icon(Icons.restaurant);
+    }
+  }
+
+  getGastoIconColor(){
+    if(widget.getClicado() == 'gasto'){
+      return Icon(Icons.paid, color: Colors.white,);
+    }else{
+      return Icon(Icons.paid);
+    }
+  }
+
+
+  Widget getDefaultTags(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: (){
+          widget.setClicado('gasolina');
+          setState(() {});
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Container(
+                alignment: Alignment.center,
+                height: MediaQuery.of(context).size.width * 0.12,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: getClicadoBoxColor('gasolina'),
+                  border: Border.all(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: getGasolinaIconColor(),
+            ),
+          )
+        ),
+        GestureDetector(
+            onTap: (){
+              widget.setClicado('comida');
+              setState(() {});
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Container(
+                alignment: Alignment.center,
+                height: MediaQuery.of(context).size.width * 0.12,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: getClicadoBoxColor('comida'),
+                  border: Border.all(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: getComidaIconColor(),
+              ),
+            )
+        ),
+        GestureDetector(
+            onTap: (){
+              widget.setClicado('gasto');
+              setState(() {});
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Container(
+                alignment: Alignment.center,
+                height: MediaQuery.of(context).size.width * 0.12,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: getClicadoBoxColor('gasto'),
+                  border: Border.all(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: getGastoIconColor(),
+              ),
+            )
+        ),
+      ],
+    );
+  }
+
+  Widget getTags() {
+    return Column(
+      children: [
+        getDefaultTags(),
+        SizedBox(height: 16.0),
+        getDBTags()
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-        child: getDBTags());
+        child: getTags());
   }
 }

@@ -3,7 +3,7 @@ import 'package:gastos/Model/Tag.dart';
 class Gasto {
   int? id; // Pode ser usado como chave primária no banco de dados
   DateTime? date;
-  int? quantity;
+  double ? quantity;
   Tag? tag;
 
   Gasto({this.id, this.date, this.quantity, this.tag});

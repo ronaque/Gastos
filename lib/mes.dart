@@ -298,11 +298,11 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   late TextEditingController amountController;
   late TextEditingController categoryController;
   List<String> categories = [
-    'Categoria 1',
-    'Categoria 2',
-    'Categoria 3'
+    'Escolha uma Tag',
+    'Gasolina',
+    'Comida'
   ]; // Adicione suas categorias aqui
-  String selectedCategory = 'Academia';
+  String selectedCategory = 'Escolha uma Tag';
 
   @override
   void initState() {
@@ -319,8 +319,17 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   }
 
   Future<Widget> getDBTagsTexts() async {
-    List<Tag> dbTags = await databaseHelper.getAllTags();
+    //List<Tag> dbTagsTmp = ["", ""];
+    Tag newTag = Tag(name: "Escolha uma Tag");
+    List<Tag> dbTagsTmp = [];
+    dbTagsTmp.add(newTag);
 
+    List<Tag> dbTags = await databaseHelper.getAllTags();
+    if (dbTags.isEmpty)
+      dbTags = dbTagsTmp;
+    else {
+      dbTags.insert(0, newTag);
+    }
     return DropdownButtonFormField<String>(
       value: selectedCategory,
       items: dbTags.map((tag) {
@@ -331,11 +340,11 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       }).toList(),
       onChanged: (String? value) {
         setState(() {
-          selectedCategory = value ??
-              'Academia'; // Define uma categoria padrão caso o valor seja nulo
+          selectedCategory = value ?? 'Escolha uma Tag';
+          categoryController.text = value.toString();
         });
       },
-      decoration: InputDecoration(labelText: 'Categoria'),
+      decoration: InputDecoration(labelText: 'Tag'),
     );
   }
 

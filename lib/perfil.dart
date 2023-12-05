@@ -106,9 +106,14 @@ class _PerfilState extends State<Perfil> {
 
   Future<void> saveSalario(String salario) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setDouble('salario', double.parse(salario));
-    double? salarioSalvo = prefs.getDouble('salario');
-    print('salario salvo: $salarioSalvo');
+
+    if (RegExp(r'^\d+(\.\d+)?$').hasMatch(salario)) {
+      prefs.setDouble('salario', double.parse(salario));
+      double? salarioSalvo = prefs.getDouble('salario');
+      print('salario salvo: $salarioSalvo');
+    } else {
+      print('Formato de salário inválido');
+    }
   }
 
   Future<void> saveNome(String nome) async {
@@ -213,7 +218,8 @@ class _PerfilState extends State<Perfil> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
+                    tag.name!.substring(0, 1).toUpperCase() +
+                        tag.name!.substring(1),
                     style: TextStyle(fontSize: 16),
                   ),
                   IconButton(
@@ -247,7 +253,6 @@ class _PerfilState extends State<Perfil> {
       },
     );
   }
-
   void _sair() {
     Navigator.pushReplacementNamed(context, '/login');
   }
@@ -407,7 +412,8 @@ class _PerfilState extends State<Perfil> {
             onChanged: (value) {
               // Você pode adicionar validações ou manipular o valor conforme necessário
             },
-            decoration: const InputDecoration(hintText: 'Digite o nome da nova tag'),
+            decoration:
+                const InputDecoration(hintText: 'Digite o nome da nova tag'),
           ),
           actions: <Widget>[
             TextButton(
@@ -476,14 +482,18 @@ class _PerfilState extends State<Perfil> {
 
   CircleAvatar defaultAvatar() {
     return CircleAvatar(
-        radius: MediaQuery.of(context).size.width * 0.1, backgroundImage: AssetImage("images/user.png"));
+        radius: MediaQuery.of(context).size.width * 0.1,
+        backgroundImage: AssetImage("images/user.png"));
   }
 
   CircleAvatar profileAvatar() {
     if (image == null) {
       return CircleAvatar(
-          radius: MediaQuery.of(context).size.width * 0.1, backgroundImage: AssetImage("images/user.png"));
+          radius: MediaQuery.of(context).size.width * 0.1,
+          backgroundImage: AssetImage("images/user.png"));
     }
-    return CircleAvatar(radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: image?.image);
+    return CircleAvatar(
+        radius: MediaQuery.of(context).size.width * 0.18,
+        backgroundImage: image?.image);
   }
 }

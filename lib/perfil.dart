@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
+int globalIndex = 0;
+
 class Perfil extends StatefulWidget {
   @override
   _PerfilState createState() => _PerfilState();
@@ -29,8 +31,8 @@ class _PerfilState extends State<Perfil> {
 
   @override
   void initState() {
-    super.initState();
     loadImage();
+    super.initState();
   }
 
   void _nomeChange(String value) {
@@ -53,51 +55,6 @@ class _PerfilState extends State<Perfil> {
     saveSalario(value);
   }
 
-  _displayChangePinDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Alterar PIN'),
-          content: Container(
-            height: 150,
-            child: Column(
-              children: [
-                TextField(
-                  controller: _pinController,
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                  decoration:
-                      InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_pinController.text.length == 4) {
-                      savePin(_pinController.text);
-                      Navigator.of(context).pop();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('O PIN deve ter 4 dígitos.'),
-                        ),
-                      );
-                    }
-                  },
-                  child: Text('Salvar'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    elevation: 5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> savePin(String pin) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('pin', pin);
@@ -114,7 +71,7 @@ class _PerfilState extends State<Perfil> {
         return;
       } else {
         String filePath = '$testeImage';
-        print('testeImage: $testeImage');
+        print('Arquivo carregado do path: $filePath');
         _imageFile = File(filePath);
         setState(() {
           image = Image.file(_imageFile!);
@@ -133,10 +90,12 @@ class _PerfilState extends State<Perfil> {
 
     Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
     String appDocumentsPath = appDocumentsDirectory.path;
+    globalIndex++;
 
-    await file.saveTo('$appDocumentsPath/minha_imagem.jpg');
+    await file.saveTo('$appDocumentsPath/minha_imagem$globalIndex.jpg');
+    print("Arquivo salvo no path: $appDocumentsPath/minha_imagem$globalIndex.jpg");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('test_image', '$appDocumentsPath/minha_imagem.jpg');
+    prefs.setString('test_image', '$appDocumentsPath/minha_imagem$globalIndex.jpg');
 
     _imageFile = File(file.path);
     setState(() {
@@ -289,6 +248,9 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
+  void _sair() {
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   void adicionarTag(String newTagName) {
     Tag newTag = Tag(name: newTagName);
@@ -314,122 +276,124 @@ class _PerfilState extends State<Perfil> {
               ],
             ),
           ),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Stack(children: <Widget>[
-                        image != null ? profileAvatar() : defaultAvatar(),
-                        Positioned(
-                          bottom: -10,
-                          left: 80,
-                          child: IconButton(
-                              onPressed: _selecionarImagem,
-                              icon: const Icon(Icons.add_a_photo)),
-                        )
-                      ])
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("Nome:"),
-                      SizedBox(width: 250, child: getNomeTextField()),
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("Salário:"),
-                      SizedBox(
-                        width: 250,
-                        child: getSalarioTextField(),
-                      ),
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Tags"),
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      getDefaultTagsWidgets(),
-                    ],
-                  )
-              ),
-              Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                      child: getDBTags()),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ElevatedButton(
-                          onPressed: () {
-                            _displayNewTagDialog(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            elevation: 5,
-                          ),
-                          child: const Icon(Icons.add, color: Colors.white)),
-                    ],
-                  )
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _displayChangePinDialog(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  backgroundColor: Colors.blue,
-                  elevation: 5,
+          body: WillPopScope(
+            onWillPop: () async {
+              Navigator.pop(context, "updateImage");
+              return true;
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Stack(children: <Widget>[
+                          image != null ? profileAvatar() : defaultAvatar(),
+                          Positioned(
+                            bottom: -10,
+                            left: 80,
+                            child: IconButton(
+                                onPressed: _selecionarImagem,
+                                icon: const Icon(Icons.add_a_photo)),
+                          )
+                        ])
+                      ],
+                    )),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Nome:"),
+                        SizedBox(width: 250, child: getNomeTextField()),
+                      ],
+                    )),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Salário:"),
+                        SizedBox(
+                          width: 250,
+                          child: getSalarioTextField(),
+                        ),
+                      ],
+                    )),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("Tags"),
+                      ],
+                    )),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        getDefaultTagsWidgets(),
+                      ],
+                    )
                 ),
-                child: Text('Alterar PIN', style: TextStyle(color: Colors.white),
+                Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: getDBTags()),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ElevatedButton(
+                            onPressed: () {
+                              _displayNewTagDialog(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              elevation: 5,
+                            ),
+                            child: const Icon(Icons.add, color: Colors.white)),
+                      ],
+                    )
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _displayChangePinDialog(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    backgroundColor: Colors.blue,
+                    elevation: 5,
                   ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _sair();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  elevation: 5,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.logout, color: Colors.white),
-                    ],
+                  child: Text('Alterar PIN', style: TextStyle(color: Colors.white),
                   ),
                 ),
-              ),
-            ],
-          ),
+                ElevatedButton(
+                  onPressed: () {
+                    _sair();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    elevation: 5,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.logout, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
         ));
-  }
-
-  void _sair() {
-    Navigator.pushReplacementNamed(context, '/login');
   }
 
   _displayNewTagDialog(BuildContext context) async {
@@ -463,6 +427,51 @@ class _PerfilState extends State<Perfil> {
     print('sai do dialogo');
     print('newTag: $_tagController');
     _tagController.clear();
+  }
+
+  _displayChangePinDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alterar PIN'),
+          content: Container(
+            height: 150,
+            child: Column(
+              children: [
+                TextField(
+                  controller: _pinController,
+                  keyboardType: TextInputType.number,
+                  obscureText: true,
+                  decoration:
+                  InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_pinController.text.length == 4) {
+                      savePin(_pinController.text);
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('O PIN deve ter 4 dígitos.'),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('Salvar'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    elevation: 5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   CircleAvatar defaultAvatar() {

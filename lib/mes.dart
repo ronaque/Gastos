@@ -74,15 +74,6 @@ class _MesScreenState extends State<MesScreen> {
   Future<double> getSalario() async {
     final prefs = await SharedPreferences.getInstance();
     final transactionsJson = prefs.getStringList('transactions');
-    /*
-    print(transactionsJson);
-    double? salarioTmp = 0;
-    if (transactionsJson != null) {
-      for (int i = 0; i < transactionsJson.length; i++) {
-        salarioTmp = salarioTmp + transactionsJson[i].
-      }
-    }
-    */
     double salarioTmp = 0;
     List<FinanceEntry> transactionsTmp = [];
     if (transactionsJson != null) {
@@ -93,9 +84,6 @@ class _MesScreenState extends State<MesScreen> {
     for (int i = 0; i < transactionsTmp.length; i++) {
       salarioTmp = salarioTmp + transactionsTmp[i].amount;
     }
-    //print('salarioTmp:');
-    //print(salarioTmp);
-
     double? salarioSalvo = prefs.getDouble('salario');
     if (salarioSalvo == null) {
       return 0;

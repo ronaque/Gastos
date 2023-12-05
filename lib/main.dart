@@ -82,39 +82,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return CircleAvatar(radius: 64, backgroundImage: image?.image);
   }
 
-  Future<double> getSalario() async {
-    final prefs = await SharedPreferences.getInstance();
-    double? salarioSalvo = prefs.getDouble('salario');
-    if (salarioSalvo == null) {
-      return 0;
-    }
-    return salarioSalvo;
-  }
-
-  Widget getSaldoTexto() {
-    return FutureBuilder(
-      future: getSalario(),
-      builder: (context, AsyncSnapshot<double> snapshot) {
-        if (snapshot.hasData) {
-          return Text(
-            'Saldo: \$${snapshot.data}',
-            style: TextStyle(color: Colors.white),
-          );
-        } else {
-          return const Text(
-            'Saldo: \$0.0',
-            style: TextStyle(color: Colors.white),
-          );
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
+        title: const Row(
           children: [
             Icon(
               Icons.attach_money,
@@ -143,15 +115,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             controller: _tabController,
             tabs: [
               Tab(
-                  child: Row(
-                children: [
-                  SizedBox(width: 35),
-                  Text(_getMonth()),
-                  SizedBox(width: 5),
-                  Icon(Icons.calendar_month),
-                ],
-              )),
-              Tab(
+                child: Row(
+                  children: [
+                    SizedBox(width: 35),
+                    Text(_getMonth()),
+                    SizedBox(width: 5),
+                    Icon(Icons.calendar_month),
+                  ],
+                )
+              ),
+              const Tab(
                   child: Row(
                 children: [
                   SizedBox(width: 35),

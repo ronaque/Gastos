@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/src/mes/finance_module.dart';
+import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'components/adicionar_transacao.dart';
 import 'mes_module.dart';
 
@@ -16,6 +18,21 @@ class Mes extends StatefulWidget {
 
 class _MesState extends State<Mes> {
   final FinanceManager financeManager = FinanceManager();
+  GastoHelper gastoHelper = GastoHelper();
+  Widget transactionsList = buildTransactionList([]);
+
+  void adicionarTransacao() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return AdicionarTransacaoModal();
+      },
+    );
+    var list_gastos = await gastoHelper.getAllGastos();
+    setState(() {
+      transactionsList = buildTransactionList(list_gastos);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +40,7 @@ class _MesState extends State<Mes> {
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _exibirModalAdicionarTransacao(context);
+          adicionarTransacao();
         },
         backgroundColor: const Color(0xB02196F3),
         child: const Icon(Icons.add),
@@ -32,8 +49,8 @@ class _MesState extends State<Mes> {
   }
 
   Widget _buildBody() {
-    return FutureBuilder<List<FinanceEntry>>(
-      future: financeManager.loadTransactions(),
+    return FutureBuilder<List<Gasto>>(
+      future: gastoHelper.getAllGastos(), // financeManager.loadTransactions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -42,26 +59,9 @@ class _MesState extends State<Mes> {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return buildEmptyState();
         } else {
-          return buildTransactionList(snapshot.data!);
+          transactionsList = buildTransactionList(snapshot.data!);
+          return transactionsList;
         }
-      },
-    );
-  }
-
-  void _exibirModalAdicionarTransacao(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return AdicionarTransacaoModal(
-          onTransacaoSalva: (double amount, String category) async {
-            FinanceEntry novaTransacao =
-                FinanceEntry(amount: amount, category: category);
-            await financeManager.addTransaction(novaTransacao);
-            Navigator.pop(context);
-
-            setState(() {});
-          },
-        );
       },
     );
   }

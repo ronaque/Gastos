@@ -173,7 +173,10 @@ class _PerfilState extends State<Perfil> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         const Text("Nome:"),
-                        SizedBox(width: 250, child: getNomeTextField()),
+                        SizedBox(
+                            width: 250,
+                            child: getNomeTextField()
+                        ),
                       ],
                     )),
                 Padding(

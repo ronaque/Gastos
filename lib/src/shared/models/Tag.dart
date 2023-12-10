@@ -1,10 +1,8 @@
-int tag_id = 0;
-
 class Tag {
   int? id; // Pode ser usado como chave primária no banco de dados
   String? nome;
 
-  Tag(this.nome) : id = tag_id++;
+  Tag(this.id, this.nome);
 
   // Converte um objeto Tag em um Map para persistir no banco de dados
   Map<String, dynamic> toMap() {
@@ -20,3 +18,4 @@ class Tag {
     nome = map['nome'];
   }
 }
+

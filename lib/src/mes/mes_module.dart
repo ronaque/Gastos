@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:gastos/src/mes/finance_module.dart';
-import 'dart:convert';
+import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<double> getSalario() async {
+  GastoHelper gastoHelper = GastoHelper();
   final prefs = await SharedPreferences.getInstance();
-  final transactionsJson = prefs.getStringList('transactions');
-  double salarioTmp = 0;
-  List<FinanceEntry> transactionsTmp = [];
-  if (transactionsJson != null) {
-    transactionsTmp = transactionsJson
-        .map((json) => FinanceEntry.fromJson(jsonDecode(json)))
-        .toList();
-  }
-  for (int i = 0; i < transactionsTmp.length; i++) {
-    salarioTmp = salarioTmp + transactionsTmp[i].amount;
+
+  List<Gasto> gastos = await gastoHelper.getAllGastos();
+  double gastosTotal = 0;
+  for (int i = 0; i < gastos.length; i++) {
+    gastosTotal += gastos[i].quantidade!;
   }
   double? salarioSalvo = prefs.getDouble('salario');
   if (salarioSalvo == null) {
-    return 0;
+    prefs.setDouble('salario', 0);
+    return 0 + gastosTotal;
   } else {
-    return salarioSalvo + salarioTmp;
+    return salarioSalvo + gastosTotal;
   }
 }
 
@@ -70,7 +67,7 @@ Widget buildEmptyState() {
   );
 }
 
-Widget buildTransactionList(List<FinanceEntry> transactions) {
+Widget buildTransactionList(List<Gasto> transactions) {
   return Stack(
     children: [
       _buildTransactionListView(transactions),
@@ -79,10 +76,10 @@ Widget buildTransactionList(List<FinanceEntry> transactions) {
   );
 }
 
-Widget _buildTransactionListView(List<FinanceEntry> transactions) {
+Widget _buildTransactionListView(List<Gasto> gastos) {
   return Expanded(
     child: ListView(
-      children: transactions.map((transaction) {
+      children: gastos.map((transaction) {
         return Container(
           margin: const EdgeInsets.all(8.0),
           padding: const EdgeInsets.all(16.0),
@@ -102,17 +99,17 @@ Widget _buildTransactionListView(List<FinanceEntry> transactions) {
               Row(
                 children: [
                   Text(
-                    '\$${transaction.amount.toStringAsFixed(2)}',
+                    '\$${transaction.quantidade?.toStringAsFixed(2)}',
                     style: TextStyle(
                       color:
-                      transaction.amount < 0 ? Colors.red : Colors.green,
+                      transaction.quantidade! < 0 ? Colors.red : Colors.green,
                     ),
                   ),
                   const SizedBox(width: 8.0),
                 ],
               ),
               Expanded(child: Container()),
-              getCategoryTextOrIcon(transaction.category),
+              // getCategoryTextOrIcon(transaction.category),
             ],
           ),
         );

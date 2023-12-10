@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:gastos/src/shared/gasto_utils.dart';
+import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/repositories/GastoHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'card_tags.dart';
 import 'entrada_saida.dart';
 
 class AdicionarTransacaoModal extends StatefulWidget {
-  final Function(double amount, String category) onTransacaoSalva;
-
-  const AdicionarTransacaoModal({super.key, required this.onTransacaoSalva});
-
   @override
   _AdicionarTransacaoModalState createState() =>
       _AdicionarTransacaoModalState();
 }
 
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
+  TagHelper tagHelper = TagHelper();
   late TextEditingController amountController;
   late TextEditingController categoryController;
   String? _clicado;
   bool? _isIncome;
+
+  void adicionarTransacao() async {
+    GastoHelper gastoHelper = GastoHelper();
+    double amount = double.tryParse(amountController.text) ?? 0.0;
+    if (getIsIncome() == false) {
+      amount = amount * -1;
+    }
+    String category = getClicado();
+
+    Tag? tag = await tagHelper.getTagByNome(category);
+    if (tag == null) {
+      return;
+    }
+
+    Gasto gasto = await novoGasto(DateTime.now(), amount, tag);
+    gastoHelper.insertGasto(gasto);
+
+    Navigator.pop(context);
+  }
 
   bool? getIsIncome(){
     return _isIncome;
@@ -70,12 +91,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              double amount = double.tryParse(amountController.text) ?? 0.0;
-              if (getIsIncome() == false) {
-                amount = amount * -1;
-              }
-              String category = getClicado();
-              widget.onTransacaoSalva(amount, category);
+              adicionarTransacao();
             },
             child: const Text('Salvar'),
           ),

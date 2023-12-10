@@ -1,14 +1,12 @@
 import 'package:gastos/src/shared/models/Tag.dart';
 
-int gasto_id = 0;
-
 class Gasto {
   int? id; // Pode ser usado como chave primária no banco de dados
   DateTime? data;
   double? quantidade;
   Tag? tag;
 
-  Gasto(this.data, this.quantidade, this.tag) : id = gasto_id++;
+  Gasto(this.id, this.data, this.quantidade, this.tag);
 
   // Converte um objeto Gasto em um Map para persistir no banco de dados
   Map<String, dynamic> toMap() {
@@ -28,3 +26,4 @@ class Gasto {
     tag = Tag.fromMap({'id': map['tag_id'], 'nome': map['tag_nome']});
   }
 }
+

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 
-void adicionarTag(String newTagName) {
+void adicionarTag(String newTagName) async {
   TagHelper tagHelper = TagHelper();
-  Tag newTag = Tag(newTagName);
+  Tag newTag = await novaTag(newTagName);
   tagHelper.insertTag(newTag);
 }
 

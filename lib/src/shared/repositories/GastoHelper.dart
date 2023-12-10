@@ -43,4 +43,18 @@ class GastoHelper{
       return Gasto.fromMap(result[i]);
     });
   }
+
+  Future<List<Gasto>?> getGastosByTagId(int tagId) async {
+    Database? db = await database;
+
+    List<Map<String, Object?>>? result = await db?.query(
+      'gastos',
+      where: 'tag_id = ?',
+      whereArgs: [tagId],
+    );
+
+    List<Gasto>? gastos = result?.map((map) => Gasto.fromMap(map)).toList();
+
+    return gastos;
+  }
 }

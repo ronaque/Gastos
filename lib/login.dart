@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
       // Se a senha nunca foi alterada, aceitar a senha padrão "0000"
       if (enteredPin == '0000') {
         // Navegar para a tela principal
-        Navigator.pushReplacementNamed(context, '/main');
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         // Senha inválida
         showInvalidPinDialog(context);
@@ -23,7 +23,7 @@ class LoginPage extends StatelessWidget {
       // Senha já foi alterada, verificar com a senha salva
       if (enteredPin == savedPin) {
         // Senha válida, navegar para a tela principal
-        Navigator.pushReplacementNamed(context, '/main');
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         // Senha inválida
         showInvalidPinDialog(context);

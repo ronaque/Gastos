@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-Widget returnResumoDisplay(context){
+class Resumo extends StatefulWidget {
+  @override
+  _ResumoState createState() => _ResumoState();
+}
+
+class _ResumoState extends State<Resumo> {
   TooltipBehavior _tooltip = TooltipBehavior(enable: true);
   List<_ChartData> data = [
     _ChartData('Jan', 12, 15),
@@ -20,7 +25,9 @@ Widget returnResumoDisplay(context){
     _ChartData('Dez', 19, 12),
   ];
 
-  return SingleChildScrollView(
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           // !! Tabela mensal !!
@@ -130,6 +137,7 @@ Widget returnResumoDisplay(context){
       ),
     );
   }
+}
 
 class _ChartData {
   _ChartData(this.x, this.y, this.y2);

@@ -107,8 +107,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-                returnMesDisplay(context),
-                returnResumoDisplay(context),
+                Mes(),
+                Resumo(),
               ],
             ),
           ),

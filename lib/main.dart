@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/src/home/home_page.dart';
+import 'package:gastos/src/mes/mes_page.dart';
+import 'package:gastos/src/resumo/resumo_page.dart';
+import 'package:gastos/src/perfil/perfil_page.dart';
 import 'package:gastos/theme.dart';
 import 'package:gastos/login.dart';
 
@@ -15,7 +18,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login', // Defina a tela de login como rota inicial
       routes: {
         '/login': (context) => LoginPage(),
-        '/main': (context) => Home(),
+        '/home': (context) => Home(),
+        '/mes': (context) => Mes(),
+        '/perfil' : (context) => Perfil(),
+        '/resumo' : (context) => Resumo(),
       },
     );
   }

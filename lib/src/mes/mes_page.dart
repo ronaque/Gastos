@@ -5,15 +5,15 @@ import 'components/adicionar_transacao.dart';
 import 'mes_module.dart';
 
 Widget returnMesDisplay(context) {
-  return MesScreen();
+  return Mes();
 }
 
-class MesScreen extends StatefulWidget {
+class Mes extends StatefulWidget {
   @override
-  _MesScreenState createState() => _MesScreenState();
+  _MesState createState() => _MesState();
 }
 
-class _MesScreenState extends State<MesScreen> {
+class _MesState extends State<Mes> {
   final FinanceManager financeManager = FinanceManager();
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gastos/views/card_tags.dart';
-import 'package:gastos/views/entrada_saida.dart';
+import 'card_tags.dart';
+import 'entrada_saida.dart';
 
 class AdicionarTransacaoModal extends StatefulWidget {
   final Function(double amount, String category) onTransacaoSalva;

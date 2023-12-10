@@ -1,5 +1,5 @@
-import 'package:gastos/Model/Gasto.dart';
-import 'package:gastos/Model/Tag.dart';
+import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

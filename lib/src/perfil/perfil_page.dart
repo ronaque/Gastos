@@ -2,12 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gastos/Model/Tag.dart';
-import 'package:gastos/ModelHelper/DatabaseHelper.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
+import 'package:gastos/src/shared/imageUtils.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
+import 'components/new_tag_dialog.dart';
+import 'components/change_pin_dialog.dart';
+import 'perfil_module.dart';
 
 int globalIndex = 0;
 
@@ -21,65 +25,16 @@ class _PerfilState extends State<Perfil> {
   TextEditingController _pinController = TextEditingController();
   File? _imageFile;
   Image? image;
-  DatabaseHelper databaseHelper = DatabaseHelper();
-  Map<String, Widget> tags = {
-    'gasolina' : Icon(Icons.local_gas_station),
-    'comida' : Icon(Icons.restaurant),
-    'gasto' : Icon(Icons.paid)
-  };
-  // List<Tag> newTags = [];
 
   @override
   void initState() {
-    loadImage();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      var resultImage = await loadImage(_imageFile, image);
+      setState(() {
+        image = resultImage;
+      });
+    });
     super.initState();
-  }
-
-  void _nomeChange(String value) {
-    if (value.isEmpty) {
-      value = '';
-    } else {
-      value = value;
-    }
-    print('nome: $value');
-    saveNome(value);
-  }
-
-  void _salarioChange(String value) {
-    if (value.isEmpty) {
-      value = '0';
-    } else {
-      value = value.replaceAll(RegExp(r'[R\$]'), '');
-    }
-    print('salario: $value');
-    saveSalario(value);
-  }
-
-  Future<void> savePin(String pin) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('pin', pin);
-    print('PIN salvo: $pin');
-  }
-
-  Future<void> loadImage() async {
-    try {
-      print('loadImage');
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? testeImage = prefs.getString('test_image');
-      if (testeImage == null) {
-        print('testeImage null');
-        return;
-      } else {
-        String filePath = '$testeImage';
-        print('Arquivo carregado do path: $filePath');
-        _imageFile = File(filePath);
-        setState(() {
-          image = Image.file(_imageFile!);
-        });
-      }
-    } catch (e) {
-      print('Erro ao carregar a imagem: $e');
-    }
   }
 
   Future<void> _selecionarImagem() async {
@@ -104,99 +59,8 @@ class _PerfilState extends State<Perfil> {
     return;
   }
 
-  Future<void> saveSalario(String salario) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (RegExp(r'^\d+(\.\d+)?$').hasMatch(salario)) {
-      prefs.setDouble('salario', double.parse(salario));
-      double? salarioSalvo = prefs.getDouble('salario');
-      print('salario salvo: $salarioSalvo');
-    } else {
-      print('Formato de salário inválido');
-    }
-  }
-
-  Future<void> saveNome(String nome) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('nome', nome);
-    String? nomeSalvo = prefs.getString('nome');
-    print('nome salvo: $nomeSalvo');
-  }
-
-  Future<String> getSalario() async {
-    final prefs = await SharedPreferences.getInstance();
-    double? salarioSalvo = prefs.getDouble('salario');
-    print('salario salvo recuperado: $salarioSalvo');
-    if (salarioSalvo == null) {
-      return 'R\$0.0';
-    }
-    String salarioSalvoString = salarioSalvo.toString();
-    return 'R\$$salarioSalvoString';
-  }
-
-  Future<String> getNome() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? nomeSalvo = prefs.getString('nome');
-    print('nome salvo recuperado: $nomeSalvo');
-    if (nomeSalvo == null) {
-      return 'Nome do Usuário';
-    }
-    return nomeSalvo;
-  }
-
-  Widget getSalarioTextField() {
-    return FutureBuilder(
-      future: getSalario(),
-      builder: (context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          return TextFormField(
-            initialValue: snapshot.data,
-            onChanged: (value) => _salarioChange(value),
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(border: OutlineInputBorder()),
-          );
-        } else {
-          return const Text(
-            'Saldo: \$0.0',
-            style: TextStyle(color: Colors.black),
-          );
-        }
-      },
-    );
-  }
-
-  Widget getNomeTextField() {
-    return FutureBuilder(
-      future: getNome(),
-      builder: (context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          return TextFormField(
-            initialValue: snapshot.data,
-            onChanged: (value) => _nomeChange(value),
-            keyboardType: TextInputType.name,
-            decoration: InputDecoration(border: OutlineInputBorder()),
-          );
-        } else {
-          return const Text(
-            'Saldo: \$0.0',
-            style: TextStyle(color: Colors.black),
-          );
-        }
-      },
-    );
-  }
-
-  Widget getDefaultTagsWidgets() {
-    List<Widget> tagWidgets = [];
-    for (var tag in tags.values) {
-      final padding =
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: tag);
-      tagWidgets.add(padding);
-    }
-    return Row(children: tagWidgets);
-  }
-
-  Future<Widget> getDBTagsTexts() async {
+  Future<Widget> getDBTagsTexts(context) async {
+    DatabaseHelper databaseHelper = DatabaseHelper();
     List<Tag> dbTags = await databaseHelper.getAllTags();
 
     return SingleChildScrollView(
@@ -238,9 +102,9 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
-  Widget getDBTags() {
+  Widget getDBTags(context) {
     return FutureBuilder(
-      future: getDBTagsTexts(),
+      future: getDBTagsTexts(context),
       builder: (context, AsyncSnapshot<Widget> snapshot) {
         if (snapshot.hasData) {
           return snapshot.data!;
@@ -253,14 +117,9 @@ class _PerfilState extends State<Perfil> {
       },
     );
   }
+
   void _sair() {
     Navigator.pushReplacementNamed(context, '/login');
-  }
-
-  void adicionarTag(String newTagName) {
-    Tag newTag = Tag(name: newTagName);
-    databaseHelper.insertTag(newTag);
-    setState(() {});
   }
 
   @override
@@ -295,7 +154,7 @@ class _PerfilState extends State<Perfil> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Stack(children: <Widget>[
-                          image != null ? profileAvatar() : defaultAvatar(),
+                          image != null ? profileAvatar(image, context) : defaultAvatar(context),
                           Positioned(
                             bottom: -10,
                             left: 80,
@@ -346,8 +205,10 @@ class _PerfilState extends State<Perfil> {
                       ],
                     )
                 ),
-                Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                    child: getDBTags()),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    child: getDBTags(context)
+                ),
                 Padding(
                     padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                     child: Row(
@@ -355,7 +216,9 @@ class _PerfilState extends State<Perfil> {
                       children: <Widget>[
                         ElevatedButton(
                             onPressed: () {
-                              _displayNewTagDialog(context);
+                              setState(() {
+                                displayNewTagDialog(context, _tagController);
+                              });
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
@@ -367,7 +230,7 @@ class _PerfilState extends State<Perfil> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    _displayChangePinDialog(context);
+                    displayChangePinDialog(context, _pinController);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -401,99 +264,4 @@ class _PerfilState extends State<Perfil> {
         ));
   }
 
-  _displayNewTagDialog(BuildContext context) async {
-    String? newTag = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Adicionar Tag'),
-          content: TextField(
-            controller: _tagController,
-            onChanged: (value) {
-              // Você pode adicionar validações ou manipular o valor conforme necessário
-            },
-            decoration:
-                const InputDecoration(hintText: 'Digite o nome da nova tag'),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Adicionar'),
-              onPressed: () {
-                if (_tagController.text.isNotEmpty) {
-                  adicionarTag(_tagController.text);
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-
-    print('sai do dialogo');
-    print('newTag: $_tagController');
-    _tagController.clear();
-  }
-
-  _displayChangePinDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Alterar PIN'),
-          content: Container(
-            height: 150,
-            child: Column(
-              children: [
-                TextField(
-                  controller: _pinController,
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                  decoration:
-                  InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_pinController.text.length == 4) {
-                      savePin(_pinController.text);
-                      Navigator.of(context).pop();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('O PIN deve ter 4 dígitos.'),
-                        ),
-                      );
-                    }
-                  },
-                  child: Text('Salvar'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    elevation: 5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  CircleAvatar defaultAvatar() {
-    return CircleAvatar(
-        radius: MediaQuery.of(context).size.width * 0.18,
-        backgroundImage: AssetImage("images/user.png"));
-  }
-
-  CircleAvatar profileAvatar() {
-    if (image == null) {
-      return CircleAvatar(
-          radius: MediaQuery.of(context).size.width * 0.18,
-          backgroundImage: AssetImage("images/user.png"));
-    }
-    return CircleAvatar(
-        radius: MediaQuery.of(context).size.width * 0.18,
-        backgroundImage: image?.image);
-  }
 }

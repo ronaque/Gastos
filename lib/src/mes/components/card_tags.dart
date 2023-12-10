@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
 class CardTags extends StatefulWidget{
   final void Function(String category) setClicado;
@@ -14,7 +15,7 @@ class CardTags extends StatefulWidget{
 }
 
 class _CardTagsState extends State<CardTags>{
-  DatabaseHelper databaseHelper = DatabaseHelper();
+  TagHelper tagHelper = TagHelper();
 
 
   getClicadoBoxColor(String tag) {
@@ -34,7 +35,7 @@ class _CardTagsState extends State<CardTags>{
   }
 
   Future<Widget> getDBTagsTexts() async {
-    List<Tag> dbTags = await databaseHelper.getAllTags();
+    List<Tag> dbTags = await tagHelper.getAllTags();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -43,7 +44,7 @@ class _CardTagsState extends State<CardTags>{
           final tag = dbTags[index];
           return GestureDetector(
             onTap: (){
-              widget.setClicado(tag.name ?? '');
+              widget.setClicado(tag.nome ?? '');
               setState(() {});
             },
             child: Padding(
@@ -53,15 +54,15 @@ class _CardTagsState extends State<CardTags>{
                 height: MediaQuery.of(context).size.width * 0.12,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: getClicadoBoxColor(tag.name!),
+                  color: getClicadoBoxColor(tag.nome!),
                   border: Border.all(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8),
                   ),
                 child: Text(
-                    tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
+                    tag.nome!.substring(0, 1).toUpperCase() + tag.nome!.substring(1),
                     style: TextStyle(
                         fontSize: 16,
-                        color: getClicadoTextColor(tag.name!),
+                        color: getClicadoTextColor(tag.nome!),
                     ),
                 ),
               ),

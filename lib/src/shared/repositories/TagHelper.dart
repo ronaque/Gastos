@@ -27,4 +27,21 @@ class TagHelper{
       return Tag.fromMap(maps[i]);
     });
   }
+
+  // Função para excluir uma tag com base no nome
+  Future<void> deleteTagByName(String tagName) async {
+    Database? db = await database;
+
+    // Obtém o ID da tag com base no nome
+    List<Map<String, Object?>>? tagResult = await db?.query('tags', where: 'nome = ?', whereArgs: [tagName]);
+    if (tagResult!.isNotEmpty) {
+      Object? tagId = tagResult.first['id'];
+
+      // Exclui a tag da tabela 'tags'
+      await db?.delete('tags', where: 'id = ?', whereArgs: [tagId]);
+
+      // Também é recomendável excluir os gastos associados à tag
+      await db?.delete('gastos', where: 'tag_id = ?', whereArgs: [tagId]);
+    }
+  }
 }

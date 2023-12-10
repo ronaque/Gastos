@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,8 +61,8 @@ class _PerfilState extends State<Perfil> {
   }
 
   Future<Widget> getDBTagsTexts(context) async {
-    DatabaseHelper databaseHelper = DatabaseHelper();
-    List<Tag> dbTags = await databaseHelper.getAllTags();
+    TagHelper tagHelper = TagHelper();
+    List<Tag> dbTags = await tagHelper.getAllTags();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -82,13 +83,13 @@ class _PerfilState extends State<Perfil> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    tag.name!.substring(0, 1).toUpperCase() +
-                        tag.name!.substring(1),
+                    tag.nome!.substring(0, 1).toUpperCase() +
+                        tag.nome!.substring(1),
                     style: TextStyle(fontSize: 16),
                   ),
                   IconButton(
                     onPressed: () {
-                      databaseHelper.deleteTagByName(tag.name!);
+                      tagHelper.deleteTagByName(tag.nome!);
                       setState(() {});
                     },
                     icon: Icon(Icons.close),

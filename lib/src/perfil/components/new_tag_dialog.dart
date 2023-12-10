@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
 void adicionarTag(String newTagName) {
-  DatabaseHelper databaseHelper = DatabaseHelper();
-  Tag newTag = Tag(name: newTagName);
-  databaseHelper.insertTag(newTag);
+  TagHelper tagHelper = TagHelper();
+  Tag newTag = Tag(newTagName);
+  tagHelper.insertTag(newTag);
 }
 
 displayNewTagDialog(BuildContext context, _tagController) async {

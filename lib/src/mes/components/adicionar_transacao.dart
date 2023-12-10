@@ -8,6 +8,8 @@ import 'card_tags.dart';
 import 'entrada_saida.dart';
 
 class AdicionarTransacaoModal extends StatefulWidget {
+  const AdicionarTransacaoModal({super.key});
+
   @override
   _AdicionarTransacaoModalState createState() =>
       _AdicionarTransacaoModalState();

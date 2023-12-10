@@ -23,12 +23,12 @@ class _MesState extends State<Mes> {
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return AdicionarTransacaoModal();
+        return const AdicionarTransacaoModal();
       },
     );
-    var list_gastos = await gastoHelper.getAllGastos();
+    var listGastos = await gastoHelper.getAllGastos();
     setState(() {
-      transactionsList = buildTransactionList(list_gastos);
+      transactionsList = buildTransactionList(listGastos);
     });
   }
 

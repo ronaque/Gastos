@@ -125,10 +125,10 @@ class _CardTagsState extends State<CardTags>{
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        final tag_name = tagsPadroes.keys.toList()[index];
+        final tagName = tagsPadroes.keys.toList()[index];
         return GestureDetector(
             onTap: (){
-              widget.setClicado(tag_name);
+              widget.setClicado(tagName);
               setState(() {});
             },
             child: Padding(
@@ -138,11 +138,11 @@ class _CardTagsState extends State<CardTags>{
                 height: MediaQuery.of(context).size.width * 0.12,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: getClicadoBoxColor(tag_name),
+                  color: getClicadoBoxColor(tagName),
                   border: Border.all(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: getClicadoIcon(tag_name),
+                child: getClicadoIcon(tagName),
               ),
             )
         );

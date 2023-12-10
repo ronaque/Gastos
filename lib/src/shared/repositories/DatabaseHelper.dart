@@ -2,7 +2,6 @@ import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:gastos/globals.dart' as globals;
 
 class DatabaseHelper {

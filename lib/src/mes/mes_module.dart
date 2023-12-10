@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/mes/finance_module.dart';
 import 'dart:convert';
@@ -32,7 +31,7 @@ Widget getSaldoTexto() {
       if (snapshot.hasData) {
         return Text(
           'Saldo: \$${snapshot.data}',
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         );
       } else {
         return const Text(
@@ -46,15 +45,15 @@ Widget getSaldoTexto() {
 
 Widget getCategoryTextOrIcon(String category) {
   if (category == 'gasolina') {
-    return Icon(Icons.local_gas_station);
+    return const Icon(Icons.local_gas_station);
   } else if (category == 'comida') {
-    return Icon(Icons.restaurant);
+    return const Icon(Icons.restaurant);
   } else if (category == 'gasto') {
-    return Icon(Icons.paid);
+    return const Icon(Icons.paid);
   } else {
     return Text(
       category,
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.blue,
         fontSize: 18.0,
       ),
@@ -85,12 +84,12 @@ Widget _buildTransactionListView(List<FinanceEntry> transactions) {
     child: ListView(
       children: transactions.map((transaction) {
         return Container(
-          margin: EdgeInsets.all(8.0),
-          padding: EdgeInsets.all(16.0),
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.white,
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.grey,
                 offset: Offset(0, 2),
@@ -109,7 +108,7 @@ Widget _buildTransactionListView(List<FinanceEntry> transactions) {
                       transaction.amount < 0 ? Colors.red : Colors.green,
                     ),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                 ],
               ),
               Expanded(child: Container()),
@@ -128,10 +127,10 @@ Widget _buildSaldoContainer(){
     left: 16.0,
     child: Container(
       decoration: BoxDecoration(
-        color: Color(0xB02196F3),
+        color: const Color(0xB02196F3),
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(color: Colors.blue, width: 1.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0x019E9E9E),
             offset: Offset(0, 2),
@@ -140,7 +139,7 @@ Widget _buildSaldoContainer(){
         ],
       ),
       height: 50.0,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: getSaldoTexto(),
     ),
   );

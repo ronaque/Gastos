@@ -1,14 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/mes/finance_module.dart';
 import 'components/adicionar_transacao.dart';
 import 'mes_module.dart';
 
 Widget returnMesDisplay(context) {
-  return Mes();
+  return const Mes();
 }
 
 class Mes extends StatefulWidget {
+  const Mes({super.key});
+
   @override
   _MesState createState() => _MesState();
 }
@@ -24,8 +25,8 @@ class _MesState extends State<Mes> {
         onPressed: () {
           _exibirModalAdicionarTransacao(context);
         },
-        child: Icon(Icons.add),
-        backgroundColor: Color(0xB02196F3),
+        backgroundColor: const Color(0xB02196F3),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -35,7 +36,7 @@ class _MesState extends State<Mes> {
       future: financeManager.loadTransactions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

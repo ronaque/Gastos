@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController pinController = TextEditingController();
+
+  LoginPage({super.key});
 
   Future<void> authenticateUser(String enteredPin, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -45,29 +46,29 @@ class LoginPage extends StatelessWidget {
                 size: 64.0,
                 color: AppTheme().blueColors[500],
               ),
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'MobiFin',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 50.0),
+              const SizedBox(height: 50.0),
               TextField(
                 controller: pinController,
                 keyboardType: TextInputType.number,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'PIN (4 dígitos)',
                 ),
               ),
-              SizedBox(height: 50.0),
+              const SizedBox(height: 50.0),
               ElevatedButton(
                 onPressed: () {
                   authenticateUser(pinController.text, context);
                 },
-                child: Container(
+                child: const SizedBox(
                   width: double.infinity, // Largura máxima possível
                   child: Center(
                     child: Text('Entrar'),
@@ -78,7 +79,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   _exibirModalInfoPIN(context);
                 },
-                child: Text(
+                child: const Text(
                   'Não tem um PIN?',
                   style: TextStyle(
                     color: Colors.blue, // ou a cor desejada
@@ -98,14 +99,14 @@ class LoginPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Erro'),
-          content: Text('PIN inválido. Tente novamente.'),
+          title: const Text('Erro'),
+          content: const Text('PIN inválido. Tente novamente.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -118,8 +119,8 @@ class LoginPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Informação sobre o PIN'),
-          content: Text(
+          title: const Text('Informação sobre o PIN'),
+          content: const Text(
             'Se você nunca alterou seu PIN, o valor padrão é 0000. '
                 'Após desbloquear o app é possível alterar seu PIN na tela de perfil.',
           ),
@@ -128,7 +129,7 @@ class LoginPage extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Fechar'),
+              child: const Text('Fechar'),
             ),
           ],
         );

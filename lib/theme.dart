@@ -3,29 +3,29 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   Map<int, Color> blueColors = <int, Color>{
-    50: Color(0xffE3F2FD),
-    100: Color(0xffBBDEFB),
-    200: Color(0xff90CAF9),
-    300: Color(0xff64B5F6),
-    400: Color(0xff42A5F5),
-    500: Color(0xff2196F3),
-    600: Color(0xff1E88E5),
-    700: Color(0xff1976D2),
-    800: Color(0xff1565C0),
-    900: Color(0xff0D47A1)
+    50: const Color(0xffE3F2FD),
+    100: const Color(0xffBBDEFB),
+    200: const Color(0xff90CAF9),
+    300: const Color(0xff64B5F6),
+    400: const Color(0xff42A5F5),
+    500: const Color(0xff2196F3),
+    600: const Color(0xff1E88E5),
+    700: const Color(0xff1976D2),
+    800: const Color(0xff1565C0),
+    900: const Color(0xff0D47A1)
   };
 
   Map<int, Color> grayColors = <int, Color>{
-    50: Color(0xffFAFAFA),
-    100: Color(0xffF5F5F5),
-    200: Color(0xffEEEEEE),
-    300: Color(0xffEE0E0),
-    400: Color(0xffBDBDBD),
-    500: Color(0xff9E9E9E),
-    600: Color(0xff757575),
-    700: Color(0xff616161),
-    800: Color(0xff424242),
-    900: Color(0xff212121)
+    50: const Color(0xffFAFAFA),
+    100: const Color(0xffF5F5F5),
+    200: const Color(0xffEEEEEE),
+    300: const Color(0x0ffee0e0),
+    400: const Color(0xffBDBDBD),
+    500: const Color(0xff9E9E9E),
+    600: const Color(0xff757575),
+    700: const Color(0xff616161),
+    800: const Color(0xff424242),
+    900: const Color(0xff212121)
   };
 
   ThemeData getAppTheme() {
@@ -42,7 +42,7 @@ class AppTheme {
           unselectedLabelColor: grayColors[50],
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
-              border: Border(
+              border: const Border(
                   left: BorderSide(color: Color(0xff1565C0)),
                   right: BorderSide(color: Color(0xff1565C0)),
                   top: BorderSide(color: Color(0xff1565C0)),

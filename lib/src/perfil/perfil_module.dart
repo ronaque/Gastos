@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +72,7 @@ Widget getSalarioTextField() {
           initialValue: snapshot.data,
           onChanged: (value) => _salarioChange(value),
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(border: OutlineInputBorder()),
+          decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       } else {
         return const Text(
@@ -94,7 +93,7 @@ Widget getNomeTextField() {
           initialValue: snapshot.data,
           onChanged: (value) => _nomeChange(value),
           keyboardType: TextInputType.name,
-          decoration: InputDecoration(border: OutlineInputBorder()),
+          decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       } else {
         return const Text(
@@ -108,14 +107,14 @@ Widget getNomeTextField() {
 
 Widget getDefaultTagsWidgets() {
   Map<String, Widget> tags = {
-    'gasolina' : Icon(Icons.local_gas_station),
-    'comida' : Icon(Icons.restaurant),
-    'gasto' : Icon(Icons.paid)
+    'gasolina' : const Icon(Icons.local_gas_station),
+    'comida' : const Icon(Icons.restaurant),
+    'gasto' : const Icon(Icons.paid)
   };
   List<Widget> tagWidgets = [];
   for (var tag in tags.values) {
     final padding =
-    Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: tag);
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 5), child: tag);
     tagWidgets.add(padding);
   }
   return Row(children: tagWidgets);

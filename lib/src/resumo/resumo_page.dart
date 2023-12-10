@@ -1,15 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Resumo extends StatefulWidget {
+  const Resumo({super.key});
+
   @override
   _ResumoState createState() => _ResumoState();
 }
 
 class _ResumoState extends State<Resumo> {
-  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
+  final TooltipBehavior _tooltip = TooltipBehavior(enable: true);
   List<_ChartData> data = [
     _ChartData('Jan', 12, 15),
     _ChartData('Fev', 15, 30),
@@ -32,9 +33,9 @@ class _ResumoState extends State<Resumo> {
         children: <Widget>[
           // !! Tabela mensal !!
           Container(
-            margin: EdgeInsets.fromLTRB(0, 50, 0, 20),
+            margin: const EdgeInsets.fromLTRB(0, 50, 0, 20),
             decoration:
-            BoxDecoration(border: Border.all(color: Color(0xff0D47A1))),
+            BoxDecoration(border: Border.all(color: const Color(0xff0D47A1))),
             width: MediaQuery.of(context).size.width * 0.8,
             child: const Column(
               children: <Widget>[
@@ -66,7 +67,7 @@ class _ResumoState extends State<Resumo> {
             ),
           ),
           // !! Gráfico mensal !!
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.width *
                 0.8, // Defina a altura desejada para o PieChart
             child: PieChart(
@@ -88,14 +89,14 @@ class _ResumoState extends State<Resumo> {
                 centerSpaceRadius: MediaQuery.of(context).size.width * 0.2,
               ),
               swapAnimationCurve: Curves.linear,
-              swapAnimationDuration: Duration(milliseconds: 150),
+              swapAnimationDuration: const Duration(milliseconds: 150),
             ),
           ),
           // !! Tabela anual !!
           Container(
-            margin: EdgeInsets.fromLTRB(0, 50, 0, 20),
+            margin: const EdgeInsets.fromLTRB(0, 50, 0, 20),
             decoration:
-            BoxDecoration(border: Border.all(color: Color(0xff0D47A1))),
+            BoxDecoration(border: Border.all(color: const Color(0xff0D47A1))),
             width: MediaQuery.of(context).size.width * 0.8,
             child: const Padding(
               padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -110,7 +111,7 @@ class _ResumoState extends State<Resumo> {
             ),
           ),
           // !! Gráfico anual !!
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.width * 0.8,
             width: MediaQuery.of(context).size.width * 0.9,
             child: SfCartesianChart(

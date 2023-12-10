@@ -8,7 +8,7 @@ class Gasto {
   double? quantidade;
   Tag? tag;
 
-  Gasto(this.data, this.quantidade, this.tag) : this.id = gasto_id++;
+  Gasto(this.data, this.quantidade, this.tag) : id = gasto_id++;
 
   // Converte um objeto Gasto em um Map para persistir no banco de dados
   Map<String, dynamic> toMap() {

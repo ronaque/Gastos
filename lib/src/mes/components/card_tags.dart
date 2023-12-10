@@ -1,14 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
 class CardTags extends StatefulWidget{
   final void Function(String category) setClicado;
   final String Function() getClicado;
 
-  const CardTags(this.setClicado, this.getClicado);
+  const CardTags(this.setClicado, this.getClicado, {super.key});
 
   @override
   State<CardTags> createState() => _CardTagsState();
@@ -92,24 +90,24 @@ class _CardTagsState extends State<CardTags>{
 
   getGasolinaIconColor(){
     if(widget.getClicado() == 'gasolina'){
-      return Icon(Icons.local_gas_station, color: Colors.white,);
+      return const Icon(Icons.local_gas_station, color: Colors.white,);
     }else{
-      return Icon(Icons.local_gas_station);
+      return const Icon(Icons.local_gas_station);
     }
   }
   getComidaIconColor(){
     if(widget.getClicado() == 'comida'){
-      return Icon(Icons.restaurant, color: Colors.white,);
+      return const Icon(Icons.restaurant, color: Colors.white,);
     }else{
-      return Icon(Icons.restaurant);
+      return const Icon(Icons.restaurant);
     }
   }
 
   getGastoIconColor(){
     if(widget.getClicado() == 'gasto'){
-      return Icon(Icons.paid, color: Colors.white,);
+      return const Icon(Icons.paid, color: Colors.white,);
     }else{
-      return Icon(Icons.paid);
+      return const Icon(Icons.paid);
     }
   }
 
@@ -186,7 +184,7 @@ class _CardTagsState extends State<CardTags>{
     return Column(
       children: [
         getDefaultTags(),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
         getDBTags()
       ],
     );

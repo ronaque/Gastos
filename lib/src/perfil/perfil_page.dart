@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:gastos/theme.dart';
@@ -17,13 +15,15 @@ import 'perfil_module.dart';
 int globalIndex = 0;
 
 class Perfil extends StatefulWidget {
+  const Perfil({super.key});
+
   @override
   _PerfilState createState() => _PerfilState();
 }
 
 class _PerfilState extends State<Perfil> {
-  TextEditingController _tagController = TextEditingController();
-  TextEditingController _pinController = TextEditingController();
+  final TextEditingController _tagController = TextEditingController();
+  final TextEditingController _pinController = TextEditingController();
   File? _imageFile;
   Image? image;
 
@@ -85,14 +85,14 @@ class _PerfilState extends State<Perfil> {
                   Text(
                     tag.nome!.substring(0, 1).toUpperCase() +
                         tag.nome!.substring(1),
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   IconButton(
                     onPressed: () {
                       tagHelper.deleteTagByName(tag.nome!);
                       setState(() {});
                     },
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
@@ -172,7 +172,7 @@ class _PerfilState extends State<Perfil> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("Nome:"),
+                        const Text("Nome:"),
                         SizedBox(width: 250, child: getNomeTextField()),
                       ],
                     )),
@@ -182,7 +182,7 @@ class _PerfilState extends State<Perfil> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("Salário:"),
+                        const Text("Salário:"),
                         SizedBox(
                           width: 250,
                           child: getSalarioTextField(),
@@ -191,7 +191,7 @@ class _PerfilState extends State<Perfil> {
                     )),
                 Padding(
                     padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text("Tags"),
@@ -234,11 +234,11 @@ class _PerfilState extends State<Perfil> {
                     displayChangePinDialog(context, _pinController);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                     backgroundColor: Colors.blue,
                     elevation: 5,
                   ),
-                  child: Text('Alterar PIN', style: TextStyle(color: Colors.white),
+                  child: const Text('Alterar PIN', style: TextStyle(color: Colors.white),
                   ),
                 ),
                 ElevatedButton(
@@ -249,8 +249,8 @@ class _PerfilState extends State<Perfil> {
                     backgroundColor: Colors.red,
                     elevation: 5,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

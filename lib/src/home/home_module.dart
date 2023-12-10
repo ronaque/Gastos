@@ -1,6 +1,6 @@
 String getMonth() {
   DateTime now = DateTime.now();
-  return '${_getMonthName(now.month)}';
+  return _getMonthName(now.month);
 }
 
 String _getMonthName(int month) {

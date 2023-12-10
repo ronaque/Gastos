@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gastos/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int globalIndex = 0;
@@ -134,16 +135,11 @@ Widget getNomeTextField() {
 }
 
 Widget getDefaultTagsWidgets() {
-  Map<String, Widget> tags = {
-    'gasolina' : const Icon(Icons.local_gas_station),
-    'comida' : const Icon(Icons.restaurant),
-    'gasto' : const Icon(Icons.paid)
-  };
   List<Widget> tagWidgets = [];
-  for (var tag in tags.values) {
+  tagsPadroes.forEach((key, value) {
     final padding =
-    Padding(padding: const EdgeInsets.symmetric(horizontal: 5), child: tag);
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 5), child: Icon(value));
     tagWidgets.add(padding);
-  }
+  });
   return Row(children: tagWidgets);
 }

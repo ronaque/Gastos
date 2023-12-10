@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gastos/globals.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
@@ -33,12 +34,12 @@ class _CardTagsState extends State<CardTags>{
   }
 
   Future<Widget> getDBTagsTexts() async {
-    List<Tag> dbTags = await tagHelper.getAllTags();
+    List<Tag>? dbTags = await tagHelper.getTagsPersonalizadas();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(dbTags.length, (index) {
+        children: List.generate(dbTags!.length, (index) {
           final tag = dbTags[index];
           return GestureDetector(
             onTap: (){
@@ -111,34 +112,23 @@ class _CardTagsState extends State<CardTags>{
     }
   }
 
+  getClicadoIcon(String tag){
+    if(widget.getClicado() == tag){
+      return Icon(tagsPadroes[tag], color: Colors.white);
+    }else{
+      return Icon(tagsPadroes[tag]);
+    }
+  }
+
 
   Widget getDefaultTags(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: (){
-          widget.setClicado('gasolina');
-          setState(() {});
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.width * 0.12,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: getClicadoBoxColor('gasolina'),
-                  border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: getGasolinaIconColor(),
-            ),
-          )
-        ),
-        GestureDetector(
+      children: List.generate(3, (index) {
+        final tag_name = tagsPadroes.keys.toList()[index];
+        return GestureDetector(
             onTap: (){
-              widget.setClicado('comida');
+              widget.setClicado(tag_name);
               setState(() {});
             },
             child: Padding(
@@ -148,35 +138,78 @@ class _CardTagsState extends State<CardTags>{
                 height: MediaQuery.of(context).size.width * 0.12,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: getClicadoBoxColor('comida'),
+                  color: getClicadoBoxColor(tag_name),
                   border: Border.all(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: getComidaIconColor(),
+                child: getClicadoIcon(tag_name),
               ),
             )
-        ),
-        GestureDetector(
-            onTap: (){
-              widget.setClicado('gasto');
-              setState(() {});
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.width * 0.12,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: getClicadoBoxColor('gasto'),
-                  border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: getGastoIconColor(),
-              ),
-            )
-        ),
-      ],
+        );
+      }),
+      // children: [
+      //
+      //   GestureDetector(
+      //     onTap: (){
+      //     widget.setClicado('gasolina');
+      //     setState(() {});
+      //     },
+      //     child: Padding(
+      //       padding: const EdgeInsets.symmetric(horizontal: 5),
+      //         child: Container(
+      //           alignment: Alignment.center,
+      //           height: MediaQuery.of(context).size.width * 0.12,
+      //           padding: const EdgeInsets.symmetric(horizontal: 8),
+      //           decoration: BoxDecoration(
+      //             color: getClicadoBoxColor('gasolina'),
+      //             border: Border.all(color: Colors.blue),
+      //             borderRadius: BorderRadius.circular(8),
+      //           ),
+      //           child: getGasolinaIconColor(),
+      //       ),
+      //     )
+      //   ),
+      //   GestureDetector(
+      //       onTap: (){
+      //         widget.setClicado('comida');
+      //         setState(() {});
+      //       },
+      //       child: Padding(
+      //         padding: const EdgeInsets.symmetric(horizontal: 5),
+      //         child: Container(
+      //           alignment: Alignment.center,
+      //           height: MediaQuery.of(context).size.width * 0.12,
+      //           padding: const EdgeInsets.symmetric(horizontal: 8),
+      //           decoration: BoxDecoration(
+      //             color: getClicadoBoxColor('comida'),
+      //             border: Border.all(color: Colors.blue),
+      //             borderRadius: BorderRadius.circular(8),
+      //           ),
+      //           child: getComidaIconColor(),
+      //         ),
+      //       )
+      //   ),
+      //   GestureDetector(
+      //       onTap: (){
+      //         widget.setClicado('gasto');
+      //         setState(() {});
+      //       },
+      //       child: Padding(
+      //         padding: const EdgeInsets.symmetric(horizontal: 5),
+      //         child: Container(
+      //           alignment: Alignment.center,
+      //           height: MediaQuery.of(context).size.width * 0.12,
+      //           padding: const EdgeInsets.symmetric(horizontal: 8),
+      //           decoration: BoxDecoration(
+      //             color: getClicadoBoxColor('gasto'),
+      //             border: Border.all(color: Colors.blue),
+      //             borderRadius: BorderRadius.circular(8),
+      //           ),
+      //           child: getGastoIconColor(),
+      //         ),
+      //       )
+      //   ),
+      // ],
     );
   }
 

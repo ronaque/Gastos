@@ -1,3 +1,4 @@
+import 'package:gastos/globals.dart';
 import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
@@ -26,6 +27,22 @@ class TagHelper{
     return List.generate(maps!.length, (i) {
       return Tag.fromMap(maps[i]);
     });
+  }
+
+  Future<List<Tag>?> getTagsPersonalizadas() async {
+    List<String> exclusoes = tagsPadroes.keys.toList();
+    Database? db = await database;
+
+    String exclusoesPlaceholders = exclusoes.map((e) => '?').join(', ');
+
+    List<Map<String, Object?>>? result = await db?.rawQuery(
+      'SELECT * FROM tags WHERE nome NOT IN ($exclusoesPlaceholders)',
+      exclusoes,
+    );
+
+    List<Tag>? tags = result?.map((map) => Tag.fromMap(map)).toList();
+
+    return tags;
   }
 
   Future<Tag?> getTagByNome(String nome) async {

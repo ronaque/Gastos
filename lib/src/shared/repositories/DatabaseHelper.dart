@@ -1,5 +1,9 @@
+import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/globals.dart' as globals;
 
 class DatabaseHelper {
   Database? _db;
@@ -23,6 +27,7 @@ class DatabaseHelper {
   Future<void> _createDatabase(Database db, int version) async {
     await _createTagsTable(db);
     await _createGastosTable(db);
+    await inicializarTagsPadroes();
   }
 
   // Método para inserir uma nova tag no banco de dados
@@ -47,5 +52,18 @@ class DatabaseHelper {
         FOREIGN KEY(tag_id) REFERENCES tags(id)
       )
       ''');
+  }
+
+  Future<void> inicializarTagsPadroes() async{
+    globals.tagsPadroes.forEach((key, value) async {
+      Tag tag = await novaTag(key);
+      Database? db = await database;
+      await db?.insert('tags', tag.toMap());
+    });
+    // for (var tag in globals.tagsPadroes.keys) {
+    //   Tag nova_tag = await novaTag(tag);
+    //   Database? db = await database;
+    //   await db?.insert('tags', nova_tag.toMap());
+    // }
   }
 }

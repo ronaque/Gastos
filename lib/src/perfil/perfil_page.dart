@@ -62,12 +62,12 @@ class _PerfilState extends State<Perfil> {
 
   Future<Widget> getDBTagsTexts(context) async {
     TagHelper tagHelper = TagHelper();
-    List<Tag> dbTags = await tagHelper.getAllTags();
+    List<Tag>? dbTags = await tagHelper.getTagsPersonalizadas();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(dbTags.length, (index) {
+        children: List.generate(dbTags!.length, (index) {
           final tag = dbTags[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),

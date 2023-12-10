@@ -12,3 +12,4 @@ Future<Tag> novaTag(String nome) async {
   prefs.setInt('tag_id', id);
   return Tag(id, nome);
 }
+

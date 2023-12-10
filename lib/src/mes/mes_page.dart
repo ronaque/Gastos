@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gastos/src/mes/finance_module.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'components/adicionar_transacao.dart';
@@ -17,7 +16,6 @@ class Mes extends StatefulWidget {
 }
 
 class _MesState extends State<Mes> {
-  final FinanceManager financeManager = FinanceManager();
   GastoHelper gastoHelper = GastoHelper();
   Widget transactionsList = buildTransactionList([]);
 

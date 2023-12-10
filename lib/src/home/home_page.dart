@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/mes/mes_page.dart';
-import 'package:gastos/perfil.dart';
-import 'package:gastos/resumo.dart';
+import 'package:gastos/src/perfil/perfil_page.dart';
+import 'package:gastos/src/resumo/resumo_page.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
 import 'home_module.dart';
 
@@ -70,7 +70,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         actions: [
           IconButton(
-            icon: image != null ? profileAvatar(image) : defaultAvatar(),
+            icon: image != null ? profileAvatar(image, context) : defaultAvatar(context),
             onPressed: _abrirPerfil,
           ),
         ],

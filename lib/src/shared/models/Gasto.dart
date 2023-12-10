@@ -1,4 +1,4 @@
-import 'package:gastos/Model/Tag.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
 
 class Gasto {
   int? id; // Pode ser usado como chave primária no banco de dados

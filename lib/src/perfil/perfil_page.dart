@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gastos/Model/Tag.dart';
-import 'package:gastos/ModelHelper/DatabaseHelper.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';

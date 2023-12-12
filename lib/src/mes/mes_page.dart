@@ -26,9 +26,9 @@ class _MesState extends State<Mes> {
         return const AdicionarTransacaoModal();
       },
     );
-    var listGastos = await gastoHelper.getAllGastos();
+    var listGastos = await gastoHelper.getGastosDoMes(DateTime.now().year, DateTime.now().month);
     setState(() {
-      transactionsList = buildTransactionList(listGastos);
+      transactionsList = buildTransactionList(listGastos!);
     });
   }
 
@@ -47,8 +47,8 @@ class _MesState extends State<Mes> {
   }
 
   Widget _buildBody() {
-    return FutureBuilder<List<Gasto>>(
-      future: gastoHelper.getAllGastos(), // financeManager.loadTransactions(),
+    return FutureBuilder<List<Gasto>?>(
+      future: gastoHelper.getGastosDoMes(DateTime.now().year, DateTime.now().month), // financeManager.loadTransactions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();

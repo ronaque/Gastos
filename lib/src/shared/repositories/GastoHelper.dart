@@ -57,4 +57,20 @@ class GastoHelper{
 
     return gastos;
   }
+
+  Future<List<Gasto>?> getGastosDoMes(int ano, int mes) async {
+    Database? db = await database;
+
+    String query = '''
+      SELECT * FROM gastos
+      WHERE strftime('%Y', data) = ? AND strftime('%m', data) = ?
+    ''';
+
+    List<Map<String, Object?>>? result = await db?.rawQuery(query, ['$ano', '$mes']);
+
+    List<Gasto>? gastos = result?.map((map) => Gasto.fromMap(map)).toList();
+
+    return gastos;
+  }
+
 }

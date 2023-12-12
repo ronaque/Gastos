@@ -36,7 +36,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     }
 
     Gasto gasto = await novoGasto(DateTime.now(), amount, tag);
-    gastoHelper.insertGasto(gasto);
+    await gastoHelper.insertGasto(gasto);
 
     Navigator.pop(context);
   }

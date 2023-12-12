@@ -62,6 +62,23 @@ class TagHelper{
     }
   }
 
+  Future<Tag?> getTagById(int tagId) async {
+    Database? db = await database;
+
+    List<Map<String, Object?>>? result = await db?.query(
+      'tags',
+      where: 'id = ?',
+      whereArgs: [tagId],
+      limit: 1, // Limita a consulta a um resultado, pois esperamos apenas uma tag com o ID específico
+    );
+
+    if (result!.isNotEmpty) {
+      return Tag.fromMap(result.first);
+    } else {
+      return null; // Retorna null se não encontrar nenhuma tag com o ID especificado
+    }
+  }
+
   // Função para excluir uma tag com base no nome
   Future<void> deleteTagByName(String tagName) async {
     Database? db = await database;

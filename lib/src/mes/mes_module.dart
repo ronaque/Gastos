@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gastos/globals.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,23 +42,26 @@ Widget getSaldoTexto() {
   );
 }
 
-Widget getCategoryTextOrIcon(String category) {
-  if (category == 'gasolina') {
-    return const Icon(Icons.local_gas_station);
-  } else if (category == 'comida') {
-    return const Icon(Icons.restaurant);
-  } else if (category == 'gasto') {
-    return const Icon(Icons.paid);
-  } else {
-    return Text(
-      category,
-      style: const TextStyle(
-        color: Colors.blue,
-        fontSize: 18.0,
-      ),
-    );
+Widget getCategoryTextOrIcon(Tag tag) {
+  String category = tag.nome!;
+  var icon = null;
+  tagsPadroes.forEach((key, value) {
+    if (key == category) {
+      icon = Icon(value);
+    }
+  });
+  if (icon != null) {
+    return icon;
   }
+  return Text(
+    category,
+    style: const TextStyle(
+      color: Colors.blue,
+      fontSize: 18.0,
+    ),
+  );
 }
+
 
 Widget buildEmptyState() {
   return const Column(
@@ -99,7 +104,7 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
               Row(
                 children: [
                   Text(
-                    '\$${transaction.quantidade?.toStringAsFixed(2)}',
+                    'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
                     style: TextStyle(
                       color:
                       transaction.quantidade! < 0 ? Colors.red : Colors.green,
@@ -109,7 +114,7 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
                 ],
               ),
               Expanded(child: Container()),
-              // getCategoryTextOrIcon(transaction.category),
+              getCategoryTextOrIcon(transaction.tag!),
             ],
           ),
         );

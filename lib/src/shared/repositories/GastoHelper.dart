@@ -62,13 +62,15 @@ class GastoHelper{
     Database? db = await database;
 
     String query = '''
-      SELECT * FROM gastos
-      WHERE strftime('%Y', data) = ? AND strftime('%m', data) = ?
-    ''';
+        SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
+        FROM gastos
+        INNER JOIN tags ON gastos.tag_id = tags.id
+        WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ?
+      ''';
 
     List<Map<String, Object?>>? result = await db?.rawQuery(query, ['$ano', '$mes']);
 
-    List<Gasto>? gastos = result?.map((map) => Gasto.fromMap(map)).toList();
+    List<Gasto>? gastos = await result?.map((map) => Gasto.fromMap(map)).toList();
 
     return gastos;
   }

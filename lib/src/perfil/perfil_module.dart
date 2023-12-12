@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int globalIndex = 0;
@@ -48,7 +48,7 @@ Future<String> getSalario() async {
   double? salarioSalvo = prefs.getDouble('salario');
   print('salario salvo recuperado: $salarioSalvo');
   if (salarioSalvo == null) {
-    return 'R\$0.0';
+    return '';
   }
   String salarioSalvoString = salarioSalvo.toString();
   return 'R\$$salarioSalvoString';
@@ -59,7 +59,7 @@ Future<String> getNome() async {
   String? nomeSalvo = prefs.getString('nome');
   print('nome salvo recuperado: $nomeSalvo');
   if (nomeSalvo == null) {
-    return 'Nome do Usuário';
+    return '';
   }
   return nomeSalvo;
 }
@@ -69,16 +69,30 @@ Widget getSalarioTextField() {
     future: getSalario(),
     builder: (context, AsyncSnapshot<String> snapshot) {
       if (snapshot.hasData) {
+        if (snapshot.data!.isEmpty) {
+          return TextField(
+            onChanged: (value) => _nomeChange(value),
+            keyboardType: TextInputType.name,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Salário',
+            ),
+          );
+        }
         return TextFormField(
           initialValue: snapshot.data,
           onChanged: (value) => _salarioChange(value),
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(border: OutlineInputBorder()),
+          decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       } else {
-        return const Text(
-          'Saldo: \$0.0',
-          style: TextStyle(color: Colors.black),
+        return TextField(
+          onChanged: (value) => _nomeChange(value),
+          keyboardType: TextInputType.name,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Salário',
+          ),
         );
       }
     },
@@ -90,16 +104,30 @@ Widget getNomeTextField() {
     future: getNome(),
     builder: (context, AsyncSnapshot<String> snapshot) {
       if (snapshot.hasData) {
+        if (snapshot.data!.isEmpty) {
+          return TextField(
+            onChanged: (value) => _nomeChange(value),
+            keyboardType: TextInputType.name,
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Nome de Usuário',
+            ),
+          );
+        }
         return TextFormField(
           initialValue: snapshot.data,
           onChanged: (value) => _nomeChange(value),
           keyboardType: TextInputType.name,
-          decoration: InputDecoration(border: OutlineInputBorder()),
+          decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       } else {
-        return const Text(
-          'Saldo: \$0.0',
-          style: TextStyle(color: Colors.black),
+        return TextField(
+          onChanged: (value) => _nomeChange(value),
+          keyboardType: TextInputType.name,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Nome de Usuário',
+          ),
         );
       }
     },
@@ -107,16 +135,11 @@ Widget getNomeTextField() {
 }
 
 Widget getDefaultTagsWidgets() {
-  Map<String, Widget> tags = {
-    'gasolina' : Icon(Icons.local_gas_station),
-    'comida' : Icon(Icons.restaurant),
-    'gasto' : Icon(Icons.paid)
-  };
   List<Widget> tagWidgets = [];
-  for (var tag in tags.values) {
+  tagsPadroes.forEach((key, value) {
     final padding =
-    Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: tag);
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 5), child: Icon(value));
     tagWidgets.add(padding);
-  }
+  });
   return Row(children: tagWidgets);
 }

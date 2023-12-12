@@ -1,7 +1,8 @@
-import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:gastos/globals.dart' as globals;
 
 class DatabaseHelper {
   Database? _db;
@@ -25,6 +26,7 @@ class DatabaseHelper {
   Future<void> _createDatabase(Database db, int version) async {
     await _createTagsTable(db);
     await _createGastosTable(db);
+    await inicializarTagsPadroes();
   }
 
   // Método para inserir uma nova tag no banco de dados
@@ -33,7 +35,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE tags(
         id INTEGER PRIMARY KEY,
-        name TEXT
+        nome TEXT
       )
     ''');
   }
@@ -43,73 +45,24 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE gastos(
         id INTEGER PRIMARY KEY,
-        date TEXT,
-        quantity REAL,
+        data TEXT,
+        quantidade REAL,
         tag_id INTEGER,
         FOREIGN KEY(tag_id) REFERENCES tags(id)
       )
       ''');
   }
 
-  // Método para inserir uma nova tag no banco de dados
-  Future<void> insertTag(Tag tag) async {
-    Database? db = await database;
-    await db?.insert('tags', tag.toMap());
-  }
-
-  // Método para obter todas as tags do banco de dados
-  Future<List<Tag>> getAllTags() async {
-    Database? db = await database;
-    List<Map<String, Object?>>? maps = await db?.query('tags');
-    return List.generate(maps!.length, (i) {
-      return Tag.fromMap(maps[i]);
+  Future<void> inicializarTagsPadroes() async{
+    globals.tagsPadroes.forEach((key, value) async {
+      Tag tag = await novaTag(key);
+      Database? db = await database;
+      await db?.insert('tags', tag.toMap());
     });
-  }
-
-  // Método para inserir um novo gasto no banco de dados
-  Future<void> insertGasto(Gasto gasto) async {
-    Database? db = await database;
-    await db?.insert('gastos', gasto.toMap());
-  }
-
-  // Método para obter todos os gastos do banco de dados
-  Future<List<Gasto>> getAllGastos() async {
-    Database? db = await database;
-    List<Map<String, Object?>>? maps = await db?.query('gastos');
-    return List.generate(maps!.length, (i) {
-      return Gasto.fromMap(maps[i]);
-    });
-  }
-
-  Future<List<Gasto>> getGastosByTagName(String tagName) async {
-    Database? db = await database;
-
-    final List<Map<String, Object?>>? result = await db?.rawQuery('''
-    SELECT gastos.id, gastos.date, gastos.quantity, tags.name as tag_name
-    FROM gastos
-    INNER JOIN tags ON gastos.tag_id = tags.id
-    WHERE tags.name = ?
-  ''', [tagName]);
-
-    return List.generate(result!.length, (i) {
-      return Gasto.fromMap(result[i]);
-    });
-  }
-
-  // Função para excluir uma tag com base no nome
-  Future<void> deleteTagByName(String tagName) async {
-    Database? db = await database;
-
-    // Obtém o ID da tag com base no nome
-    List<Map<String, Object?>>? tagResult = await db?.query('tags', where: 'name = ?', whereArgs: [tagName]);
-    if (tagResult!.isNotEmpty) {
-      Object? tagId = tagResult.first['id'];
-
-      // Exclui a tag da tabela 'tags'
-      await db?.delete('tags', where: 'id = ?', whereArgs: [tagId]);
-
-      // Também é recomendável excluir os gastos associados à tag
-      await db?.delete('gastos', where: 'tag_id = ?', whereArgs: [tagId]);
-    }
+    // for (var tag in globals.tagsPadroes.keys) {
+    //   Tag nova_tag = await novaTag(tag);
+    //   Database? db = await database;
+    //   await db?.insert('tags', nova_tag.toMap());
+    // }
   }
 }

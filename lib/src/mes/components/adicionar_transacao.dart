@@ -1,12 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/src/shared/gasto_utils.dart';
+import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/repositories/GastoHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'card_tags.dart';
 import 'entrada_saida.dart';
 
 class AdicionarTransacaoModal extends StatefulWidget {
-  final Function(double amount, String category) onTransacaoSalva;
-
-  AdicionarTransacaoModal({required this.onTransacaoSalva});
+  const AdicionarTransacaoModal({super.key});
 
   @override
   _AdicionarTransacaoModalState createState() =>
@@ -14,10 +16,30 @@ class AdicionarTransacaoModal extends StatefulWidget {
 }
 
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
+  TagHelper tagHelper = TagHelper();
   late TextEditingController amountController;
   late TextEditingController categoryController;
   String? _clicado;
-  bool? _isIncome = null;
+  bool? _isIncome;
+
+  void adicionarTransacao() async {
+    GastoHelper gastoHelper = GastoHelper();
+    double amount = double.tryParse(amountController.text) ?? 0.0;
+    if (getIsIncome() == false) {
+      amount = amount * -1;
+    }
+    String category = getClicado();
+
+    Tag? tag = await tagHelper.getTagByNome(category);
+    if (tag == null) {
+      return;
+    }
+
+    Gasto gasto = await novoGasto(DateTime.now(), amount, tag);
+    await gastoHelper.insertGasto(gasto);
+
+    Navigator.pop(context);
+  }
 
   bool? getIsIncome(){
     return _isIncome;
@@ -56,29 +78,24 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Adicionar Transação', style: Theme.of(context).textTheme.headline6),
-          SizedBox(height: 16.0),
+          Text('Adicionar Transação', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 16.0),
           TextField(
             controller: amountController,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: 'Valor'),
+            decoration: const InputDecoration(labelText: 'Valor'),
           ),
-          SizedBox(height: 16.0),
-          Text('Categoria'),
+          const SizedBox(height: 16.0),
+          const Text('Categoria'),
           CardTags(setClicado, getClicado),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           EntradaSaida(setIsIncome, getIsIncome),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              double amount = double.tryParse(amountController.text) ?? 0.0;
-              if (getIsIncome() == false) {
-                amount = amount * -1;
-              }
-              String category = getClicado();
-              widget.onTransacaoSalva(amount, category);
+              adicionarTransacao();
             },
-            child: Text('Salvar'),
+            child: const Text('Salvar'),
           ),
         ],
       ),

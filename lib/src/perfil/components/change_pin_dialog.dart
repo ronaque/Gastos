@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,42 +8,42 @@ Future<void> savePin(String pin) async {
   print('PIN salvo: $pin');
 }
 
-displayChangePinDialog(BuildContext context, _pinController) async {
+displayChangePinDialog(BuildContext context, pinController) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Alterar PIN'),
-        content: Container(
+        title: const Text('Alterar PIN'),
+        content: SizedBox(
           height: 150,
           child: Column(
             children: [
               TextField(
-                controller: _pinController,
+                controller: pinController,
                 keyboardType: TextInputType.number,
                 obscureText: true,
                 decoration:
-                InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
+                const InputDecoration(labelText: 'Novo PIN (4 dígitos)'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  if (_pinController.text.length == 4) {
-                    savePin(_pinController.text);
+                  if (pinController.text.length == 4) {
+                    savePin(pinController.text);
                     Navigator.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('O PIN deve ter 4 dígitos.'),
                       ),
                     );
                   }
                 },
-                child: Text('Salvar'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   elevation: 5,
                 ),
+                child: const Text('Salvar'),
               ),
             ],
           ),

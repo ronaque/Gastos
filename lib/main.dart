@@ -8,20 +8,22 @@ import 'package:gastos/login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(home: MyApp(), theme: AppTheme().getAppTheme()));
+  runApp(MaterialApp(home: const MyApp(), theme: AppTheme().getAppTheme()));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/login', // Defina a tela de login como rota inicial
       routes: {
         '/login': (context) => LoginPage(),
-        '/home': (context) => Home(),
-        '/mes': (context) => Mes(),
-        '/perfil' : (context) => Perfil(),
-        '/resumo' : (context) => Resumo(),
+        '/home': (context) => const Home(),
+        '/mes': (context) => const Mes(),
+        '/perfil' : (context) => const Perfil(),
+        '/resumo' : (context) => const Resumo(),
       },
     );
   }

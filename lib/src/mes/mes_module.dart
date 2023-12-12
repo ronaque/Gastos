@@ -1,27 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gastos/src/mes/finance_module.dart';
-import 'dart:convert';
+import 'package:gastos/globals.dart';
+import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
+import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<double> getSalario() async {
+  GastoHelper gastoHelper = GastoHelper();
   final prefs = await SharedPreferences.getInstance();
-  final transactionsJson = prefs.getStringList('transactions');
-  double salarioTmp = 0;
-  List<FinanceEntry> transactionsTmp = [];
-  if (transactionsJson != null) {
-    transactionsTmp = transactionsJson
-        .map((json) => FinanceEntry.fromJson(jsonDecode(json)))
-        .toList();
-  }
-  for (int i = 0; i < transactionsTmp.length; i++) {
-    salarioTmp = salarioTmp + transactionsTmp[i].amount;
+
+  List<Gasto> gastos = await gastoHelper.getAllGastos();
+  double gastosTotal = 0;
+  for (int i = 0; i < gastos.length; i++) {
+    gastosTotal += gastos[i].quantidade!;
   }
   double? salarioSalvo = prefs.getDouble('salario');
   if (salarioSalvo == null) {
-    return 0;
+    prefs.setDouble('salario', 0);
+    return 0 + gastosTotal;
   } else {
-    return salarioSalvo + salarioTmp;
+    return salarioSalvo + gastosTotal;
   }
 }
 
@@ -32,7 +30,7 @@ Widget getSaldoTexto() {
       if (snapshot.hasData) {
         return Text(
           'Saldo: \$${snapshot.data}',
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         );
       } else {
         return const Text(
@@ -44,23 +42,26 @@ Widget getSaldoTexto() {
   );
 }
 
-Widget getCategoryTextOrIcon(String category) {
-  if (category == 'gasolina') {
-    return Icon(Icons.local_gas_station);
-  } else if (category == 'comida') {
-    return Icon(Icons.restaurant);
-  } else if (category == 'gasto') {
-    return Icon(Icons.paid);
-  } else {
-    return Text(
-      category,
-      style: TextStyle(
-        color: Colors.blue,
-        fontSize: 18.0,
-      ),
-    );
+Widget getCategoryTextOrIcon(Tag tag) {
+  String category = tag.nome!;
+  var icon = null;
+  tagsPadroes.forEach((key, value) {
+    if (key == category) {
+      icon = Icon(value);
+    }
+  });
+  if (icon != null) {
+    return icon;
   }
+  return Text(
+    category,
+    style: const TextStyle(
+      color: Colors.blue,
+      fontSize: 18.0,
+    ),
+  );
 }
+
 
 Widget buildEmptyState() {
   return const Column(
@@ -71,7 +72,7 @@ Widget buildEmptyState() {
   );
 }
 
-Widget buildTransactionList(List<FinanceEntry> transactions) {
+Widget buildTransactionList(List<Gasto> transactions) {
   return Stack(
     children: [
       _buildTransactionListView(transactions),
@@ -80,17 +81,17 @@ Widget buildTransactionList(List<FinanceEntry> transactions) {
   );
 }
 
-Widget _buildTransactionListView(List<FinanceEntry> transactions) {
+Widget _buildTransactionListView(List<Gasto> gastos) {
   return Expanded(
     child: ListView(
-      children: transactions.map((transaction) {
+      children: gastos.map((transaction) {
         return Container(
-          margin: EdgeInsets.all(8.0),
-          padding: EdgeInsets.all(16.0),
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.white,
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.grey,
                 offset: Offset(0, 2),
@@ -103,17 +104,17 @@ Widget _buildTransactionListView(List<FinanceEntry> transactions) {
               Row(
                 children: [
                   Text(
-                    '\$${transaction.amount.toStringAsFixed(2)}',
+                    'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
                     style: TextStyle(
                       color:
-                      transaction.amount < 0 ? Colors.red : Colors.green,
+                      transaction.quantidade! < 0 ? Colors.red : Colors.green,
                     ),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                 ],
               ),
               Expanded(child: Container()),
-              getCategoryTextOrIcon(transaction.category),
+              getCategoryTextOrIcon(transaction.tag!),
             ],
           ),
         );
@@ -128,10 +129,10 @@ Widget _buildSaldoContainer(){
     left: 16.0,
     child: Container(
       decoration: BoxDecoration(
-        color: Color(0xB02196F3),
+        color: const Color(0xB02196F3),
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(color: Colors.blue, width: 1.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0x019E9E9E),
             offset: Offset(0, 2),
@@ -140,7 +141,7 @@ Widget _buildSaldoContainer(){
         ],
       ),
       height: 50.0,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: getSaldoTexto(),
     ),
   );

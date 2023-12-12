@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/mes/mes_page.dart';
 import 'package:gastos/src/perfil/perfil_page.dart';
@@ -9,6 +8,8 @@ import 'package:gastos/src/shared/imageUtils.dart';
 import 'home_module.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -17,6 +18,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   File? _imageFile;
   Image? image;
   late TabController _tabController;
+  Widget mes = Mes();
 
   @override
   void initState() {
@@ -38,12 +40,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   void _abrirPerfil() async {
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => Perfil()));
+    var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const Perfil()));
 
     if (result != null) {
       var resultImage = await loadImage(_imageFile, image);
       setState(() {
         image = resultImage;
+        mes = Mes();
       });
     }
   }
@@ -83,10 +86,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Tab(
                   child: Row(
                     children: [
-                      SizedBox(width: 35),
+                      const SizedBox(width: 35),
                       Text(getMonth()),
-                      SizedBox(width: 5),
-                      Icon(Icons.calendar_month),
+                      const SizedBox(width: 5),
+                      const Icon(Icons.calendar_month),
                     ],
                   )
               ),
@@ -107,7 +110,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: [
-                Mes(),
+                mes,
                 Resumo(),
               ],
             ),

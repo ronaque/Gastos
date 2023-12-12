@@ -1,22 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 
-void adicionarTag(String newTagName) {
-  DatabaseHelper databaseHelper = DatabaseHelper();
-  Tag newTag = Tag(name: newTagName);
-  databaseHelper.insertTag(newTag);
+void adicionarTag(String newTagName) async {
+  TagHelper tagHelper = TagHelper();
+  Tag newTag = await novaTag(newTagName);
+  tagHelper.insertTag(newTag);
 }
 
-displayNewTagDialog(BuildContext context, _tagController) async {
+displayNewTagDialog(BuildContext context, tagController) async {
   String? newTag = await showDialog<String>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Adicionar Tag'),
+        title: const Text('Adicionar Tag'),
         content: TextField(
-          controller: _tagController,
+          controller: tagController,
           onChanged: (value) {
             // Você pode adicionar validações ou manipular o valor conforme necessário
           },
@@ -27,8 +27,8 @@ displayNewTagDialog(BuildContext context, _tagController) async {
           TextButton(
             child: const Text('Adicionar'),
             onPressed: () {
-              if (_tagController.text.isNotEmpty) {
-                adicionarTag(_tagController.text);
+              if (tagController.text.isNotEmpty) {
+                adicionarTag(tagController.text);
               }
               Navigator.of(context).pop();
             },
@@ -39,6 +39,6 @@ displayNewTagDialog(BuildContext context, _tagController) async {
   );
 
   print('sai do dialogo');
-  print('newTag: $_tagController');
-  _tagController.clear();
+  print('newTag: $tagController');
+  tagController.clear();
 }

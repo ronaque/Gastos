@@ -1,20 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gastos/globals.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
 class CardTags extends StatefulWidget{
   final void Function(String category) setClicado;
   final String Function() getClicado;
 
-  const CardTags(this.setClicado, this.getClicado);
+  const CardTags(this.setClicado, this.getClicado, {super.key});
 
   @override
   State<CardTags> createState() => _CardTagsState();
 }
 
 class _CardTagsState extends State<CardTags>{
-  DatabaseHelper databaseHelper = DatabaseHelper();
+  TagHelper tagHelper = TagHelper();
 
 
   getClicadoBoxColor(String tag) {
@@ -34,16 +34,16 @@ class _CardTagsState extends State<CardTags>{
   }
 
   Future<Widget> getDBTagsTexts() async {
-    List<Tag> dbTags = await databaseHelper.getAllTags();
+    List<Tag>? dbTags = await tagHelper.getTagsPersonalizadas();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(dbTags.length, (index) {
+        children: List.generate(dbTags!.length, (index) {
           final tag = dbTags[index];
           return GestureDetector(
             onTap: (){
-              widget.setClicado(tag.name ?? '');
+              widget.setClicado(tag.nome ?? '');
               setState(() {});
             },
             child: Padding(
@@ -53,15 +53,15 @@ class _CardTagsState extends State<CardTags>{
                 height: MediaQuery.of(context).size.width * 0.12,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: getClicadoBoxColor(tag.name!),
+                  color: getClicadoBoxColor(tag.nome!),
                   border: Border.all(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8),
                   ),
                 child: Text(
-                    tag.name!.substring(0, 1).toUpperCase() + tag.name!.substring(1),
+                    tag.nome!.substring(0, 1).toUpperCase() + tag.nome!.substring(1),
                     style: TextStyle(
                         fontSize: 16,
-                        color: getClicadoTextColor(tag.name!),
+                        color: getClicadoTextColor(tag.nome!),
                     ),
                 ),
               ),
@@ -91,24 +91,32 @@ class _CardTagsState extends State<CardTags>{
 
   getGasolinaIconColor(){
     if(widget.getClicado() == 'gasolina'){
-      return Icon(Icons.local_gas_station, color: Colors.white,);
+      return const Icon(Icons.local_gas_station, color: Colors.white,);
     }else{
-      return Icon(Icons.local_gas_station);
+      return const Icon(Icons.local_gas_station);
     }
   }
   getComidaIconColor(){
     if(widget.getClicado() == 'comida'){
-      return Icon(Icons.restaurant, color: Colors.white,);
+      return const Icon(Icons.restaurant, color: Colors.white,);
     }else{
-      return Icon(Icons.restaurant);
+      return const Icon(Icons.restaurant);
     }
   }
 
   getGastoIconColor(){
     if(widget.getClicado() == 'gasto'){
-      return Icon(Icons.paid, color: Colors.white,);
+      return const Icon(Icons.paid, color: Colors.white,);
     }else{
-      return Icon(Icons.paid);
+      return const Icon(Icons.paid);
+    }
+  }
+
+  getClicadoIcon(String tag){
+    if(widget.getClicado() == tag){
+      return Icon(tagsPadroes[tag], color: Colors.white);
+    }else{
+      return Icon(tagsPadroes[tag]);
     }
   }
 
@@ -116,30 +124,11 @@ class _CardTagsState extends State<CardTags>{
   Widget getDefaultTags(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: (){
-          widget.setClicado('gasolina');
-          setState(() {});
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.width * 0.12,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: getClicadoBoxColor('gasolina'),
-                  border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: getGasolinaIconColor(),
-            ),
-          )
-        ),
-        GestureDetector(
+      children: List.generate(3, (index) {
+        final tagName = tagsPadroes.keys.toList()[index];
+        return GestureDetector(
             onTap: (){
-              widget.setClicado('comida');
+              widget.setClicado(tagName);
               setState(() {});
             },
             child: Padding(
@@ -149,35 +138,78 @@ class _CardTagsState extends State<CardTags>{
                 height: MediaQuery.of(context).size.width * 0.12,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: getClicadoBoxColor('comida'),
+                  color: getClicadoBoxColor(tagName),
                   border: Border.all(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: getComidaIconColor(),
+                child: getClicadoIcon(tagName),
               ),
             )
-        ),
-        GestureDetector(
-            onTap: (){
-              widget.setClicado('gasto');
-              setState(() {});
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Container(
-                alignment: Alignment.center,
-                height: MediaQuery.of(context).size.width * 0.12,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: getClicadoBoxColor('gasto'),
-                  border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: getGastoIconColor(),
-              ),
-            )
-        ),
-      ],
+        );
+      }),
+      // children: [
+      //
+      //   GestureDetector(
+      //     onTap: (){
+      //     widget.setClicado('gasolina');
+      //     setState(() {});
+      //     },
+      //     child: Padding(
+      //       padding: const EdgeInsets.symmetric(horizontal: 5),
+      //         child: Container(
+      //           alignment: Alignment.center,
+      //           height: MediaQuery.of(context).size.width * 0.12,
+      //           padding: const EdgeInsets.symmetric(horizontal: 8),
+      //           decoration: BoxDecoration(
+      //             color: getClicadoBoxColor('gasolina'),
+      //             border: Border.all(color: Colors.blue),
+      //             borderRadius: BorderRadius.circular(8),
+      //           ),
+      //           child: getGasolinaIconColor(),
+      //       ),
+      //     )
+      //   ),
+      //   GestureDetector(
+      //       onTap: (){
+      //         widget.setClicado('comida');
+      //         setState(() {});
+      //       },
+      //       child: Padding(
+      //         padding: const EdgeInsets.symmetric(horizontal: 5),
+      //         child: Container(
+      //           alignment: Alignment.center,
+      //           height: MediaQuery.of(context).size.width * 0.12,
+      //           padding: const EdgeInsets.symmetric(horizontal: 8),
+      //           decoration: BoxDecoration(
+      //             color: getClicadoBoxColor('comida'),
+      //             border: Border.all(color: Colors.blue),
+      //             borderRadius: BorderRadius.circular(8),
+      //           ),
+      //           child: getComidaIconColor(),
+      //         ),
+      //       )
+      //   ),
+      //   GestureDetector(
+      //       onTap: (){
+      //         widget.setClicado('gasto');
+      //         setState(() {});
+      //       },
+      //       child: Padding(
+      //         padding: const EdgeInsets.symmetric(horizontal: 5),
+      //         child: Container(
+      //           alignment: Alignment.center,
+      //           height: MediaQuery.of(context).size.width * 0.12,
+      //           padding: const EdgeInsets.symmetric(horizontal: 8),
+      //           decoration: BoxDecoration(
+      //             color: getClicadoBoxColor('gasto'),
+      //             border: Border.all(color: Colors.blue),
+      //             borderRadius: BorderRadius.circular(8),
+      //           ),
+      //           child: getGastoIconColor(),
+      //         ),
+      //       )
+      //   ),
+      // ],
     );
   }
 
@@ -185,7 +217,7 @@ class _CardTagsState extends State<CardTags>{
     return Column(
       children: [
         getDefaultTags(),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
         getDBTags()
       ],
     );

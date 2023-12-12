@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +11,7 @@ Future<Image?> loadImage(var imageFile, var image) async {
       print('testeImage null');
       return null;
     } else {
-      String filePath = '$testeImage';
+      String filePath = testeImage;
       print('testeImage: $testeImage');
       imageFile = File(filePath);
       return Image.file(imageFile!);
@@ -25,13 +24,13 @@ Future<Image?> loadImage(var imageFile, var image) async {
 
 CircleAvatar defaultAvatar(context) {
   return CircleAvatar(
-      radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: AssetImage("images/user.png"));
+      radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: const AssetImage("images/user.png"));
 }
 
 CircleAvatar profileAvatar(Image? image, context) {
   if (image == null) {
     return CircleAvatar(
-        radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: AssetImage("images/user.png"));
+        radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: const AssetImage("images/user.png"));
   }
   return CircleAvatar(radius: MediaQuery.of(context).size.width * 0.18, backgroundImage: image.image);
 }

@@ -1,12 +1,11 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EntradaSaida extends StatefulWidget {
   final void Function(bool value) setIsIncome;
   final bool? Function() getIsIncome;
 
-  const EntradaSaida(this.setIsIncome, this.getIsIncome);
+  const EntradaSaida(this.setIsIncome, this.getIsIncome, {super.key});
 
   @override
   _EntradaSaidaState createState() => _EntradaSaidaState();

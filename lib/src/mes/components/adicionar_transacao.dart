@@ -18,7 +18,7 @@ class AdicionarTransacaoModal extends StatefulWidget {
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   TagHelper tagHelper = TagHelper();
   late TextEditingController amountController;
-  late TextEditingController categoryController;
+  TextEditingController descriptionController = TextEditingController();
   String? _clicado;
   bool? _isIncome;
 
@@ -29,13 +29,14 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       amount = amount * -1;
     }
     String category = getClicado();
+    String descricao = descriptionController.text;
 
     Tag? tag = await tagHelper.getTagByNome(category);
     if (tag == null) {
       return;
     }
 
-    Gasto gasto = await novoGasto(DateTime.now(), amount, tag);
+    Gasto gasto = await novoGasto(DateTime.now(), amount, tag, descricao);
     await gastoHelper.insertGasto(gasto);
 
     Navigator.pop(context);
@@ -61,36 +62,42 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   void initState() {
     super.initState();
     amountController = TextEditingController();
-    categoryController = TextEditingController();
+    // categoryController = TextEditingController();
   }
 
   @override
   void dispose() {
     amountController.dispose();
-    categoryController.dispose();
+    // categoryController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('Adicionar Transação', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 16.0),
+          // const SizedBox(height: 4.0),
           TextField(
             controller: amountController,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(labelText: 'Valor'),
           ),
-          const SizedBox(height: 16.0),
+          // const SizedBox(height: 6.0),
+          TextField(
+            controller: descriptionController,
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(labelText: 'Descrição'),
+          ),
+          const SizedBox(height: 8.0),
           const Text('Categoria'),
           CardTags(setClicado, getClicado),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 14.0),
           EntradaSaida(setIsIncome, getIsIncome),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 10.0),
           ElevatedButton(
             onPressed: () {
               adicionarTransacao();

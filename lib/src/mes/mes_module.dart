@@ -55,9 +55,10 @@ Widget getCategoryTextOrIcon(Tag tag) {
   }
   return Text(
     category,
-    style: const TextStyle(
-      color: Colors.blue,
-      fontSize: 18.0,
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 16.0,
+      fontWeight: FontWeight.bold,
     ),
   );
 }
@@ -101,20 +102,40 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
           ),
           child: Row(
             children: [
-              Row(
-                children: [
-                  Text(
-                    'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color:
-                      transaction.quantidade! < 0 ? Colors.red : Colors.green,
+              Expanded(
+                flex: 7,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 8.0),
+                    Text(
+                      '${transaction.data!.day}',
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8.0),
-                ],
+                    const SizedBox(width: 12.0),
+                    getCategoryTextOrIcon(transaction.tag!),
+                    const SizedBox(width: 12.0),
+                    Text(
+                      '${transaction.descricao}',
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Expanded(child: Container()),
-              getCategoryTextOrIcon(transaction.tag!),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: transaction.quantidade! < 0 ? Colors.red : Colors.green,
+                    fontSize: 17.0,
+                  ),
+                ),
+              ),
             ],
           ),
         );

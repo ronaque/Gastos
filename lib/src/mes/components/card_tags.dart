@@ -47,7 +47,7 @@ class _CardTagsState extends State<CardTags>{
               setState(() {});
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
               child: Container(
                 alignment: Alignment.center,
                 height: MediaQuery.of(context).size.width * 0.12,

@@ -87,18 +87,11 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
     child: ListView(
       children: gastos.map((transaction) {
         return Container(
-          margin: const EdgeInsets.all(8.0),
-          padding: const EdgeInsets.all(16.0),
+          // margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(18.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, 2),
-                blurRadius: 6.0,
-              ),
-            ],
+            border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 4)),
+
           ),
           child: Row(
             children: [

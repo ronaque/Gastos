@@ -48,6 +48,7 @@ class DatabaseHelper {
         data TEXT,
         quantidade REAL,
         tag_id INTEGER,
+        descricao TEXT,
         FOREIGN KEY(tag_id) REFERENCES tags(id)
       )
       ''');

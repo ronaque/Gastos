@@ -33,7 +33,7 @@ class GastoHelper{
     Database? db = await database;
 
     final List<Map<String, Object?>>? result = await db?.rawQuery('''
-    SELECT gastos.id, gastos.data, gastos.quantidade, tags.nome as tag_nome
+    SELECT gastos.id, gastos.data, gastos.quantidade, gastos.descricao, tags.nome as tag_nome, 
     FROM gastos
     INNER JOIN tags ON gastos.tag_id = tags.id
     WHERE tags.nome = ?

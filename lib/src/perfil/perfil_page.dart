@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'components/new_tag_dialog.dart';
-import 'components/change_pin_dialog.dart';
 import 'perfil_module.dart';
 
 int globalIndex = 0;
@@ -23,7 +22,6 @@ class Perfil extends StatefulWidget {
 
 class _PerfilState extends State<Perfil> {
   final TextEditingController _tagController = TextEditingController();
-  final TextEditingController _pinController = TextEditingController();
   File? _imageFile;
   Image? image;
 
@@ -119,10 +117,6 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
-  void _sair() {
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -150,7 +144,7 @@ class _PerfilState extends State<Perfil> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -167,7 +161,7 @@ class _PerfilState extends State<Perfil> {
                       ],
                     )),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +174,7 @@ class _PerfilState extends State<Perfil> {
                       ],
                     )),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +187,7 @@ class _PerfilState extends State<Perfil> {
                       ],
                     )),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -201,7 +195,7 @@ class _PerfilState extends State<Perfil> {
                       ],
                     )),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -210,11 +204,11 @@ class _PerfilState extends State<Perfil> {
                     )
                 ),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: getDBTags(context)
                 ),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -231,36 +225,6 @@ class _PerfilState extends State<Perfil> {
                             child: const Icon(Icons.add, color: Colors.white)),
                       ],
                     )
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    displayChangePinDialog(context, _pinController);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    backgroundColor: Colors.blue,
-                    elevation: 5,
-                  ),
-                  child: const Text('Alterar PIN', style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _sair();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    elevation: 5,
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.logout, color: Colors.white),
-                      ],
-                    ),
-                  ),
                 ),
               ],
             ),

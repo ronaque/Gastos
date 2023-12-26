@@ -91,13 +91,13 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
           // margin: const EdgeInsets.all(8.0),
           padding: const EdgeInsets.all(18.0),
           decoration: BoxDecoration(
-            border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 4)),
+            border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 2)),
 
           ),
           child: Row(
             children: [
               Expanded(
-                flex: 7,
+                flex: 4,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -122,16 +122,23 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
                     ),
                     const SizedBox(width: 12.0),
                     getCategoryTextOrIcon(transaction.tag!),
-                    const SizedBox(width: 12.0),
-                    Text(
-                      '${transaction.descricao}',
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                    ),
                   ],
                 ),
               ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                flex: 3,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    '${transaction.descricao}',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )
+                  ),
+                )
+              ),
+              const SizedBox(width: 12.0),
               Expanded(
                 flex: 3,
                 child: Text(

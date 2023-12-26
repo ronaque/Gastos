@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
@@ -24,7 +25,15 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 
   void adicionarTransacao() async {
     GastoHelper gastoHelper = GastoHelper();
+    if (amountController.text.isEmpty) {
+      Alerta('Informe um valor').show(context);
+      return null;
+    }
     double amount = double.tryParse(amountController.text) ?? 0.0;
+    if (getIsIncome() == null){
+      Alerta('Informe se é entrada ou saída').show(context);
+      return null;
+    }
     if (getIsIncome() == false) {
       amount = amount * -1;
     }
@@ -33,7 +42,9 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 
     Tag? tag = await tagHelper.getTagByNome(category);
     if (tag == null) {
-      return;
+      // Fazer um alerta para o usuário informando que deve escolher uma tag
+      Alerta('Escolha uma categoria').show(context);
+      return null;
     }
 
     Gasto gasto = await novoGasto(DateTime.now(), amount, tag, descricao);

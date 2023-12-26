@@ -4,10 +4,6 @@ import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'components/adicionar_transacao.dart';
 import 'mes_module.dart';
 
-Widget returnMesDisplay(context) {
-  return const Mes();
-}
-
 class Mes extends StatefulWidget {
   const Mes({super.key});
 

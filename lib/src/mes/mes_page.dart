@@ -5,15 +5,23 @@ import 'components/adicionar_transacao.dart';
 import 'mes_module.dart';
 
 class Mes extends StatefulWidget {
-  const Mes({super.key});
+  final DateTime data;
+  const Mes(this.data, {super.key});
 
   @override
   _MesState createState() => _MesState();
 }
 
 class _MesState extends State<Mes> {
+  late DateTime data;
   GastoHelper gastoHelper = GastoHelper();
   Widget transactionsList = buildTransactionList([]);
+
+  @override
+  void initState() {
+    data = widget.data;
+    super.initState();
+  }
 
   void adicionarTransacao() async {
     await showModalBottomSheet(
@@ -44,7 +52,7 @@ class _MesState extends State<Mes> {
 
   Widget _buildBody() {
     return FutureBuilder<List<Gasto>?>(
-      future: gastoHelper.getGastosDoMes(DateTime.now().year, DateTime.now().month), // financeManager.loadTransactions(),
+      future: gastoHelper.getGastosDoMes(data.year, data.month), // financeManager.loadTransactions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();

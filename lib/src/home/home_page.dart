@@ -18,7 +18,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   File? _imageFile;
   Image? image;
   late TabController _tabController;
-  Widget mes = Mes();
+  Widget mes = Mes(DateTime.now());
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       var resultImage = await loadImage(_imageFile, image);
       setState(() {
         image = resultImage;
-        mes = Mes();
+        mes = Mes(DateTime.now());
       });
     }
   }

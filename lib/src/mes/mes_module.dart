@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
+import 'package:gastos/src/shared/data_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
@@ -101,11 +102,23 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(width: 8.0),
-                    Text(
-                      '${transaction.data!.day}',
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${transaction.data!.day}',
+                          style: const TextStyle(
+                            fontSize: 14.0,
+                          ),
+                        ),
+                        Text(
+                          '${retornarMesAbreviado(transaction.data!.month)}',
+                          style: const TextStyle(
+                            fontSize: 10.0,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(width: 12.0),
                     getCategoryTextOrIcon(transaction.tag!),

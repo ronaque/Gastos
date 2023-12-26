@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/home', // Defina a tela de login como rota inicial
       routes: {
         '/home': (context) => const Home(),
-        '/mes': (context) => const Mes(),
+        '/mes': (context) => Mes(DateTime.now()),
         '/perfil' : (context) => const Perfil(),
         '/resumo' : (context) => const Resumo(),
       },

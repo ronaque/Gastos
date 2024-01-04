@@ -58,7 +58,7 @@ class GastoHelper{
     return gastos;
   }
 
-  Future<List<Gasto>?> getGastosDoMes(int ano, int mes) async {
+  Future<List<Gasto>?> getGastosDoMes(String ano, String mes) async {
     Database? db = await database;
 
     String query = '''
@@ -68,7 +68,7 @@ class GastoHelper{
         WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ?
       ''';
 
-    List<Map<String, Object?>>? result = await db?.rawQuery(query, ['$ano', '$mes']);
+    List<Map<String, Object?>>? result = await db?.rawQuery(query, [ano, mes]);
 
     List<Gasto>? gastos = await result?.map((map) => Gasto.fromMap(map)).toList();
 

@@ -3,6 +3,7 @@ import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'components/adicionar_transacao.dart';
 import 'mes_module.dart';
+import 'package:intl/intl.dart';
 
 class Mes extends StatefulWidget {
   final DateTime data;
@@ -30,7 +31,7 @@ class _MesState extends State<Mes> {
         return const AdicionarTransacaoModal();
       },
     );
-    var listGastos = await gastoHelper.getGastosDoMes(DateTime.now().year, DateTime.now().month);
+    var listGastos = await gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data));
     setState(() {
       transactionsList = buildTransactionList(listGastos!);
     });
@@ -52,7 +53,7 @@ class _MesState extends State<Mes> {
 
   Widget _buildBody() {
     return FutureBuilder<List<Gasto>?>(
-      future: gastoHelper.getGastosDoMes(data.year, data.month), // financeManager.loadTransactions(),
+      future: gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data)), // financeManager.loadTransactions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();

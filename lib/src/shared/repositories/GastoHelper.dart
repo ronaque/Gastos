@@ -75,4 +75,56 @@ class GastoHelper{
     return gastos;
   }
 
+  Future<List<Gasto>?> getGastosDoMesComQuantidadePositiva(String ano, String mes) async {
+    try {
+      Database? db = await database;
+
+      String query = '''
+        SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
+        FROM gastos
+        LEFT JOIN tags ON gastos.tag_id = tags.id
+        WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ? AND gastos.quantidade >= 0
+      ''';
+
+      List<Map<String, Object?>>? result = await db?.rawQuery(query, [ano, mes]);
+
+      if (result == null || result.isEmpty) {
+        return null;
+      }
+
+      List<Gasto>? gastos = result.map((map) => Gasto.fromMap(map)).toList();
+
+      return gastos;
+    } catch (e) {
+      print('Erro ao obter gastos do mês com quantidade positiva: $e');
+      return null;
+    }
+  }
+
+  Future<List<Gasto>?> getGastosDoMesComQuantidadeNegativa(String ano, String mes) async {
+    try {
+      Database? db = await database;
+
+      String query = '''
+        SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
+        FROM gastos
+        LEFT JOIN tags ON gastos.tag_id = tags.id
+        WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ? AND gastos.quantidade < 0
+      ''';
+
+      List<Map<String, Object?>>? result = await db?.rawQuery(query, [ano, mes]);
+
+      if (result == null || result.isEmpty) {
+        return null;
+      }
+
+      List<Gasto>? gastos = result.map((map) => Gasto.fromMap(map)).toList();
+
+      return gastos;
+    } catch (e) {
+      print('Erro ao obter gastos do mês com quantidade negativa: $e');
+      return null;
+    }
+  }
+
 }

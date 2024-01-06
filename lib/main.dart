@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // This will remove the Debug label from the app
       initialRoute: '/home', // Defina a tela de login como rota inicial
       routes: {
         '/home': (context) => const Home(),

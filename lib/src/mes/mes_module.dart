@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
+import 'package:gastos/src/shared/data_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 Future<double> getSalario() async {
   GastoHelper gastoHelper = GastoHelper();
@@ -55,13 +57,75 @@ Widget getCategoryTextOrIcon(Tag tag) {
   }
   return Text(
     category,
-    style: const TextStyle(
-      color: Colors.blue,
-      fontSize: 18.0,
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 16.0,
+      fontWeight: FontWeight.bold,
     ),
   );
 }
 
+Widget getGastosPositivos() {
+  GastoHelper gastoHelper = GastoHelper();
+  return FutureBuilder(
+    future: gastoHelper.getGastosDoMesComQuantidadePositiva(DateFormat('y').format(DateTime.now()), DateFormat('MM').format(DateTime.now())),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data!.isEmpty) {
+          return const Text(
+            '\$0.0',
+            style: TextStyle(color: Colors.white),
+          );
+        }
+        double gastosTotal = 0;
+        for (int i = 0; i < snapshot.data!.length; i++) {
+          gastosTotal += snapshot.data![i].quantidade!;
+        }
+        String strGastosTotal = gastosTotal.toStringAsFixed(2);
+        return Text(
+          '\$$strGastosTotal',
+          style: const TextStyle(color: Colors.green),
+        );
+      } else {
+        return const Text(
+          '\$0.0',
+          style: TextStyle(color: Colors.white),
+        );
+      }
+    },
+  );
+}
+
+Widget getGastosNegativos() {
+  GastoHelper gastoHelper = GastoHelper();
+  return FutureBuilder(
+    future: gastoHelper.getGastosDoMesComQuantidadeNegativa(DateFormat('y').format(DateTime.now()), DateFormat('MM').format(DateTime.now())),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        if (snapshot.data!.isEmpty) {
+          return const Text(
+            '\$0.0',
+            style: TextStyle(color: Colors.white),
+          );
+        }
+        double gastosTotal = 0;
+        for (int i = 0; i < snapshot.data!.length; i++) {
+          gastosTotal += snapshot.data![i].quantidade!;
+        }
+        String strGastosTotal = (gastosTotal * -1).toStringAsFixed(2);
+        return Text(
+          '\$$strGastosTotal',
+          style: const TextStyle(color: Colors.red),
+        );
+      } else {
+        return const Text(
+          '\$0.0',
+          style: TextStyle(color: Colors.white),
+        );
+      }
+    },
+  );
+}
 
 Widget buildEmptyState() {
   return const Column(
@@ -86,35 +150,66 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
     child: ListView(
       children: gastos.map((transaction) {
         return Container(
-          margin: const EdgeInsets.all(8.0),
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, 2),
-                blurRadius: 6.0,
-              ),
-            ],
+          padding: const EdgeInsets.all(18.0),
+          decoration: const BoxDecoration(
+            border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 2)),
           ),
           child: Row(
             children: [
-              Row(
-                children: [
-                  Text(
+              Expanded(
+                flex: 3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 8.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${transaction.data!.day}',
+                          style: const TextStyle(
+                            fontSize: 14.0,
+                          ),
+                        ),
+                        Text(
+                          '${retornarMesAbreviado(transaction.data!.month)}',
+                          style: const TextStyle(
+                            fontSize: 10.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 12.0),
+                    getCategoryTextOrIcon(transaction.tag!),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    '${transaction.descricao}',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                    )
+                  ),
+                )
+              ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                flex: 3,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
                     'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
                     style: TextStyle(
-                      color:
-                      transaction.quantidade! < 0 ? Colors.red : Colors.green,
+                      color: transaction.quantidade! < 0 ? Colors.red : Colors.green,
+                      fontSize: 17.0,
                     ),
                   ),
-                  const SizedBox(width: 8.0),
-                ],
+                ),
               ),
-              Expanded(child: Container()),
-              getCategoryTextOrIcon(transaction.tag!),
             ],
           ),
         );
@@ -140,9 +235,9 @@ Widget _buildSaldoContainer(){
           ),
         ],
       ),
-      height: 50.0,
+      // height: 50.0,
       padding: const EdgeInsets.all(16.0),
       child: getSaldoTexto(),
-    ),
-  );
+      ) //getSaldoTexto(),
+    );
 }

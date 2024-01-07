@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
@@ -18,7 +20,7 @@ class AdicionarTransacaoModal extends StatefulWidget {
 
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   TagHelper tagHelper = TagHelper();
-  late TextEditingController amountController;
+  var amountController = new MoneyMaskedTextController();
   TextEditingController descriptionController = TextEditingController();
   String? _clicado;
   bool? _isIncome;
@@ -72,13 +74,13 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   @override
   void initState() {
     super.initState();
-    amountController = TextEditingController();
+    // amountController = TextEditingController();
     // categoryController = TextEditingController();
   }
 
   @override
   void dispose() {
-    amountController.dispose();
+    // amountController.dispose();
     // categoryController.dispose();
     super.dispose();
   }
@@ -91,13 +93,13 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('Adicionar Transação', style: Theme.of(context).textTheme.titleLarge),
-          // const SizedBox(height: 4.0),
-          TextField(
+          TextFormField(
             controller: amountController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Valor'),
+            // inputFormatters: <TextInputFormatter>[
+            //   FilteringTextInputFormatter.digitsOnly
+            // ],
           ),
-          // const SizedBox(height: 6.0),
           TextField(
             controller: descriptionController,
             keyboardType: TextInputType.text,

@@ -147,69 +147,6 @@ class _CardTagsState extends State<CardTags>{
             )
         );
       }),
-      // children: [
-      //
-      //   GestureDetector(
-      //     onTap: (){
-      //     widget.setClicado('gasolina');
-      //     setState(() {});
-      //     },
-      //     child: Padding(
-      //       padding: const EdgeInsets.symmetric(horizontal: 5),
-      //         child: Container(
-      //           alignment: Alignment.center,
-      //           height: MediaQuery.of(context).size.width * 0.12,
-      //           padding: const EdgeInsets.symmetric(horizontal: 8),
-      //           decoration: BoxDecoration(
-      //             color: getClicadoBoxColor('gasolina'),
-      //             border: Border.all(color: Colors.blue),
-      //             borderRadius: BorderRadius.circular(8),
-      //           ),
-      //           child: getGasolinaIconColor(),
-      //       ),
-      //     )
-      //   ),
-      //   GestureDetector(
-      //       onTap: (){
-      //         widget.setClicado('comida');
-      //         setState(() {});
-      //       },
-      //       child: Padding(
-      //         padding: const EdgeInsets.symmetric(horizontal: 5),
-      //         child: Container(
-      //           alignment: Alignment.center,
-      //           height: MediaQuery.of(context).size.width * 0.12,
-      //           padding: const EdgeInsets.symmetric(horizontal: 8),
-      //           decoration: BoxDecoration(
-      //             color: getClicadoBoxColor('comida'),
-      //             border: Border.all(color: Colors.blue),
-      //             borderRadius: BorderRadius.circular(8),
-      //           ),
-      //           child: getComidaIconColor(),
-      //         ),
-      //       )
-      //   ),
-      //   GestureDetector(
-      //       onTap: (){
-      //         widget.setClicado('gasto');
-      //         setState(() {});
-      //       },
-      //       child: Padding(
-      //         padding: const EdgeInsets.symmetric(horizontal: 5),
-      //         child: Container(
-      //           alignment: Alignment.center,
-      //           height: MediaQuery.of(context).size.width * 0.12,
-      //           padding: const EdgeInsets.symmetric(horizontal: 8),
-      //           decoration: BoxDecoration(
-      //             color: getClicadoBoxColor('gasto'),
-      //             border: Border.all(color: Colors.blue),
-      //             borderRadius: BorderRadius.circular(8),
-      //           ),
-      //           child: getGastoIconColor(),
-      //         ),
-      //       )
-      //   ),
-      // ],
     );
   }
 
@@ -225,7 +162,7 @@ class _CardTagsState extends State<CardTags>{
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+    return Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
         child: getTags());
   }
 }

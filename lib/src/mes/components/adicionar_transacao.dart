@@ -20,7 +20,7 @@ class AdicionarTransacaoModal extends StatefulWidget {
 
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   TagHelper tagHelper = TagHelper();
-  var amountController = new MoneyMaskedTextController();
+  var amountController = new MoneyMaskedTextController(leftSymbol: 'R\$');
   TextEditingController descriptionController = TextEditingController();
   String? _clicado;
   bool? _isIncome;
@@ -72,52 +72,55 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    // amountController = TextEditingController();
-    // categoryController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    // amountController.dispose();
-    // categoryController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Adicionar Transação', style: Theme.of(context).textTheme.titleLarge),
-          TextFormField(
-            controller: amountController,
-            keyboardType: TextInputType.number,
-            // inputFormatters: <TextInputFormatter>[
-            //   FilteringTextInputFormatter.digitsOnly
-            // ],
-          ),
-          TextField(
-            controller: descriptionController,
-            keyboardType: TextInputType.text,
-            decoration: const InputDecoration(labelText: 'Descrição'),
-          ),
-          const SizedBox(height: 8.0),
-          const Text('Categoria'),
-          CardTags(setClicado, getClicado),
-          const SizedBox(height: 14.0),
-          EntradaSaida(setIsIncome, getIsIncome),
-          const SizedBox(height: 10.0),
-          ElevatedButton(
-            onPressed: () {
-              adicionarTransacao();
-            },
-            child: const Text('Salvar'),
-          ),
-        ],
+      padding: const EdgeInsets.all(20.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: Text('Adicionar Transação', style: Theme.of(context).textTheme.titleLarge),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: TextFormField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    )
+                )
+            ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+              child: TextFormField(
+                controller: descriptionController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                    labelText: 'Descrição',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    )
+                ),
+              ),
+            ),
+            const Text('Categoria'),
+            CardTags(setClicado, getClicado),
+            const SizedBox(height: 10.0),
+            EntradaSaida(setIsIncome, getIsIncome),
+            const SizedBox(height: 10.0),
+            ElevatedButton(
+              onPressed: () {
+                adicionarTransacao();
+              },
+              child: const Text('Salvar'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -225,7 +225,7 @@ Widget _buildSaldoContainer(){
     left: 16.0,
     child: Container(
       decoration: BoxDecoration(
-        color: const Color(0x502196F3),
+        color: const Color(0xB02196F3),
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(color: Colors.blue, width: 1.0),
         boxShadow: const [
@@ -238,25 +238,7 @@ Widget _buildSaldoContainer(){
       ),
       // height: 50.0,
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.trending_up,
-            color: Colors.green,
-          ),
-          const SizedBox(width: 8.0),
-          getGastosPositivos(),
-          const SizedBox(width: 8.0),
-          const Icon(
-            Icons.trending_down,
-            color: Colors.red,
-          ),
-          const SizedBox(width: 8.0),
-          getGastosNegativos(),
-        ],
-      ),
+      child: getSaldoTexto(),
       ) //getSaldoTexto(),
     );
 }

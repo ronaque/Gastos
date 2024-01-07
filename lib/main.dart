@@ -7,7 +7,12 @@ import 'package:gastos/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(home: const MyApp(), theme: AppTheme().getAppTheme()));
+  runApp(MaterialApp(
+    home: const MyApp(),
+    theme: AppTheme().getAppTheme(),
+    debugShowCheckedModeBanner: false,
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: '/home', // Defina a tela de login como rota inicial
       routes: {
         '/home': (context) => const Home(),

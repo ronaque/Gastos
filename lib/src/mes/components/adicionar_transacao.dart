@@ -31,7 +31,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       Alerta('Informe um valor').show(context);
       return null;
     }
-    double amount = double.tryParse(amountController.text) ?? 0.0;
+    double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
     if (getIsIncome() == null){
       Alerta('Informe se é entrada ou saída').show(context);
       return null;

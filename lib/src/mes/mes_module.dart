@@ -150,23 +150,20 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
     child: ListView(
       children: gastos.map((transaction) {
         return Container(
-          // margin: const EdgeInsets.all(8.0),
           padding: const EdgeInsets.all(18.0),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 2)),
-
           ),
           child: Row(
             children: [
               Expanded(
-                flex: 4,
+                flex: 3,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(width: 8.0),
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           '${transaction.data!.day}',
@@ -187,9 +184,8 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
                   ],
                 ),
               ),
-              const SizedBox(width: 12.0),
               Expanded(
-                flex: 3,
+                flex: 4,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Text(
@@ -203,11 +199,14 @@ Widget _buildTransactionListView(List<Gasto> gastos) {
               const SizedBox(width: 12.0),
               Expanded(
                 flex: 3,
-                child: Text(
-                  'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
-                  style: TextStyle(
-                    color: transaction.quantidade! < 0 ? Colors.red : Colors.green,
-                    fontSize: 17.0,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: transaction.quantidade! < 0 ? Colors.red : Colors.green,
+                      fontSize: 17.0,
+                    ),
                   ),
                 ),
               ),

@@ -136,89 +136,9 @@ Widget buildEmptyState() {
   );
 }
 
-Widget buildTransactionList(List<Gasto> transactions) {
-  return Stack(
-    children: [
-      _buildTransactionListView(transactions),
-      _buildSaldoContainer(),
-    ],
-  );
-}
 
-Widget _buildTransactionListView(List<Gasto> gastos) {
-  return Expanded(
-    child: ListView(
-      children: gastos.map((transaction) {
-        return Container(
-          padding: const EdgeInsets.all(18.0),
-          decoration: const BoxDecoration(
-            border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 2)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(width: 8.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${transaction.data!.day}',
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                          ),
-                        ),
-                        Text(
-                          '${retornarMesAbreviado(transaction.data!.month)}',
-                          style: const TextStyle(
-                            fontSize: 10.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 12.0),
-                    getCategoryTextOrIcon(transaction.tag!),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Text(
-                    '${transaction.descricao}',
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                    )
-                  ),
-                )
-              ),
-              const SizedBox(width: 12.0),
-              Expanded(
-                flex: 3,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Text(
-                    'R\$${transaction.quantidade?.abs().toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: transaction.quantidade! < 0 ? Colors.red : Colors.green,
-                      fontSize: 17.0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    ),
-  );
-}
 
-Widget _buildSaldoContainer(){
+Widget buildSaldoContainer(){
   return Positioned(
     bottom: 16.0,
     left: 16.0,

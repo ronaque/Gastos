@@ -127,4 +127,18 @@ class GastoHelper{
     }
   }
 
+  Future<void> removerGastoPorId(int gastoId) async {
+    try {
+      Database? db = await database;
+
+      await db?.delete(
+        'gastos',
+        where: 'id = ?',
+        whereArgs: [gastoId],
+      );
+    } catch (e) {
+      print('Erro ao remover gasto por ID: $e');
+    }
+  }
+
 }

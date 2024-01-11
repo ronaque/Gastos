@@ -136,6 +136,7 @@ class _MesState extends State<Mes> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        excluirGasto(gastos[index], context);
                                         print('Excluir');
                                       },
                                       child: const Padding(

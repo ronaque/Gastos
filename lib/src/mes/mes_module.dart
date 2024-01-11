@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
+import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/data_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
@@ -160,4 +161,21 @@ Widget buildSaldoContainer(){
       child: getSaldoTexto(),
       ) //getSaldoTexto(),
     );
+}
+
+Future<void> excluirGasto(Gasto gasto, BuildContext context) async {
+  var alerta = await const Alerta(
+    text: 'Deseja excluir o gasto?',
+    action: 'Sim',
+    cancel: 'Cancelar',
+  ).show(context);
+
+  GastoHelper gastoHelper = GastoHelper();
+  if (alerta) {
+    await gastoHelper.removerGastoPorId(gasto.id!);
+    print("Excluindo gasto");
+  }
+  else {
+    print("Não excluindo gasto");
+  }
 }

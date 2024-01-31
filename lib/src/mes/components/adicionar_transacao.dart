@@ -27,13 +27,14 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 
   void adicionarTransacao() async {
     GastoHelper gastoHelper = GastoHelper();
+
     if (amountController.text.isEmpty) {
-      Alerta('Informe um valor').show(context);
+      Alerta(text: 'Informe um valor').show(context);
       return null;
     }
     double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
     if (getIsIncome() == null){
-      Alerta('Informe se é entrada ou saída').show(context);
+      Alerta(text: 'Informe se é entrada ou saída').show(context);
       return null;
     }
     if (getIsIncome() == false) {
@@ -45,7 +46,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     Tag? tag = await tagHelper.getTagByNome(category);
     if (tag == null) {
       // Fazer um alerta para o usuário informando que deve escolher uma tag
-      Alerta('Escolha uma categoria').show(context);
+      Alerta(text: 'Escolha uma categoria').show(context);
       return null;
     }
 

@@ -2,40 +2,78 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Alerta extends StatelessWidget{
-  final String text;
+  final String? text;
+  final String? action;
+  final String? cancel;
 
-  const Alerta(this.text, {super.key});
+  const Alerta({super.key, this.text, this.action, this.cancel});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Alerta!'),
-      content: Text(text),
+      content: text != null ? Text(text!) : Text('Nada a alertar'),
       actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.blue),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text('Ok'),
-          )
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            cancel != null
+              ? TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(cancel!, style: const TextStyle(color: Colors.red)),
+                )
+            )
+              : Container(),
+              action != null
+              ? TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(action!),
+                  )
+              )
+              :TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text('Ok'),
+                )
+              ),
+          ]
         ),
       ],
     );
   }
 
-  void show(BuildContext context) {
-    showDialog(
+  Future<bool> show(BuildContext context) async {
+    bool? comfirmado = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return this;
       },
     );
+
+    return comfirmado ?? false;
   }
 
 }

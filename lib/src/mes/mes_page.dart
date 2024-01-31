@@ -208,11 +208,11 @@ class _MesState extends State<Mes> {
                 Expanded(
                     flex: 3,
                     child: FloatingActionButton(
-                  onPressed: () {
-                    adicionarTransacao(mesCubit, data, context);
-                  },
-                  backgroundColor: const Color(0xB02196F3),
-                  child: const Icon(Icons.add),
+                      onPressed: () {
+                        adicionarTransacao(mesCubit, data, context);
+                      },
+                      backgroundColor: const Color(0xB02196F3),
+                      child: const Icon(Icons.add),
                 )
                 ),
               ],

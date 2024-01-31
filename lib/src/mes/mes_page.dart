@@ -49,7 +49,7 @@ class _MesState extends State<Mes> {
             return GestureDetector(
                 onTap: () {
                   for (int i = 0; i < toggled!.length; i++) {
-                    if (i != index){
+                    if (i != index) {
                       toggled?[i] = false;
                     } else {
                       toggled?[i] = !toggled![i];
@@ -67,35 +67,39 @@ class _MesState extends State<Mes> {
                     children: [
                       Expanded(
                         flex: 3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(width: 8.0),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${gastos[index].data!.day}',
-                                  style: const TextStyle(
-                                    fontSize: 14.0,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(width: 8.0),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${gastos[index].data!.day}',
+                                    style: const TextStyle(
+                                      fontSize: 14.0,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${retornarMesAbreviado(gastos[index].data!.month)}',
-                                  style: const TextStyle(
-                                    fontSize: 10.0,
+                                  Text(
+                                    '${retornarMesAbreviado(gastos[index].data!.month)}',
+                                    style: const TextStyle(
+                                      fontSize: 10.0,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 12.0),
-                            getCategoryTextOrIcon(gastos[index].tag!),
-                          ],
+                                ],
+                              ),
+                              const SizedBox(width: 12.0),
+                              getCategoryTextOrIcon(gastos[index].tag!),
+                            ],
+                          ),
                         ),
                       ),
                       Expanded(
                           flex: 4,
                           child: SingleChildScrollView(
+                            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                             scrollDirection: Axis.horizontal,
                             child: Text(
                                 '${gastos[index].descricao}',
@@ -167,8 +171,9 @@ class _MesState extends State<Mes> {
       },
     );
     var listGastos = await gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data));
+    toggled = List.generate(listGastos!.length, (index) => false);
     setState(() {
-      transactionsList = buildTransactionList(listGastos!);
+      transactionsList = buildTransactionList(listGastos);
     });
   }
 

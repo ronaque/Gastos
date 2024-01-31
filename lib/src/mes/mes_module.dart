@@ -32,7 +32,7 @@ Widget getSaldoTexto() {
     builder: (context, AsyncSnapshot<double> snapshot) {
       if (snapshot.hasData) {
         return Text(
-          'Saldo: \$${snapshot.data}',
+          'Saldo: \$${snapshot.data?.toStringAsFixed(2)}',
           style: const TextStyle(color: Colors.white),
         );
       } else {
@@ -136,8 +136,6 @@ Widget buildEmptyState() {
     ],
   );
 }
-
-
 
 Widget buildSaldoContainer(){
   return Positioned(

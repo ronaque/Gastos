@@ -101,6 +101,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
               child: TextFormField(
                 controller: descriptionController,
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
                     labelText: 'Descrição',
                     border: OutlineInputBorder(

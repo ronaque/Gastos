@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
+import 'package:gastos/src/mes/blocs/mes_cubit.dart';
+import 'package:gastos/src/mes/components/adicionar_transacao.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/data_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
@@ -141,27 +143,21 @@ Widget buildSaldoContainer(){
   return Positioned(
     bottom: 16.0,
     left: 16.0,
-    child: Container(
-      decoration: BoxDecoration(
-        color: const Color(0xB02196F3),
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.blue, width: 1.0),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x019E9E9E),
-            offset: Offset(0, 2),
-            blurRadius: 6.0,
-          ),
-        ],
-      ),
-      // height: 50.0,
-      padding: const EdgeInsets.all(16.0),
-      child: getSaldoTexto(),
-      ) //getSaldoTexto(),
+    child: Container(),
     );
 }
 
-Future<void> excluirGasto(Gasto gasto, BuildContext context) async {
+void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) async {
+  await showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return const AdicionarTransacaoModal();
+    },
+  );
+  mesCubit.changeGastos(data);
+}
+
+Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
   var alerta = await const Alerta(
     text: 'Deseja excluir o gasto?',
     action: 'Sim',
@@ -176,4 +172,6 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context) async {
   else {
     print("Não excluindo gasto");
   }
+
+  mesCubit.changeGastos(data);
 }

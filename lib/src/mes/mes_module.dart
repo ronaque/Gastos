@@ -3,47 +3,16 @@ import 'package:gastos/globals.dart';
 import 'package:gastos/src/mes/blocs/mes_cubit.dart';
 import 'package:gastos/src/mes/components/adicionar_transacao.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
-import 'package:gastos/src/shared/data_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gastos/src/shared/saldo_utils.dart';
 import 'package:intl/intl.dart';
 
-Future<double> getSalario() async {
-  GastoHelper gastoHelper = GastoHelper();
-  final prefs = await SharedPreferences.getInstance();
-
-  List<Gasto> gastos = await gastoHelper.getAllGastos();
-  double gastosTotal = 0;
-  for (int i = 0; i < gastos.length; i++) {
-    gastosTotal += gastos[i].quantidade!;
-  }
-  double? salarioSalvo = prefs.getDouble('salario');
-  if (salarioSalvo == null) {
-    prefs.setDouble('salario', 0);
-    return 0 + gastosTotal;
-  } else {
-    return salarioSalvo + gastosTotal;
-  }
-}
-
-Widget getSaldoTexto() {
-  return FutureBuilder(
-    future: getSalario(),
-    builder: (context, AsyncSnapshot<double> snapshot) {
-      if (snapshot.hasData) {
-        return Text(
-          'Saldo: \$${snapshot.data?.toStringAsFixed(2)}',
-          style: const TextStyle(color: Colors.white),
-        );
-      } else {
-        return const Text(
-          'Saldo: \$0.0',
-          style: TextStyle(color: Colors.white),
-        );
-      }
-    },
+Widget getSaldoTexto(double saldo) {
+  return Text(
+    'Saldo: \$${saldo.toStringAsFixed(2)}',
+    style: const TextStyle(color: Colors.white),
   );
 }
 
@@ -60,7 +29,7 @@ Widget getCategoryTextOrIcon(Tag tag) {
   }
   return Text(
     category,
-    style: TextStyle(
+    style: const TextStyle(
       color: Colors.black,
       fontSize: 16.0,
       fontWeight: FontWeight.bold,
@@ -139,14 +108,6 @@ Widget buildEmptyState() {
   );
 }
 
-Widget buildSaldoContainer(){
-  return Positioned(
-    bottom: 16.0,
-    left: 16.0,
-    child: Container(),
-    );
-}
-
 void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) async {
   await showModalBottomSheet(
     context: context,
@@ -155,6 +116,7 @@ void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) 
     },
   );
   mesCubit.changeGastos(data);
+  mesCubit.changeSaldo(data);
 }
 
 Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {

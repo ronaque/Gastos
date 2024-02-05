@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:gastos/globals.dart';
+import 'package:gastos/src/shared/saldo_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int globalIndex = 0;
@@ -19,6 +21,7 @@ void _salarioChange(String value) {
     value = '0';
   } else {
     value = value.replaceAll(RegExp(r'[R\$]'), '');
+    value = value.replaceAll(RegExp(r'[,]'), '.');
   }
   print('salario: $value');
   saveSalario(value);
@@ -54,6 +57,16 @@ Future<String> getSalario() async {
   return 'R\$$salarioSalvoString';
 }
 
+Future<double> getSalarioDouble() async {
+  final prefs = await SharedPreferences.getInstance();
+  double? salarioSalvo = prefs.getDouble('salario');
+  if (salarioSalvo == null) {
+    return 0;
+  }
+
+  return salarioSalvo;
+}
+
 Future<String> getNome() async {
   final prefs = await SharedPreferences.getInstance();
   String? nomeSalvo = prefs.getString('nome');
@@ -71,7 +84,11 @@ Widget getSalarioTextField() {
       if (snapshot.hasData) {
         if (snapshot.data!.isEmpty) {
           return TextField(
-            onChanged: (value) => _nomeChange(value),
+            controller: MoneyMaskedTextController(
+                leftSymbol: 'R\$',
+                initialValue: 0.0
+            ),
+            onChanged: (value) => _salarioChange(value),
             keyboardType: TextInputType.name,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -80,14 +97,22 @@ Widget getSalarioTextField() {
           );
         }
         return TextFormField(
-          initialValue: snapshot.data,
+          // initialValue: snapshot.data,
+          controller: MoneyMaskedTextController(
+              leftSymbol: 'R\$',
+              initialValue: double.parse(snapshot.data!.replaceAll(RegExp(r'[R\$]'), ''))
+          ),
           onChanged: (value) => _salarioChange(value),
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       } else {
         return TextField(
-          onChanged: (value) => _nomeChange(value),
+          controller: MoneyMaskedTextController(
+              leftSymbol: 'R\$',
+              initialValue: 0.0
+          ),
+          onChanged: (value) => _salarioChange(value),
           keyboardType: TextInputType.name,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

@@ -5,6 +5,7 @@ import 'package:gastos/src/mes/mes_page.dart';
 import 'package:gastos/src/perfil/perfil_page.dart';
 import 'package:gastos/src/resumo/resumo_page.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
+import 'package:gastos/src/shared/saldo_utils.dart';
 import 'home_module.dart';
 
 class Home extends StatefulWidget {
@@ -23,6 +24,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      atualizarSaldoNovoMes();
       var resultImage = await loadImage(_imageFile, image);
       setState(() {
         image = resultImage;

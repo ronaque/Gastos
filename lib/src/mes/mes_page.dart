@@ -44,9 +44,7 @@ class _MesState extends State<Mes> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                           onTap: () {
-                            print('state ${state.index_open}');
                             mesCubit.checkIndex(index);
-                            print('state ${state.index_open}');
                           },
                           child: Container(
                             padding: const EdgeInsets.all(18.0),
@@ -167,6 +165,7 @@ class _MesState extends State<Mes> {
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
+                    // Saldo
                     Expanded(
                       flex: 7,
                       child: Row(
@@ -191,6 +190,8 @@ class _MesState extends State<Mes> {
                         ],
                       )
                     ),
+
+                    // Adicionar Transação
                     Expanded(
                         flex: 3,
                         child: FloatingActionButton(

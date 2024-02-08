@@ -136,4 +136,5 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, 
   }
 
   mesCubit.changeGastos(data);
+  mesCubit.changeSaldo(data);
 }

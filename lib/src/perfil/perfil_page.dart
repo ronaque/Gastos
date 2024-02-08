@@ -25,30 +25,16 @@ class _PerfilState extends State<Perfil> {
   final TextEditingController _tagController = TextEditingController();
   File? _imageFile;
   Image? image;
-  double salarioAntigo = 0;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      salarioAntigo = await getSalarioDouble();
       var resultImage = await loadImage(_imageFile, image);
       setState(() {
         image = resultImage;
       });
     });
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      double novoSalario = await getSalarioDouble();
-      if (salarioAntigo != novoSalario) {
-        atualizarSaldo(novoSalario - salarioAntigo);
-      }
-    });
-
-    super.dispose();
   }
 
   Future<void> _selecionarImagem() async {

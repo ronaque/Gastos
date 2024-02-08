@@ -28,25 +28,21 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   TextEditingController parcelasController = TextEditingController();
   String? _tagclicada;
   bool? _isIncome;
+  OverlayEntry? overlayEntry;
+  GlobalKey valorkey = GlobalKey();
   PagamentoCubit pagamentoCubit = PagamentoCubit();
   List<String> parcelas = ['2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x', '11x', '12x', '+'];
   String dropdownValue = '2x';
 
-  void adicionarTransacao(DateTime data) async {
+  Future<bool?> adicionarTransacao(DateTime data) async {
     GastoHelper gastoHelper = GastoHelper();
 
     if (amountController.text.isEmpty) {
       Alerta(text: 'Informe um valor').show(context);
-      return null;
+      return false;
     }
     double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
-    if (getIsIncome() == null){
-      Alerta(text: 'Informe se é entrada ou saída').show(context);
-      return null;
-    }
-    if (getIsIncome() == false) {
-      amount = amount * -1;
-    }
+
     String category = getClicado();
     String descricao = descriptionController.text;
 
@@ -54,7 +50,15 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     if (tag == null) {
       // Fazer um alerta para o usuário informando que deve escolher uma tag
       Alerta(text: 'Escolha uma categoria').show(context);
-      return null;
+      return false;
+    }
+
+    if (getIsIncome() == null){
+      Alerta(text: 'Informe se é entrada ou saída').show(context);
+      return false;
+    }
+    if (getIsIncome() == false) {
+      amount = amount * -1;
     }
 
     Gasto gasto = await novoGasto(data, amount, tag, descricao);
@@ -64,7 +68,22 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   }
 
   void adicionarParcelas(int numParcelas) async {
-
+    DateTime data = DateTime.now();
+    for (int i = 0; i < numParcelas; i++) {
+      if (i > 0){
+        int year = data.year;
+        int month = data.month + 1;
+        if (month > 12){
+          month = month - 12;
+          year += 1;
+        }
+        data = DateTime(year, month, 1);
+      }
+      bool? result = await adicionarTransacao(data);
+      if (result == false){
+        return null;
+      }
+    }
   }
 
   bool? getIsIncome(){
@@ -93,11 +112,9 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
           child: SingleChildScrollView(
               child: Column(
                 children: [
-                  state.pagamento != -1 ? Column(
+                  state.pagamento != -1 && state.pagamento != 2 ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        state.pagamento == 2 ? Text('Funcionalidade de Assinatura ainda não implementada', style: Theme.of(context).textTheme.titleLarge) : Container(),
-
                         // Titulo
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -108,13 +125,18 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                           child: TextFormField(
-                              controller: amountController,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  )
-                              )
+                            key: valorkey,
+                            onTap: () {
+                              _showOverlay(context, text: 'Informe o valor de cada parcela');
+                            },
+                            controller: amountController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                                suffixIcon: Icon(Icons.info, color: Color(0xff90CAF9)),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blue),
+                                )
+                            )
                           ),
                         ),
 
@@ -296,6 +318,46 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
         );
       }
     );
+  }
+
+  void _showOverlay(BuildContext context, {required String text}) {
+    RenderBox renderBox = valorkey.currentContext?.findRenderObject() as RenderBox;
+    Offset offset = renderBox.localToGlobal(Offset.zero);
+    print("dx dy ${offset.dx} ${offset.dy}");
+    OverlayEntry newOverlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: offset.dy + 13,
+        left: offset.dx,
+        width: MediaQuery.of(context).size.width,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            alignment: Alignment.center,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Color(0xF590CAF9),
+              ),
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.white, fontSize: 12.0),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlayEntry?.remove();
+    overlayEntry = newOverlayEntry;
+
+    Overlay.of(context)?.insert(overlayEntry!);
+
+    // Remove the overlay after a certain duration
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry?.remove();
+    });
   }
 }
 

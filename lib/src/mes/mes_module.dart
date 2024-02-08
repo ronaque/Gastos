@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
 import 'package:gastos/src/mes/blocs/mes_cubit.dart';
-import 'package:gastos/src/mes/components/adicionar_transacao.dart';
+import 'package:gastos/src/pagamento/pagamento_page.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';

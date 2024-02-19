@@ -63,8 +63,12 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 
     Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
     await gastoHelper.insertGasto(gasto);
+    print('Gasto inserido com sucesso: ${gasto.toString()}');
 
-    Navigator.pop(context);
+    if (mode == 0)
+      Navigator.pop(context);
+
+    return true;
   }
 
   void adicionarParcelas(int numParcelas) async {
@@ -84,6 +88,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
         return null;
       }
     }
+    Navigator.pop(context);
   }
 
   bool? getIsIncome(){

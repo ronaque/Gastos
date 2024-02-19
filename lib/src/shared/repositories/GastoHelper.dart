@@ -143,6 +143,23 @@ class GastoHelper{
     return Gasto.fromMap(result[0]);
   }
 
+  Future<bool> atualizarGasto(Gasto gasto) async {
+    try {
+      Database? db = await database;
+
+      await db?.update(
+        'gastos',
+        gasto.toMap(), // Utiliza o método toMap() da classe Gasto para obter um Map com os valores atualizados
+        where: 'id = ?',
+        whereArgs: [gasto.id],
+      );
+      return true;
+    } catch (e) {
+      print('Erro ao atualizar gasto: $e');
+      return false;
+    }
+  }
+
   Future<void> removerGastoPorId(int gastoId) async {
     try {
       Database? db = await database;

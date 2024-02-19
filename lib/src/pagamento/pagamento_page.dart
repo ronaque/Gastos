@@ -34,7 +34,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   List<String> parcelas = ['2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x', '11x', '12x', '+'];
   String dropdownValue = '2x';
 
-  Future<bool?> adicionarTransacao(DateTime data) async {
+  Future<bool?> adicionarTransacao(DateTime data, int mode, int parcelas) async {
     GastoHelper gastoHelper = GastoHelper();
 
     if (amountController.text.isEmpty) {
@@ -61,7 +61,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       amount = amount * -1;
     }
 
-    Gasto gasto = await novoGasto(data, amount, tag, descricao);
+    Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
     await gastoHelper.insertGasto(gasto);
 
     Navigator.pop(context);
@@ -79,7 +79,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
         }
         data = DateTime(year, month, 1);
       }
-      bool? result = await adicionarTransacao(data);
+      bool? result = await adicionarTransacao(data, 1, i + 1);
       if (result == false){
         return null;
       }
@@ -127,7 +127,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                           child: TextFormField(
                             key: valorkey,
                             onTap: () {
-                              _showOverlay(context, text: 'Informe o valor de cada parcela');
+                              state.pagamento == 1 ? _showOverlay(context, text: 'Informe o valor de cada parcela') : null;
                             },
                             controller: amountController,
                             keyboardType: TextInputType.number,
@@ -226,7 +226,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                         // Botão Salvar
                         ElevatedButton(
                           onPressed: () {
-                            state.pagamento == 0 ? adicionarTransacao(DateTime.now()) : null;
+                            state.pagamento == 0 ? adicionarTransacao(DateTime.now(), 0, 0) : null;
                             state.pagamento == 1 ? adicionarParcelas(state.parcelas) : null;
                           },
                           child: const Text('Salvar'),

@@ -104,7 +104,24 @@ class _MesState extends State<Mes> {
                                       children: [
                                         SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
-                                          child: Text(
+                                          child: state.gastos[index].mode == 1 ? Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'R\$${state.gastos[index].quantidade?.abs().toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  color: state.gastos[index].quantidade! < 0 ? Colors.red : Colors.green,
+                                                  fontSize: 17.0,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${state.gastos[index].parcelas}x',
+                                                style: const TextStyle(
+                                                  fontSize: 11.0,
+                                                ),
+                                              ),
+                                            ],
+                                          ) : Text(
                                             'R\$${state.gastos[index].quantidade?.abs().toStringAsFixed(2)}',
                                             style: TextStyle(
                                               color: state.gastos[index].quantidade! < 0 ? Colors.red : Colors.green,

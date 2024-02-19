@@ -51,8 +51,10 @@ class _MesState extends State<Mes> {
                             decoration: const BoxDecoration(
                               border: BorderDirectional(bottom: BorderSide(color: Color(0xfffefefe), width: 2)),
                             ),
+                            // Transações
                             child: Row(
                               children: [
+                                // -- Data + Tag
                                 Expanded(
                                   flex: 3,
                                   child: SingleChildScrollView(
@@ -84,6 +86,7 @@ class _MesState extends State<Mes> {
                                     ),
                                   ),
                                 ),
+                                // -- Descrição
                                 Expanded(
                                     flex: 4,
                                     child: SingleChildScrollView(
@@ -98,6 +101,7 @@ class _MesState extends State<Mes> {
                                     )
                                 ),
                                 const SizedBox(width: 12.0),
+                                // -- Valor
                                 Expanded(
                                     flex: 3,
                                     child: Column (
@@ -167,7 +171,7 @@ class _MesState extends State<Mes> {
                 ),
             ),
 
-              // BottomBar
+              // -- BottomBar
               Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -182,7 +186,7 @@ class _MesState extends State<Mes> {
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
-                    // Saldo
+                    // -- Saldo
                     Expanded(
                       flex: 7,
                       child: Row(
@@ -208,12 +212,14 @@ class _MesState extends State<Mes> {
                       )
                     ),
 
-                    // Adicionar Transação
+                    // -- Adicionar Transação
                     Expanded(
                         flex: 3,
                         child: FloatingActionButton(
                           onPressed: () {
                             adicionarTransacao(mesCubit, data, context);
+                            mesCubit.changeGastos(data);
+                            mesCubit.changeSaldo(data);
                           },
                           backgroundColor: const Color(0xB02196F3),
                           child: const Icon(Icons.add),

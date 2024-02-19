@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
 import 'package:gastos/src/mes/blocs/mes_cubit.dart';
+import 'package:gastos/src/pagamento/editar_transacao_page.dart';
 import 'package:gastos/src/pagamento/pagamento_page.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
+import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
@@ -119,33 +121,15 @@ void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) 
   mesCubit.changeSaldo(data);
 }
 
-Future<List<Gasto>> listarParcelasGastos(Gasto gasto) async {
-  GastoHelper gastoHelper = GastoHelper();
-  List<Gasto> lista_parcelas_gastos = [gasto];
-  Gasto? gasto_atual = gasto;
-  while (true) {
-    DateTime data = gasto_atual!.data!;
-    int parcelas = gasto_atual.parcelas! + 1;
-    int year = data.year;
-    int month = data.month + 1;
-    if (month > 12){
-      month = month - 12;
-      year += 1;
-    }
-    data = DateTime(year, month, 1);
-
-    List<Gasto>? lista_marco = await gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data));
-    gasto_atual = await gastoHelper.getGastosByDataAndTagAndDescricaoAndQuantidadeAndParcelas(DateFormat('y').format(data), DateFormat('MM').format(data),
-        DateFormat('dd').format(data), gasto.tag!.id!, gasto.descricao!, gasto.quantidade!, parcelas);
-    if (gasto_atual == null) {
-      break;
-    } else {
-      lista_parcelas_gastos.add(gasto_atual);
-    }
-    // break;
-  }
-
-  return lista_parcelas_gastos;
+void editarTransacao(Gasto gasto, MesCubit mesCubit, DateTime data, BuildContext context) async {
+  await showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return EditarTransacaoModal(gasto);
+    },
+  );
+  mesCubit.changeGastos(data);
+  mesCubit.changeSaldo(data);
 }
 
 Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {

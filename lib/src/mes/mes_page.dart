@@ -106,6 +106,7 @@ class _MesState extends State<Mes> {
                                     flex: 3,
                                     child: Column (
                                       children: [
+                                        // -- Valor Texto
                                         SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: state.gastos[index].mode == 1 ? Column(
@@ -133,6 +134,8 @@ class _MesState extends State<Mes> {
                                             ),
                                           ),
                                         ),
+
+                                        // -- Editar/excluir
                                         index == state.index_open ? Padding(
                                           padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                                           child: Row(
@@ -140,6 +143,7 @@ class _MesState extends State<Mes> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
+                                                  editarTransacao(state.gastos[index], mesCubit, data, context);
                                                   print('Editar');
                                                 },
                                                 child: Container(
@@ -218,8 +222,8 @@ class _MesState extends State<Mes> {
                         child: FloatingActionButton(
                           onPressed: () {
                             adicionarTransacao(mesCubit, data, context);
-                            mesCubit.changeGastos(data);
-                            mesCubit.changeSaldo(data);
+                            // mesCubit.changeGastos(data);
+                            // mesCubit.changeSaldo(data);
                           },
                           backgroundColor: const Color(0xB02196F3),
                           child: const Icon(Icons.add),

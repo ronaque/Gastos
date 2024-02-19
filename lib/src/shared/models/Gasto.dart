@@ -34,5 +34,11 @@ class Gasto {
     mode = map['mode'];
     parcelas = map['parcelas'];
   }
+
+  @override
+  String toString() {
+    return 'Gasto{id: $id, data: $data, quantidade: $quantidade, tag: ${tag.toString()}, descricao: $descricao, mode: $mode, parcelas: $parcelas}';
+  }
+
 }
 

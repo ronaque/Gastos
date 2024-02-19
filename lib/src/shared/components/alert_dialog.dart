@@ -26,7 +26,7 @@ class Alerta extends StatelessWidget{
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(cancel!, style: const TextStyle(color: Colors.red)),
                 )
@@ -41,7 +41,7 @@ class Alerta extends StatelessWidget{
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(action!),
                   )

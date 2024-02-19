@@ -119,22 +119,75 @@ void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) 
   mesCubit.changeSaldo(data);
 }
 
-Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
-  var alerta = await const Alerta(
-    text: 'Deseja excluir o gasto?',
-    action: 'Sim',
-    cancel: 'Cancelar',
-  ).show(context);
-
+Future<List<Gasto>> listarParcelasGastos(Gasto gasto) async {
   GastoHelper gastoHelper = GastoHelper();
-  if (alerta) {
-    await gastoHelper.removerGastoPorId(gasto.id!);
-    print("Excluindo gasto");
-  }
-  else {
-    print("Não excluindo gasto");
+  List<Gasto> lista_parcelas_gastos = [gasto];
+  Gasto? gasto_atual = gasto;
+  while (true) {
+    DateTime data = gasto_atual!.data!;
+    int parcelas = gasto_atual.parcelas! + 1;
+    int year = data.year;
+    int month = data.month + 1;
+    if (month > 12){
+      month = month - 12;
+      year += 1;
+    }
+    data = DateTime(year, month, 1);
+
+    List<Gasto>? lista_marco = await gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data));
+    gasto_atual = await gastoHelper.getGastosByDataAndTagAndDescricaoAndQuantidadeAndParcelas(DateFormat('y').format(data), DateFormat('MM').format(data),
+        DateFormat('dd').format(data), gasto.tag!.id!, gasto.descricao!, gasto.quantidade!, parcelas);
+    if (gasto_atual == null) {
+      break;
+    } else {
+      lista_parcelas_gastos.add(gasto_atual);
+    }
+    // break;
   }
 
-  mesCubit.changeGastos(data);
-  mesCubit.changeSaldo(data);
+  return lista_parcelas_gastos;
+}
+
+Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
+  if (gasto.mode == 1) {
+    var alerta = await const Alerta(
+      text: 'Deseja excluir o gasto?\nIsso excluirá todas as parcelas seguintes.',
+      action: 'Sim',
+      cancel: 'Cancelar',
+    ).show(context);
+
+    GastoHelper gastoHelper = GastoHelper();
+    if (alerta) {
+      List<Gasto> list_parcelas_gastos = await listarParcelasGastos(gasto);
+      // await gastoHelper.removerGastoPorId(gasto.id!);
+      list_parcelas_gastos.forEach((gasto) async {
+        await gastoHelper.removerGastoPorId(gasto.id!);
+        print("Excluindo gasto ${gasto.toString()}");
+      });
+    }
+    else {
+      print("Não foi excluido gastos parcelados");
+    }
+
+    mesCubit.changeGastos(data);
+    mesCubit.changeSaldo(data);
+  } else {
+    var alerta = await const Alerta(
+      text: 'Deseja excluir o gasto?',
+      action: 'Sim',
+      cancel: 'Cancelar',
+    ).show(context);
+
+    GastoHelper gastoHelper = GastoHelper();
+    if (alerta) {
+      print("Excluindo gasto ${gasto.toString()}");
+      await gastoHelper.removerGastoPorId(gasto.id!);
+    }
+    else {
+      print("Não excluindo gasto");
+    }
+
+    mesCubit.changeGastos(data);
+    mesCubit.changeSaldo(data);
+  }
 }

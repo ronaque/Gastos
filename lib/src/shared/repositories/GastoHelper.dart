@@ -127,6 +127,22 @@ class GastoHelper{
     }
   }
 
+  Future<Gasto?> getGastosByDataAndTagAndDescricaoAndQuantidadeAndParcelas(String ano, String mes, String dia, int tagId, String descricao, double quantidade, int parcelas) async {
+    Database? db = await database;
+
+    List<Map<String, Object?>>? result = await db?.query(
+      'gastos',
+      where: 'strftime("%Y", data) = ? AND strftime("%m", data) = ? AND strftime("%d", data) = ? AND tag_id = ? AND descricao = ? AND quantidade = ? AND parcelas = ?',
+      whereArgs: [ano, mes, dia, tagId, descricao, quantidade, parcelas],
+    );
+
+    if (result == null || result.isEmpty) {
+      return null;
+    }
+
+    return Gasto.fromMap(result[0]);
+  }
+
   Future<void> removerGastoPorId(int gastoId) async {
     try {
       Database? db = await database;

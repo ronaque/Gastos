@@ -17,5 +17,10 @@ class Tag {
     id = map['id'] ?? 0;
     nome = map['nome'];
   }
+
+  @override
+  String toString() {
+    return 'Tag{id: $id, nome: $nome}';
+  }
 }
 

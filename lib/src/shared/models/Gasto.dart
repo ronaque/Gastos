@@ -6,8 +6,10 @@ class Gasto {
   double? quantidade;
   Tag? tag;
   String? descricao;
+  int? mode; // 0 - a vista 1 - parcelado 2 - assinatura
+  int? parcelas;
 
-  Gasto(this.id, this.data, this.quantidade, this.tag, this.descricao);
+  Gasto(this.id, this.data, this.quantidade, this.tag, this.descricao, this.mode, this.parcelas);
 
   // Converte um objeto Gasto em um Map para persistir no banco de dados
   Map<String, dynamic> toMap() {
@@ -17,6 +19,8 @@ class Gasto {
       'quantidade': quantidade,
       'tag_id': tag?.id, // Salva o ID da tag associada
       'descricao' : descricao,
+      'mode' : mode,
+      'parcelas' : parcelas
     };
   }
 
@@ -27,6 +31,8 @@ class Gasto {
     quantidade = map['quantidade'];
     tag = Tag.fromMap({'id': map['tag_id'], 'nome': map['tag_nome']});
     descricao = map['descricao'];
+    mode = map['mode'];
+    parcelas = map['parcelas'];
   }
 }
 

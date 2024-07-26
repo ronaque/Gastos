@@ -115,7 +115,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   controller: _tabController,
                   children: [
                     mes,
-                    Resumo(),
+                    const Resumo(),
                   ],
                 ),
               ),

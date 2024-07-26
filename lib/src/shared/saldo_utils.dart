@@ -1,10 +1,8 @@
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 
 Future<void> atualizarSaldo(double value) async {
   final prefs = await SharedPreferences.getInstance();

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Alerta extends StatelessWidget{
@@ -12,7 +11,7 @@ class Alerta extends StatelessWidget{
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Alerta!'),
-      content: text != null ? Text(text!) : Text('Nada a alertar'),
+      content: text != null ? Text(text!) : const Text('Nada a alertar'),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -56,7 +55,7 @@ class Alerta extends StatelessWidget{
                     border: Border.all(color: Colors.blue),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text('Ok'),
+                  child: const Text('Ok'),
                 )
               ),
           ]

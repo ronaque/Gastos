@@ -1,7 +1,7 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:gastos/globals.dart';
-import 'package:gastos/src/shared/saldo_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int globalIndex = 0;

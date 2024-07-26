@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';

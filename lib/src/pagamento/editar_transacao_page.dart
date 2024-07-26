@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:gastos/src/pagamento/blocs/pagamento_cubit.dart';
@@ -10,7 +9,6 @@ import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
 class EditarTransacaoModal extends StatefulWidget {
@@ -24,7 +22,7 @@ class EditarTransacaoModal extends StatefulWidget {
 
 class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
   TagHelper tagHelper = TagHelper();
-  var amountController = new MoneyMaskedTextController(leftSymbol: 'R\$');
+  var amountController = MoneyMaskedTextController(leftSymbol: 'R\$');
   TextEditingController descriptionController = TextEditingController();
   TextEditingController parcelasController = TextEditingController();
   String? _tagclicada;
@@ -37,17 +35,17 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
 
   @override
   void initState(){
-    amountController.updateValue(widget.gasto.quantidade!);
+    amountController.updateValue(widget.gasto.quantidade);
     descriptionController.text = widget.gasto.descricao!;
     parcelasController.text = widget.gasto.parcelas.toString();
-    _tagclicada = widget.gasto.tag!.nome;
-    _isIncome = widget.gasto.quantidade! > 0;
+    _tagclicada = widget.gasto.tag.nome;
+    _isIncome = widget.gasto.quantidade> 0;
     super.initState();
   }
 
   Future<bool?> editarTransacao(Gasto gasto) async {
     if (amountController.text.isEmpty) {
-      Alerta(text: 'Informe um valor').show(context);
+      const Alerta(text: 'Informe um valor').show(context);
       return false;
     }
     double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
@@ -58,12 +56,12 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     Tag? tag = await tagHelper.getTagByNome(category);
     if (tag == null) {
       // Fazer um alerta para o usuário informando que deve escolher uma tag
-      Alerta(text: 'Escolha uma categoria').show(context);
+      const Alerta(text: 'Escolha uma categoria').show(context);
       return false;
     }
 
     if (getIsIncome() == null){
-      Alerta(text: 'Informe se é entrada ou saída').show(context);
+      const Alerta(text: 'Informe se é entrada ou saída').show(context);
       return false;
     }
     if (getIsIncome() == false) {
@@ -75,13 +73,14 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     // Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
     bool update = await atualizarGasto(gasto);
     if (!update) {
-      Alerta(text: 'Erro ao atualizar gasto').show(context);
+      const Alerta(text: 'Erro ao atualizar gasto').show(context);
       return false;
     }
     print('Gasto atualizado com sucesso: ${gasto.toString()}');
 
-    if (widget.gasto.mode == 0)
+    if (widget.gasto.mode == 0) {
       Navigator.pop(context);
+    }
 
     return true;
   }
@@ -205,12 +204,12 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Color(0xF590CAF9),
+                color: const Color(0xF590CAF9),
               ),
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               child: Text(
                 text,
-                style: TextStyle(color: Colors.white, fontSize: 12.0),
+                style: const TextStyle(color: Colors.white, fontSize: 12.0),
               ),
             ),
           ),
@@ -221,10 +220,10 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     overlayEntry?.remove();
     overlayEntry = newOverlayEntry;
 
-    Overlay.of(context)?.insert(overlayEntry!);
+    Overlay.of(context).insert(overlayEntry!);
 
     // Remove the overlay after a certain duration
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       overlayEntry?.remove();
     });
   }

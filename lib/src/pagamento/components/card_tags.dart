@@ -162,7 +162,7 @@ class _CardTagsState extends State<CardTags>{
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+    return Padding(padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
         child: getTags());
   }
 }

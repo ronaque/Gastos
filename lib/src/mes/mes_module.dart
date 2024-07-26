@@ -8,8 +8,6 @@ import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
-import 'package:gastos/src/shared/saldo_utils.dart';
-import 'package:intl/intl.dart';
 
 Widget getSaldoTexto(double saldo) {
   return Text(
@@ -138,7 +136,6 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, 
       cancel: 'Cancelar',
     ).show(context);
 
-    GastoHelper gastoHelper = GastoHelper();
     if (alerta) {
       List<Gasto> listParcelasGastos = await listarParcelasGasto(gasto);
       listParcelasGastos.forEach((gasto) async {

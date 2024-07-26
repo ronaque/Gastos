@@ -67,13 +67,13 @@ class _MesState extends State<Mes> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${state.gastos[index].data!.day}',
+                                              '${state.gastos[index].data.day}',
                                               style: const TextStyle(
                                                 fontSize: 14.0,
                                               ),
                                             ),
                                             Text(
-                                              '${retornarMesAbreviado(state.gastos[index].data!.month)}',
+                                              retornarMesAbreviado(state.gastos[index].data.month),
                                               style: const TextStyle(
                                                 fontSize: 10.0,
                                               ),
@@ -81,7 +81,7 @@ class _MesState extends State<Mes> {
                                           ],
                                         ),
                                         const SizedBox(width: 12.0),
-                                        getCategoryTextOrIcon(state.gastos[index].tag!),
+                                        getCategoryTextOrIcon(state.gastos[index].tag),
                                       ],
                                     ),
                                   ),
@@ -113,9 +113,9 @@ class _MesState extends State<Mes> {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                'R\$${state.gastos[index].quantidade?.abs().toStringAsFixed(2)}',
+                                                'R\$${state.gastos[index].quantidade.abs().toStringAsFixed(2)}',
                                                 style: TextStyle(
-                                                  color: state.gastos[index].quantidade! < 0 ? Colors.red : Colors.green,
+                                                  color: state.gastos[index].quantidade< 0 ? Colors.red : Colors.green,
                                                   fontSize: 17.0,
                                                 ),
                                               ),
@@ -127,9 +127,9 @@ class _MesState extends State<Mes> {
                                               ),
                                             ],
                                           ) : Text(
-                                            'R\$${state.gastos[index].quantidade?.abs().toStringAsFixed(2)}',
+                                            'R\$${state.gastos[index].quantidade.abs().toStringAsFixed(2)}',
                                             style: TextStyle(
-                                              color: state.gastos[index].quantidade! < 0 ? Colors.red : Colors.green,
+                                              color: state.gastos[index].quantidade< 0 ? Colors.red : Colors.green,
                                               fontSize: 17.0,
                                             ),
                                           ),
@@ -137,7 +137,7 @@ class _MesState extends State<Mes> {
 
                                         // -- Editar/excluir
                                         index == state.index_open ? Padding(
-                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
@@ -147,8 +147,8 @@ class _MesState extends State<Mes> {
                                                   print('Editar');
                                                 },
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                                  child: Icon(Icons.edit, color: Colors.blue, size: 22.0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                  child: const Icon(Icons.edit, color: Colors.blue, size: 22.0),
                                                 ),
                                               ),
                                               GestureDetector(
@@ -187,7 +187,7 @@ class _MesState extends State<Mes> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
                     // -- Saldo
@@ -195,7 +195,7 @@ class _MesState extends State<Mes> {
                       flex: 7,
                       child: Row(
                         children: [
-                          SizedBox(width: 16.0),
+                          const SizedBox(width: 16.0),
                           Container(
                             decoration: BoxDecoration(
                               color: const Color(0xB02196F3),

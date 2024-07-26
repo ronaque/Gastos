@@ -10,7 +10,6 @@ import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 
 class AdicionarTransacaoModal extends StatefulWidget {
@@ -23,7 +22,7 @@ class AdicionarTransacaoModal extends StatefulWidget {
 
 class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   TagHelper tagHelper = TagHelper();
-  var amountController = new MoneyMaskedTextController(leftSymbol: 'R\$');
+  var amountController = MoneyMaskedTextController(leftSymbol: 'R\$');
   TextEditingController descriptionController = TextEditingController();
   TextEditingController parcelasController = TextEditingController();
   String? _tagclicada;
@@ -63,8 +62,9 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     inserirGasto(gasto);
     print('Gasto inserido com sucesso: ${gasto.toString()}');
 
-    if (mode == 0)
+    if (mode == 0) {
       Navigator.pop(context);
+    }
 
     return true;
   }
@@ -193,13 +193,13 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                                 }).toList(),
                               ),
                             ),
-                            state.parcelas == -1 || state.parcelas > 12 ? Expanded(flex: 1, child: SizedBox(width: 10.0)): Container(),
+                            state.parcelas == -1 || state.parcelas > 12 ? const Expanded(flex: 1, child: SizedBox(width: 10.0)): Container(),
                             // Parcelas > 12
                             state.parcelas == -1 || state.parcelas > 12 ? Expanded(
                               flex: 5,
                               child: TextFormField(
                                 controller: parcelasController,
-                                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
+                                keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: false),
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 decoration: const InputDecoration(
                                     contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -211,7 +211,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                                   int parcelas = int.tryParse(value) ?? -1;
                                   pagamentoCubit.changeParcelas(parcelas);
                                   if (parcelas >= 2 && parcelas <= 12) {
-                                    pagamentoCubit.changeDropdownValue('$parcelas' + 'x');
+                                    pagamentoCubit.changeDropdownValue('$parcelas' 'x');
                                   }
                                 },
                               ),
@@ -237,7 +237,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                       ],
                     ) : Container(),
 
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   // Selecionar pagamento Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -339,12 +339,12 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Color(0xF590CAF9),
+                color: const Color(0xF590CAF9),
               ),
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               child: Text(
                 text,
-                style: TextStyle(color: Colors.white, fontSize: 12.0),
+                style: const TextStyle(color: Colors.white, fontSize: 12.0),
               ),
             ),
           ),
@@ -355,10 +355,10 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     overlayEntry?.remove();
     overlayEntry = newOverlayEntry;
 
-    Overlay.of(context)?.insert(overlayEntry!);
+    Overlay.of(context).insert(overlayEntry!);
 
     // Remove the overlay after a certain duration
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       overlayEntry?.remove();
     });
   }

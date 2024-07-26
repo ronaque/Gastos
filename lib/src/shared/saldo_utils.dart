@@ -80,8 +80,10 @@ Future<void> atualizarSaldoNovoMes() async{
     }
     // Adicionar um novo pagamento ao mês atual com o valor total dos gastos
     Tag? tag = await tagHelper.getTagByNome('gasto');
-    Gasto gasto = await novoGasto(DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0);
-    await gastoHelper.insertGasto(gasto);
+    if (tag != null) {
+      Gasto gasto = await novoGasto(DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0);
+      await gastoHelper.insertGasto(gasto);
+    }
   }
 
   prefs.setString('ultimo_login', now.toString());

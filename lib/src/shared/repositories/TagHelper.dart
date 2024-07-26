@@ -19,7 +19,7 @@ class TagHelper{
 
   // Método para obter todas as tags do banco de dados
   Future<List<Tag>> getAllTags() async {
-    Database? db = await database;
+    Database db = await database;
     List<Map<String, Object?>>? maps = await db.query('tags');
     return List.generate(maps.length, (i) {
       return Tag.fromMap(maps[i]);
@@ -43,7 +43,7 @@ class TagHelper{
   }
 
   Future<Tag?> getTagByNome(String nome) async {
-    Database? db = await database;
+    Database db = await database;
 
     List<Map<String, Object?>>? result = await db.query(
       'tags',
@@ -60,7 +60,7 @@ class TagHelper{
   }
 
   Future<Tag?> getTagById(int tagId) async {
-    Database? db = await database;
+    Database db = await database;
 
     List<Map<String, Object?>>? result = await db.query(
       'tags',
@@ -78,7 +78,7 @@ class TagHelper{
 
   // Função para excluir uma tag com base no nome
   Future<void> deleteTagByName(String tagName) async {
-    Database? db = await database;
+    Database db = await database;
 
     // Obtém o ID da tag com base no nome
     List<Map<String, Object?>>? tagResult = await db.query('tags', where: 'nome = ?', whereArgs: [tagName]);

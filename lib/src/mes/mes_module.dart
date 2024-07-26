@@ -142,10 +142,9 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, 
 
     GastoHelper gastoHelper = GastoHelper();
     if (alerta) {
-      List<Gasto> list_parcelas_gastos = await listarParcelasGastos(gasto);
-      // await gastoHelper.removerGastoPorId(gasto.id!);
-      list_parcelas_gastos.forEach((gasto) async {
-        await gastoHelper.removerGastoPorId(gasto.id!);
+      List<Gasto> listParcelasGastos = await listarParcelasGasto(gasto);
+      listParcelasGastos.forEach((gasto) async {
+        await gastoHelper.removerGastoPorId(gasto.id);
         print("Excluindo gasto ${gasto.toString()}");
       });
     }
@@ -165,7 +164,7 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, 
     GastoHelper gastoHelper = GastoHelper();
     if (alerta) {
       print("Excluindo gasto ${gasto.toString()}");
-      await gastoHelper.removerGastoPorId(gasto.id!);
+      await gastoHelper.removerGastoPorId(gasto.id);
     }
     else {
       print("Não excluindo gasto");

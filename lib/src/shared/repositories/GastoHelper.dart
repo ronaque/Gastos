@@ -13,13 +13,13 @@ class GastoHelper{
 
   // Método para inserir um novo gasto no banco de dados
   Future<void> insertGasto(Gasto gasto) async {
-    Database? db = await database;
+    Database db = await database;
     await db.insert('gastos', gasto.toMap());
   }
 
   // Método para obter todos os gastos do banco de dados
   Future<List<Gasto>> getAllGastos() async {
-    Database? db = await database;
+    Database db = await database;
     List<Map<String, Object?>>? maps = await db.query('gastos');
     return List.generate(maps.length, (i) {
       return Gasto.fromMap(maps[i]);
@@ -27,7 +27,7 @@ class GastoHelper{
   }
 
   Future<List<Gasto>> getGastosByTagName(String tagName) async {
-    Database? db = await database;
+    Database db = await database;
 
     final List<Map<String, Object?>> result = await db.rawQuery('''
     SELECT gastos.id, gastos.data, gastos.quantidade, gastos.descricao, gastos.mode, gastos.parcelas, tags.nome as tag_nome, 
@@ -42,7 +42,7 @@ class GastoHelper{
   }
 
   Future<List<Gasto>?> getGastosByTagId(int tagId) async {
-    Database? db = await database;
+    Database db = await database;
 
     List<Map<String, Object?>>? result = await db.query(
       'gastos',
@@ -56,7 +56,7 @@ class GastoHelper{
   }
 
   Future<List<Gasto>?> getGastosDoMes(String ano, String mes) async {
-    Database? db = await database;
+    Database db = await database;
 
     String query = '''
         SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
@@ -74,7 +74,7 @@ class GastoHelper{
 
   Future<List<Gasto>?> getGastosDoMesComQuantidadePositiva(String ano, String mes) async {
     try {
-      Database? db = await database;
+      Database db = await database;
 
       String query = '''
         SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
@@ -100,7 +100,7 @@ class GastoHelper{
 
   Future<List<Gasto>?> getGastosDoMesComQuantidadeNegativa(String ano, String mes) async {
     try {
-      Database? db = await database;
+      Database db = await database;
 
       String query = '''
         SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
@@ -125,7 +125,7 @@ class GastoHelper{
   }
 
   Future<Gasto?> getGastosByDataAndTagAndDescricaoAndQuantidadeAndParcelas(String ano, String mes, String dia, int tagId, String descricao, double quantidade, int parcelas) async {
-    Database? db = await database;
+    Database db = await database;
 
     List<Map<String, Object?>>? result = await db.query(
       'gastos',
@@ -142,7 +142,7 @@ class GastoHelper{
 
   Future<bool> atualizarGasto(Gasto gasto) async {
     try {
-      Database? db = await database;
+      Database db = await database;
 
       await db.update(
         'gastos',
@@ -159,7 +159,7 @@ class GastoHelper{
 
   Future<void> removerGastoPorId(int gastoId) async {
     try {
-      Database? db = await database;
+      Database db = await database;
 
       await db.delete(
         'gastos',

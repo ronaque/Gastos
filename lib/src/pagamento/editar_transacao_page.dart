@@ -72,7 +72,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
       amount = amount * -1;
     }
 
-    gasto = Gasto(gasto.id, gasto.data, amount, tag, descricao, gasto.mode, gasto.parcelas);
+    gasto = Gasto(id: gasto.id, data: gasto.data, quantidade: amount, tag: tag, descricao: descricao, mode: gasto.mode, parcelas: gasto.parcelas);
 
     // Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
     bool update = await gastoHelper.atualizarGasto(gasto);
@@ -89,8 +89,8 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
   }
 
   void editarParcelas() async {
-    List<Gasto> list_parcelas_gastos = await listarParcelasGastos(widget.gasto);
-    list_parcelas_gastos.forEach((gasto) async {
+    List<Gasto> listParcelasGastos = await listarParcelasGasto(widget.gasto);
+    listParcelasGastos.forEach((gasto) async {
       editarTransacao(gasto);
     });
     Navigator.pop(context);

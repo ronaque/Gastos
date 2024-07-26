@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:sqflite/sqflite.dart';

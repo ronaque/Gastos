@@ -4,27 +4,24 @@ import 'package:sqflite/sqflite.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 
 class TagHelper{
-  Database? _db;
-  DatabaseHelper db = DatabaseHelper();
-
-  Future<Database?> get database async {
-    if (_db != null) return _db;
+  Future<Database> get database async {
+    DatabaseHelper dbHelper = DatabaseHelper();
 
     // Se o banco de dados ainda não existe, inicialize-o
-    _db = await db.database;
-    return _db;
+    Database db = await dbHelper.database;
+    return db;
   }
 
   Future<void> insertTag(Tag tag) async {
     Database? db = await database;
-    await db?.insert('tags', tag.toMap());
+    await db.insert('tags', tag.toMap());
   }
 
   // Método para obter todas as tags do banco de dados
   Future<List<Tag>> getAllTags() async {
     Database? db = await database;
-    List<Map<String, Object?>>? maps = await db?.query('tags');
-    return List.generate(maps!.length, (i) {
+    List<Map<String, Object?>>? maps = await db.query('tags');
+    return List.generate(maps.length, (i) {
       return Tag.fromMap(maps[i]);
     });
   }
@@ -35,12 +32,12 @@ class TagHelper{
 
     String exclusoesPlaceholders = exclusoes.map((e) => '?').join(', ');
 
-    List<Map<String, Object?>>? result = await db?.rawQuery(
+    List<Map<String, Object?>>? result = await db.rawQuery(
       'SELECT * FROM tags WHERE nome NOT IN ($exclusoesPlaceholders)',
       exclusoes,
     );
 
-    List<Tag>? tags = result?.map((map) => Tag.fromMap(map)).toList();
+    List<Tag>? tags = result.map((map) => Tag.fromMap(map)).toList();
 
     return tags;
   }
@@ -48,14 +45,14 @@ class TagHelper{
   Future<Tag?> getTagByNome(String nome) async {
     Database? db = await database;
 
-    List<Map<String, Object?>>? result = await db?.query(
+    List<Map<String, Object?>>? result = await db.query(
       'tags',
       where: 'nome = ?',
       whereArgs: [nome],
       limit: 1, // Limita a consulta a um resultado, pois esperamos apenas uma tag com o nome específico
     );
 
-    if (result!.isNotEmpty) {
+    if (result.isNotEmpty) {
       return Tag.fromMap(result.first);
     } else {
       return null; // Retorna null se não encontrar nenhuma tag com o nome especificado
@@ -65,14 +62,14 @@ class TagHelper{
   Future<Tag?> getTagById(int tagId) async {
     Database? db = await database;
 
-    List<Map<String, Object?>>? result = await db?.query(
+    List<Map<String, Object?>>? result = await db.query(
       'tags',
       where: 'id = ?',
       whereArgs: [tagId],
       limit: 1, // Limita a consulta a um resultado, pois esperamos apenas uma tag com o ID específico
     );
 
-    if (result!.isNotEmpty) {
+    if (result.isNotEmpty) {
       return Tag.fromMap(result.first);
     } else {
       return null; // Retorna null se não encontrar nenhuma tag com o ID especificado
@@ -84,15 +81,15 @@ class TagHelper{
     Database? db = await database;
 
     // Obtém o ID da tag com base no nome
-    List<Map<String, Object?>>? tagResult = await db?.query('tags', where: 'nome = ?', whereArgs: [tagName]);
-    if (tagResult!.isNotEmpty) {
+    List<Map<String, Object?>>? tagResult = await db.query('tags', where: 'nome = ?', whereArgs: [tagName]);
+    if (tagResult.isNotEmpty) {
       Object? tagId = tagResult.first['id'];
 
       // Exclui a tag da tabela 'tags'
-      await db?.delete('tags', where: 'id = ?', whereArgs: [tagId]);
+      await db.delete('tags', where: 'id = ?', whereArgs: [tagId]);
 
       // Também é recomendável excluir os gastos associados à tag
-      await db?.delete('gastos', where: 'tag_id = ?', whereArgs: [tagId]);
+      await db.delete('gastos', where: 'tag_id = ?', whereArgs: [tagId]);
     }
   }
 }

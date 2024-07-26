@@ -10,7 +10,7 @@ class GastoHelper{
     if (_db != null) return _db;
 
     // Se o banco de dados ainda não existe, inicialize-o
-    _db = await db.initDatabase();
+    _db = await db.database;
     return _db;
   }
 

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:gastos/src/mes/blocs/mes_state.dart';
+import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'package:gastos/src/shared/saldo_utils.dart';
@@ -24,9 +25,8 @@ class MesCubit extends Cubit<MesState>{
   }
 
   Future<void> changeGastos(DateTime data) async {
-    GastoHelper gastoHelper = GastoHelper();
-    var listGastos = await gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data));
-    setGastos(listGastos!);
+    var listGastos = await listarGastosDoMes(data);
+    setGastos(listGastos);
   }
 
   Future<void> changeSaldo(DateTime data) async {

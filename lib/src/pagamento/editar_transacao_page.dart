@@ -46,8 +46,6 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
   }
 
   Future<bool?> editarTransacao(Gasto gasto) async {
-    GastoHelper gastoHelper = GastoHelper();
-
     if (amountController.text.isEmpty) {
       Alerta(text: 'Informe um valor').show(context);
       return false;
@@ -75,7 +73,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     gasto = Gasto(id: gasto.id, data: gasto.data, quantidade: amount, tag: tag, descricao: descricao, mode: gasto.mode, parcelas: gasto.parcelas);
 
     // Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
-    bool update = await gastoHelper.atualizarGasto(gasto);
+    bool update = await atualizarGasto(gasto);
     if (!update) {
       Alerta(text: 'Erro ao atualizar gasto').show(context);
       return false;

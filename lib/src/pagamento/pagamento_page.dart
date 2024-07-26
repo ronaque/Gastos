@@ -35,10 +35,8 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   String dropdownValue = '2x';
 
   Future<bool?> adicionarTransacao(DateTime data, int mode, int parcelas) async {
-    GastoHelper gastoHelper = GastoHelper();
-
     if (amountController.text.isEmpty) {
-      Alerta(text: 'Informe um valor').show(context);
+      const Alerta(text: 'Informe um valor').show(context);
       return false;
     }
     double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
@@ -49,12 +47,12 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     Tag? tag = await tagHelper.getTagByNome(category);
     if (tag == null) {
       // Fazer um alerta para o usuário informando que deve escolher uma tag
-      Alerta(text: 'Escolha uma categoria').show(context);
+      const Alerta(text: 'Escolha uma categoria').show(context);
       return false;
     }
 
     if (getIsIncome() == null){
-      Alerta(text: 'Informe se é entrada ou saída').show(context);
+      const Alerta(text: 'Informe se é entrada ou saída').show(context);
       return false;
     }
     if (getIsIncome() == false) {
@@ -62,7 +60,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     }
 
     Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
-    await gastoHelper.insertGasto(gasto);
+    inserirGasto(gasto);
     print('Gasto inserido com sucesso: ${gasto.toString()}');
 
     if (mode == 0)

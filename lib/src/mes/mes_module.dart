@@ -40,9 +40,8 @@ Widget getCategoryTextOrIcon(Tag tag) {
 }
 
 Widget getGastosPositivos() {
-  GastoHelper gastoHelper = GastoHelper();
   return FutureBuilder(
-    future: gastoHelper.getGastosDoMesComQuantidadePositiva(DateFormat('y').format(DateTime.now()), DateFormat('MM').format(DateTime.now())),
+    future: listarGastosDoMesComQuantidadePositiva(DateTime.now()),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data!.isEmpty) {
@@ -53,7 +52,7 @@ Widget getGastosPositivos() {
         }
         double gastosTotal = 0;
         for (int i = 0; i < snapshot.data!.length; i++) {
-          gastosTotal += snapshot.data![i].quantidade!;
+          gastosTotal += snapshot.data![i].quantidade;
         }
         String strGastosTotal = gastosTotal.toStringAsFixed(2);
         return Text(
@@ -71,9 +70,8 @@ Widget getGastosPositivos() {
 }
 
 Widget getGastosNegativos() {
-  GastoHelper gastoHelper = GastoHelper();
   return FutureBuilder(
-    future: gastoHelper.getGastosDoMesComQuantidadeNegativa(DateFormat('y').format(DateTime.now()), DateFormat('MM').format(DateTime.now())),
+    future: listarGastosDoMesComQuantidadeNegativa(DateTime.now()),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data!.isEmpty) {
@@ -84,7 +82,7 @@ Widget getGastosNegativos() {
         }
         double gastosTotal = 0;
         for (int i = 0; i < snapshot.data!.length; i++) {
-          gastosTotal += snapshot.data![i].quantidade!;
+          gastosTotal += snapshot.data![i].quantidade;
         }
         String strGastosTotal = (gastosTotal * -1).toStringAsFixed(2);
         return Text(
@@ -144,7 +142,7 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, 
     if (alerta) {
       List<Gasto> listParcelasGastos = await listarParcelasGasto(gasto);
       listParcelasGastos.forEach((gasto) async {
-        await gastoHelper.removerGastoPorId(gasto.id);
+        await removerGastoPorId(gasto.id);
         print("Excluindo gasto ${gasto.toString()}");
       });
     }

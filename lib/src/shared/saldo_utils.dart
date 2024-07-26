@@ -1,5 +1,8 @@
+import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
+import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
+import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -49,26 +52,38 @@ Future<double> getSaldoByMonth(DateTime data) async {
 }
 
 Future<void> atualizarSaldoNovoMes() async{
+  GastoHelper gastoHelper = GastoHelper();
+  TagHelper tagHelper = TagHelper();
+
   final prefs = await SharedPreferences.getInstance();
 
-  String? ultimo_login = prefs.getString('ultimo_login');
+  String? ultimoLogin = prefs.getString('ultimo_login');
 
-  if (ultimo_login == null) {
+  if (ultimoLogin == null) {
     prefs.setString('ultimo_login', DateTime.now().toString());
     return;
   }
 
-  double? saldo = await getSaldo();
+  double saldo = 0;
 
-  DateTime ultimoLoginDate = DateTime.parse(ultimo_login);
+  DateTime ultimoLoginDate = DateTime.parse(ultimoLogin);
   DateTime now = DateTime.now();
 
   if (now.month != ultimoLoginDate.month) {
-    double? salario = prefs.getDouble('salario')!;
-    saldo += salario;
+    // Recuperar gastos do mes de ultimo login
+    List<Gasto>? ultimoLoginGastos = await gastoHelper.getGastosDoMes(DateFormat('y').format(ultimoLoginDate), DateFormat('MM').format(ultimoLoginDate));
+    // Somar valores totais dos gastos
+    if (ultimoLoginGastos != null) {
+      for (int i = 0; i < ultimoLoginGastos.length; i++) {
+        saldo += ultimoLoginGastos[i].quantidade!;
+      }
+    }
+    // Adicionar um novo pagamento ao mês atual com o valor total dos gastos
+    Tag? tag = await tagHelper.getTagByNome('gasto');
+    Gasto gasto = await novoGasto(DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0);
+    await gastoHelper.insertGasto(gasto);
   }
 
-  prefs.setDouble('saldo', saldo);
   prefs.setString('ultimo_login', now.toString());
 
   return;

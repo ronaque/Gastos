@@ -176,19 +176,6 @@ class _PerfilState extends State<Perfil> {
                     )),
                 Padding(
                     padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Text("Salário:"),
-                        SizedBox(
-                          width: 250,
-                          child: getSalarioTextField(),
-                        ),
-                      ],
-                    )),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[

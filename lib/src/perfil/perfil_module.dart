@@ -16,55 +16,11 @@ void _nomeChange(String value) {
   saveNome(value);
 }
 
-void _salarioChange(String value) {
-  if (value.isEmpty) {
-    value = '0';
-  } else {
-    value = value.replaceAll(RegExp(r'[R\$]'), '');
-    value = value.replaceAll(RegExp(r'[,]'), '.');
-  }
-  print('salario: $value');
-  saveSalario(value);
-}
-
-Future<void> saveSalario(String salario) async {
-  final prefs = await SharedPreferences.getInstance();
-
-  if (RegExp(r'^\d+(\.\d+)?$').hasMatch(salario)) {
-    prefs.setDouble('salario', double.parse(salario));
-    double? salarioSalvo = prefs.getDouble('salario');
-    print('salario salvo: $salarioSalvo');
-  } else {
-    print('Formato de salário inválido');
-  }
-}
-
 Future<void> saveNome(String nome) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setString('nome', nome);
   String? nomeSalvo = prefs.getString('nome');
   print('nome salvo: $nomeSalvo');
-}
-
-Future<String> getSalario() async {
-  final prefs = await SharedPreferences.getInstance();
-  double? salarioSalvo = prefs.getDouble('salario');
-  print('salario salvo recuperado: $salarioSalvo');
-  if (salarioSalvo == null) {
-    return '';
-  }
-  String salarioSalvoString = salarioSalvo.toString();
-  return 'R\$$salarioSalvoString';
-}
-
-Future<double> getSalarioDouble() async {
-  final prefs = await SharedPreferences.getInstance();
-  double? salarioSalvo = prefs.getDouble('salario');
-  if (salarioSalvo == null) {
-    return 0;
-  }
-
-  return salarioSalvo;
 }
 
 Future<String> getNome() async {
@@ -75,53 +31,6 @@ Future<String> getNome() async {
     return '';
   }
   return nomeSalvo;
-}
-
-Widget getSalarioTextField() {
-  return FutureBuilder(
-    future: getSalario(),
-    builder: (context, AsyncSnapshot<String> snapshot) {
-      if (snapshot.hasData) {
-        if (snapshot.data!.isEmpty) {
-          return TextField(
-            controller: MoneyMaskedTextController(
-                leftSymbol: 'R\$',
-                initialValue: 0.0
-            ),
-            onChanged: (value) => _salarioChange(value),
-            keyboardType: TextInputType.name,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Salário',
-            ),
-          );
-        }
-        return TextFormField(
-          // initialValue: snapshot.data,
-          controller: MoneyMaskedTextController(
-              leftSymbol: 'R\$',
-              initialValue: double.parse(snapshot.data!.replaceAll(RegExp(r'[R\$]'), ''))
-          ),
-          onChanged: (value) => _salarioChange(value),
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(border: OutlineInputBorder()),
-        );
-      } else {
-        return TextField(
-          controller: MoneyMaskedTextController(
-              leftSymbol: 'R\$',
-              initialValue: 0.0
-          ),
-          onChanged: (value) => _salarioChange(value),
-          keyboardType: TextInputType.name,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Salário',
-          ),
-        );
-      }
-    },
-  );
 }
 
 Widget getNomeTextField() {

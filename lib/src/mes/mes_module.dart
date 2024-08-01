@@ -17,7 +17,7 @@ Widget getSaldoTexto(double saldo) {
 }
 
 Widget getCategoryTextOrIcon(Tag tag) {
-  String category = tag.nome!;
+  String category = tag.nome;
   var icon = null;
   tagsPadroes.forEach((key, value) {
     if (key == category) {
@@ -39,7 +39,7 @@ Widget getCategoryTextOrIcon(Tag tag) {
 
 Widget getGastosPositivos() {
   return FutureBuilder(
-    future: listarGastosDoMesComQuantidadePositiva(DateTime.now()),
+    future: getGastosByMonthAndPositiveExpense(DateTime.now()),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data!.isEmpty) {
@@ -69,7 +69,7 @@ Widget getGastosPositivos() {
 
 Widget getGastosNegativos() {
   return FutureBuilder(
-    future: listarGastosDoMesComQuantidadeNegativa(DateTime.now()),
+    future: getGastosByMonthAndNegativeExpense(DateTime.now()),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data!.isEmpty) {
@@ -106,7 +106,8 @@ Widget buildEmptyState() {
   );
 }
 
-void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) async {
+void adicionarTransacao(
+    MesCubit mesCubit, DateTime data, BuildContext context) async {
   await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -117,7 +118,8 @@ void adicionarTransacao(MesCubit mesCubit, DateTime data, BuildContext context) 
   mesCubit.changeSaldo(data);
 }
 
-void editarTransacao(Gasto gasto, MesCubit mesCubit, DateTime data, BuildContext context) async {
+void editarTransacao(
+    Gasto gasto, MesCubit mesCubit, DateTime data, BuildContext context) async {
   await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -128,22 +130,23 @@ void editarTransacao(Gasto gasto, MesCubit mesCubit, DateTime data, BuildContext
   mesCubit.changeSaldo(data);
 }
 
-Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
+Future<void> excluirGasto(
+    Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
   if (gasto.mode == 1) {
     var alerta = await const Alerta(
-      text: 'Deseja excluir o gasto?\nIsso excluirá todas as parcelas seguintes.',
+      text:
+          'Deseja excluir o gasto?\nIsso excluirá todas as parcelas seguintes.',
       action: 'Sim',
       cancel: 'Cancelar',
     ).show(context);
 
     if (alerta) {
-      List<Gasto> listParcelasGastos = await listarParcelasGasto(gasto);
+      List<Gasto> listParcelasGastos = await getParcelasGasto(gasto);
       listParcelasGastos.forEach((gasto) async {
-        await removerGastoPorId(gasto.id);
+        await removeGastoById(gasto.id);
         print("Excluindo gasto ${gasto.toString()}");
       });
-    }
-    else {
+    } else {
       print("Não foi excluido gastos parcelados");
     }
 
@@ -159,9 +162,8 @@ Future<void> excluirGasto(Gasto gasto, BuildContext context, MesCubit mesCubit, 
     GastoHelper gastoHelper = GastoHelper();
     if (alerta) {
       print("Excluindo gasto ${gasto.toString()}");
-      await gastoHelper.removerGastoPorId(gasto.id);
-    }
-    else {
+      await gastoHelper.removeGastoById(gasto.id);
+    } else {
       print("Não excluindo gasto");
     }
 

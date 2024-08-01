@@ -2,7 +2,7 @@ import 'package:gastos/src/shared/repositories/DatabaseHelper.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 
-class GastoHelper{
+class GastoHelper {
   Future<Database> get database async {
     DatabaseHelper dbHelper = DatabaseHelper();
 
@@ -12,13 +12,13 @@ class GastoHelper{
   }
 
   // Método para inserir um novo gasto no banco de dados
-  Future<void> inserirGasto(Gasto gasto) async {
+  Future<void> insertGasto(Gasto gasto) async {
     Database db = await database;
     await db.insert('gastos', gasto.toMap());
   }
 
   // Método para obter todos os gastos do banco de dados
-  Future<List<Gasto>> listarTodosGastos() async {
+  Future<List<Gasto>> getAllGastos() async {
     Database db = await database;
     List<Map<String, Object?>>? maps = await db.query('gastos');
     return List.generate(maps.length, (i) {
@@ -26,22 +26,22 @@ class GastoHelper{
     });
   }
 
-  Future<List<Gasto>> listarGastosPorNomeDaTag(String tag) async {
+  Future<List<Gasto>> getGastosByTagName(String tag) async {
     Database db = await database;
 
-    final List<Map<String, Object?>> resultado = await db.rawQuery('''
+    final List<Map<String, Object?>> result = await db.rawQuery('''
     SELECT gastos.id, gastos.data, gastos.quantidade, gastos.descricao, gastos.mode, gastos.parcelas, tags.nome as tag_nome, 
     FROM gastos
     INNER JOIN tags ON gastos.tag_id = tags.id
     WHERE tags.nome = ?
   ''', [tag]);
 
-    return List.generate(resultado.length, (i) {
-      return Gasto.fromMap(resultado[i]);
+    return List.generate(result.length, (i) {
+      return Gasto.fromMap(result[i]);
     });
   }
 
-  Future<List<Gasto>> listarGastosPorIdDaTag(int tagId) async {
+  Future<List<Gasto>> getGastosByTagId(int tagId) async {
     Database db = await database;
 
     final List<Map<String, Object?>> resultado = await db.rawQuery('''
@@ -56,7 +56,7 @@ class GastoHelper{
     });
   }
 
-  Future<List<Gasto>> listarGastosDoMes(String ano, String mes) async {
+  Future<List<Gasto>> getGastosByMonth(String ano, String mes) async {
     Database db = await database;
 
     String query = '''
@@ -66,14 +66,16 @@ class GastoHelper{
         WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ?
       ''';
 
-    final List<Map<String, Object?>> resultado = await db.rawQuery(query, [ano, mes]);
+    final List<Map<String, Object?>> result =
+        await db.rawQuery(query, [ano, mes]);
 
-    return List.generate(resultado.length, (i) {
-      return Gasto.fromMap(resultado[i]);
+    return List.generate(result.length, (i) {
+      return Gasto.fromMap(result[i]);
     });
   }
 
-  Future<List<Gasto>> listarGastosDoMesComQuantidadePositiva(String ano, String mes) async {
+  Future<List<Gasto>> getGastosByMonthAndPositiveExpense(
+      String ano, String mes) async {
     try {
       Database db = await database;
 
@@ -84,7 +86,8 @@ class GastoHelper{
         WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ? AND gastos.quantidade >= 0
       ''';
 
-      List<Map<String, Object?>>? resultado = await db.rawQuery(query, [ano, mes]);
+      List<Map<String, Object?>>? resultado =
+          await db.rawQuery(query, [ano, mes]);
 
       return List.generate(resultado.length, (i) {
         return Gasto.fromMap(resultado[i]);
@@ -95,7 +98,8 @@ class GastoHelper{
     }
   }
 
-  Future<List<Gasto>> listarGastosDoMesComQuantidadeNegativa(String ano, String mes) async {
+  Future<List<Gasto>> getGastosByMonthAndNegativeExpense(
+      String ano, String mes) async {
     try {
       Database db = await database;
 
@@ -106,7 +110,8 @@ class GastoHelper{
         WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ? AND gastos.quantidade < 0
       ''';
 
-      List<Map<String, Object?>>? resultado = await db.rawQuery(query, [ano, mes]);
+      List<Map<String, Object?>>? resultado =
+          await db.rawQuery(query, [ano, mes]);
 
       return List.generate(resultado.length, (i) {
         return Gasto.fromMap(resultado[i]);
@@ -117,23 +122,7 @@ class GastoHelper{
     }
   }
 
-  Future<Gasto?> retornarGastoPorDataTagDescricaoQuantidadeParcelas(String ano, String mes, String dia, int tagId, String descricao, double quantidade, int parcelas) async {
-    Database db = await database;
-
-    List<Map<String, Object?>>? result = await db.query(
-      'gastos',
-      where: 'strftime("%Y", data) = ? AND strftime("%m", data) = ? AND strftime("%d", data) = ? AND tag_id = ? AND descricao = ? AND quantidade = ? AND parcelas = ?',
-      whereArgs: [ano, mes, dia, tagId, descricao, quantidade, parcelas],
-    );
-
-    if (result.isEmpty) {
-      return null;
-    }
-
-    return Gasto.fromMap(result[0]);
-  }
-
-  Future<List<Gasto>> listarGastosPorCriterios({
+  Future<List<Gasto>> getGastosListByCriteria({
     required DateTime data,
     required int tagId,
     String? descricao,
@@ -170,7 +159,7 @@ class GastoHelper{
     }
   }
 
-  Future<Gasto?> buscarGastoPorCriterios({
+  Future<Gasto?> getGastoByCriteria({
     required DateTime data,
     required int tagId,
     String? descricao,
@@ -212,13 +201,14 @@ class GastoHelper{
     }
   }
 
-  Future<bool> atualizarGasto(Gasto gasto) async {
+  Future<bool> updateGasto(Gasto gasto) async {
     try {
       Database db = await database;
 
       await db.update(
         'gastos',
-        gasto.toMap(), // Utiliza o método toMap() da classe Gasto para obter um Map com os valores atualizados
+        gasto
+            .toMap(), // Utiliza o método toMap() da classe Gasto para obter um Map com os valores atualizados
         where: 'id = ?',
         whereArgs: [gasto.id],
       );
@@ -229,7 +219,7 @@ class GastoHelper{
     }
   }
 
-  Future<void> removerGasto(Gasto gasto) async {
+  Future<void> removeGasto(Gasto gasto) async {
     try {
       Database db = await database;
 
@@ -243,7 +233,7 @@ class GastoHelper{
     }
   }
 
-  Future<void> removerGastoPorId(int gastoId) async {
+  Future<void> removeGastoById(int gastoId) async {
     try {
       Database db = await database;
 
@@ -256,5 +246,4 @@ class GastoHelper{
       print('Erro ao remover gasto por ID: $e');
     }
   }
-
 }

@@ -20,7 +20,7 @@ Future<void> atualizarSaldo(double value) async {
   return;
 }
 
-Future<double> getSaldo() async{
+Future<double> getSaldo() async {
   final prefs = await SharedPreferences.getInstance();
 
   double? saldo = prefs.getDouble('saldo');
@@ -34,7 +34,7 @@ Future<double> getSaldo() async{
 }
 
 Future<double> getSaldoByMonth(DateTime data) async {
-  List<Gasto> gastos = await listarGastosDoMes(data);
+  List<Gasto> gastos = await getGastosByMonth(data);
   double gastosTotal = 0;
   for (int i = 0; i < gastos.length; i++) {
     gastosTotal += gastos[i].quantidade;
@@ -45,7 +45,7 @@ Future<double> getSaldoByMonth(DateTime data) async {
   return saldo + gastosTotal;
 }
 
-Future<void> atualizarSaldoNovoMes() async{
+Future<void> atualizarSaldoNovoMes() async {
   TagHelper tagHelper = TagHelper();
 
   final prefs = await SharedPreferences.getInstance();
@@ -64,7 +64,7 @@ Future<void> atualizarSaldoNovoMes() async{
 
   if (now.month != ultimoLoginDate.month) {
     // Recuperar gastos do mes de ultimo login
-    List<Gasto> ultimoLoginGastos = await listarGastosDoMes(ultimoLoginDate);
+    List<Gasto> ultimoLoginGastos = await getGastosByMonth(ultimoLoginDate);
     // Somar valores totais dos gastos
     for (int i = 0; i < ultimoLoginGastos.length; i++) {
       saldo += ultimoLoginGastos[i].quantidade;
@@ -73,11 +73,13 @@ Future<void> atualizarSaldoNovoMes() async{
     // Adicionar um novo pagamento ao mês atual com o valor total dos gastos
     Tag? tag = await tagHelper.getTagByNome('gasto');
     if (tag != null) {
-      inserirGasto(await novoGasto(DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0));
+      insertGasto(await createGasto(
+          DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0));
     }
   }
 
   prefs.setString('ultimo_login', now.toString());
 
+  print("ultimo login atualizado para: ${prefs.getString('ultimo_login')}");
   return;
 }

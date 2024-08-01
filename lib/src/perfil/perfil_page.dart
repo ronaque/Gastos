@@ -47,9 +47,11 @@ class _PerfilState extends State<Perfil> {
     globalIndex++;
 
     await file.saveTo('$appDocumentsPath/minha_imagem$globalIndex.jpg');
-    print("Arquivo salvo no path: $appDocumentsPath/minha_imagem$globalIndex.jpg");
+    print(
+        "Arquivo salvo no path: $appDocumentsPath/minha_imagem$globalIndex.jpg");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('test_image', '$appDocumentsPath/minha_imagem$globalIndex.jpg');
+    prefs.setString(
+        'test_image', '$appDocumentsPath/minha_imagem$globalIndex.jpg');
 
     _imageFile = File(file.path);
     setState(() {
@@ -60,7 +62,7 @@ class _PerfilState extends State<Perfil> {
 
   Future<Widget> getDBTagsTexts(context) async {
     TagHelper tagHelper = TagHelper();
-    List<Tag>? dbTags = await tagHelper.getTagsPersonalizadas();
+    List<Tag>? dbTags = await tagHelper.getCustomTags();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -81,13 +83,13 @@ class _PerfilState extends State<Perfil> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    tag.nome!.substring(0, 1).toUpperCase() +
-                        tag.nome!.substring(1),
+                    tag.nome.substring(0, 1).toUpperCase() +
+                        tag.nome.substring(1),
                     style: const TextStyle(fontSize: 16),
                   ),
                   IconButton(
                     onPressed: () {
-                      tagHelper.deleteTagByName(tag.nome!);
+                      tagHelper.deleteTagByName(tag.nome);
                       setState(() {});
                     },
                     icon: const Icon(Icons.close),
@@ -122,101 +124,102 @@ class _PerfilState extends State<Perfil> {
     return Theme(
         data: AppTheme().getAppTheme(),
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 8.0, 0, 0),
-                  child: Text("MobiFin"),
-                )
-              ],
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 8.0, 0, 0),
+                    child: Text("MobiFin"),
+                  )
+                ],
+              ),
             ),
-          ),
-          body: WillPopScope(
-            onWillPop: () async {
-              Navigator.pop(context, "updateImage");
-              return true;
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Stack(children: <Widget>[
-                          image != null ? profileAvatar(image, context) : defaultAvatar(context),
-                          Positioned(
-                            bottom: -10,
-                            left: 80,
-                            child: IconButton(
-                                onPressed: _selecionarImagem,
-                                icon: const Icon(Icons.add_a_photo)),
-                          )
-                        ])
-                      ],
-                    )),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Text("Nome:"),
-                        SizedBox(
-                            width: 250,
-                            child: getNomeTextField()
-                        ),
-                      ],
-                    )),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text("Tags"),
-                      ],
-                    )),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        getDefaultTagsWidgets(),
-                      ],
-                    )
-                ),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: getDBTags(context)
-                ),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                displayNewTagDialog(context, _tagController);
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              elevation: 5,
-                            ),
-                            child: const Icon(Icons.add, color: Colors.white)),
-                      ],
-                    )
-                ),
-              ],
-            ),
-          )
-        ));
+            body: WillPopScope(
+              onWillPop: () async {
+                Navigator.pop(context, "updateImage");
+                return true;
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.width * 0.08, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Stack(children: <Widget>[
+                            image != null
+                                ? profileAvatar(image, context)
+                                : defaultAvatar(context),
+                            Positioned(
+                              bottom: -10,
+                              left: 80,
+                              child: IconButton(
+                                  onPressed: _selecionarImagem,
+                                  icon: const Icon(Icons.add_a_photo)),
+                            )
+                          ])
+                        ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.width * 0.08, 0, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Text("Nome:"),
+                          SizedBox(width: 250, child: getNomeTextField()),
+                        ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.width * 0.08, 0, 0),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Tags"),
+                        ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.width * 0.08, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          getDefaultTagsWidgets(),
+                        ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.width * 0.08, 0, 0),
+                      child: getDBTags(context)),
+                  Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, MediaQuery.of(context).size.width * 0.08, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  displayNewTagDialog(context, _tagController);
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                elevation: 5,
+                              ),
+                              child:
+                                  const Icon(Icons.add, color: Colors.white)),
+                        ],
+                      )),
+                ],
+              ),
+            )));
   }
-
 }

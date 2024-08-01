@@ -30,15 +30,33 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   OverlayEntry? overlayEntry;
   GlobalKey valorkey = GlobalKey();
   PagamentoCubit pagamentoCubit = PagamentoCubit();
-  List<String> parcelas = ['2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x', '11x', '12x', '+'];
+  List<String> parcelas = [
+    '2x',
+    '3x',
+    '4x',
+    '5x',
+    '6x',
+    '7x',
+    '8x',
+    '9x',
+    '10x',
+    '11x',
+    '12x',
+    '+'
+  ];
   String dropdownValue = '2x';
 
-  Future<bool?> adicionarTransacao(DateTime data, int mode, int parcelas) async {
+  Future<bool?> adicionarTransacao(
+      DateTime data, int mode, int parcelas) async {
     if (amountController.text.isEmpty) {
       const Alerta(text: 'Informe um valor').show(context);
       return false;
     }
-    double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+    double amount = double.tryParse(amountController.text
+            .replaceRange(0, 2, '')
+            .replaceAll('.', '')
+            .replaceAll(',', '.')) ??
+        0.0;
 
     String category = getClicado();
     String descricao = descriptionController.text;
@@ -50,7 +68,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       return false;
     }
 
-    if (getIsIncome() == null){
+    if (getIsIncome() == null) {
       const Alerta(text: 'Informe se é entrada ou saída').show(context);
       return false;
     }
@@ -58,8 +76,9 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
       amount = amount * -1;
     }
 
-    Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
-    inserirGasto(gasto);
+    Gasto gasto =
+        await createGasto(data, amount, tag, descricao, mode, parcelas);
+    insertGasto(gasto);
     print('Gasto inserido com sucesso: ${gasto.toString()}');
 
     if (mode == 0) {
@@ -72,24 +91,24 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   void adicionarParcelas(int numParcelas) async {
     DateTime data = DateTime.now();
     for (int i = 0; i < numParcelas; i++) {
-      if (i > 0){
+      if (i > 0) {
         int year = data.year;
         int month = data.month + 1;
-        if (month > 12){
+        if (month > 12) {
           month = month - 12;
           year += 1;
         }
         data = DateTime(year, month, 1);
       }
       bool? result = await adicionarTransacao(data, 1, i + 1);
-      if (result == false){
+      if (result == false) {
         return null;
       }
     }
     Navigator.pop(context);
   }
 
-  bool? getIsIncome(){
+  bool? getIsIncome() {
     return _isIncome;
   }
 
@@ -108,223 +127,269 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PagamentoCubit, PagamentoState>(
-      bloc: pagamentoCubit,
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  state.pagamento != -1 && state.pagamento != 2 ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Titulo
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: Text('Adicionar Transação', style: Theme.of(context).textTheme.titleLarge),
-                        ),
-
-                        // Valor
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: TextFormField(
-                            key: valorkey,
-                            onTap: () {
-                              state.pagamento == 1 ? _showOverlay(context, text: 'Informe o valor de cada parcela') : null;
-                            },
-                            controller: amountController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                suffixIcon: Icon(Icons.info, color: Color(0xff90CAF9)),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.blue),
-                                )
-                            )
+        bloc: pagamentoCubit,
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+                child: Column(
+              children: [
+                state.pagamento != -1 && state.pagamento != 2
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Titulo
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Text('Adicionar Transação',
+                                style: Theme.of(context).textTheme.titleLarge),
                           ),
-                        ),
 
-                        // Descrição
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                          child: TextFormField(
-                            controller: descriptionController,
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: const InputDecoration(
-                                labelText: 'Descrição',
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.blue),
-                                )
-                            ),
-                          ),
-                        ),
-
-                        // Parcelas
-                        state.pagamento == 1 ? const Padding(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                          child: Text('Parcelas'),
-                        ) : Container(),
-                        state.pagamento == 1 ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Dropdown
-                            Expanded(
-                              flex: 5,
-                              child: DropdownButtonFormField<String>(
-                                value: state.dropdownValue,
-                                decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(),
-                                      )
-                                  ),
-                                onChanged: (String? value) {
-                                  String? auxvalue = value?.replaceAll(RegExp(r'[x]'), '');
-                                  int parcelas = int.tryParse(auxvalue!) ?? -1;
-                                  pagamentoCubit.changeParcelas(parcelas);
-                                  pagamentoCubit.changeDropdownValue(value!);
-                                  // print("teste ${state.parcelas}");
+                          // Valor
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: TextFormField(
+                                key: valorkey,
+                                onTap: () {
+                                  state.pagamento == 1
+                                      ? _showOverlay(context,
+                                          text:
+                                              'Informe o valor de cada parcela')
+                                      : null;
                                 },
-                                items: parcelas.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            state.parcelas == -1 || state.parcelas > 12 ? const Expanded(flex: 1, child: SizedBox(width: 10.0)): Container(),
-                            // Parcelas > 12
-                            state.parcelas == -1 || state.parcelas > 12 ? Expanded(
-                              flex: 5,
-                              child: TextFormField(
-                                controller: parcelasController,
-                                keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: false),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                controller: amountController,
+                                keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    suffixIcon: Icon(Icons.info,
+                                        color: Color(0xff90CAF9)),
                                     border: OutlineInputBorder(
-                                      borderSide: BorderSide(),
-                                    )
-                                ),
-                                onFieldSubmitted: (String value) {
-                                  int parcelas = int.tryParse(value) ?? -1;
-                                  pagamentoCubit.changeParcelas(parcelas);
-                                  if (parcelas >= 2 && parcelas <= 12) {
-                                    pagamentoCubit.changeDropdownValue('$parcelas' 'x');
-                                  }
-                                },
-                              ),
-                            ) : Container(),
-                          ],
-                        ) : Container(),
-
-                        const SizedBox(height: 10.0),
-                        const Text('Categoria'),
-                        CardTags(setClicado, getClicado),
-                        const SizedBox(height: 10.0),
-                        EntradaSaida(setIsIncome, getIsIncome),
-                        const SizedBox(height: 10.0),
-
-                        // Botão Salvar
-                        ElevatedButton(
-                          onPressed: () {
-                            state.pagamento == 0 ? adicionarTransacao(DateTime.now(), 0, 0) : null;
-                            state.pagamento == 1 ? adicionarParcelas(state.parcelas) : null;
-                          },
-                          child: const Text('Salvar'),
-                        ),
-                      ],
-                    ) : Container(),
-
-                  const SizedBox(height: 20.0),
-                  // Selecionar pagamento Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // Pagamento a vista
-                      GestureDetector(
-                        onTap: () {
-                          pagamentoCubit.checkPagamento(0);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.width * 0.12,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: state.pagamento == 0 ? Colors.blue : Colors.white,
-                            border: Border.all(color: Colors.blue),
-                            borderRadius: BorderRadius.circular(8),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ))),
                           ),
-                          child: Text(
-                            "A vista",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: state.pagamento == 0 ? Colors.white : Colors.black,
+
+                          // Descrição
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                            child: TextFormField(
+                              controller: descriptionController,
+                              keyboardType: TextInputType.text,
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: const InputDecoration(
+                                  labelText: 'Descrição',
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  )),
                             ),
                           ),
-                        ),
-                      ),
 
-                      // Pagamento parcelado
-                      GestureDetector(
-                        onTap: () {
-                          pagamentoCubit.checkPagamento(1);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.width * 0.12,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: state.pagamento == 1 ? Colors.blue : Colors.white,
-                            border: Border.all(color: Colors.blue),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "Parcelamento",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: state.pagamento == 1 ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
+                          // Parcelas
+                          state.pagamento == 1
+                              ? const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                  child: Text('Parcelas'),
+                                )
+                              : Container(),
+                          state.pagamento == 1
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Dropdown
+                                    Expanded(
+                                      flex: 5,
+                                      child: DropdownButtonFormField<String>(
+                                        value: state.dropdownValue,
+                                        decoration: const InputDecoration(
+                                            contentPadding: EdgeInsets.fromLTRB(
+                                                10, 0, 10, 0),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(),
+                                            )),
+                                        onChanged: (String? value) {
+                                          String? auxvalue = value?.replaceAll(
+                                              RegExp(r'[x]'), '');
+                                          int parcelas =
+                                              int.tryParse(auxvalue!) ?? -1;
+                                          pagamentoCubit
+                                              .changeParcelas(parcelas);
+                                          pagamentoCubit
+                                              .changeDropdownValue(value!);
+                                          // print("teste ${state.parcelas}");
+                                        },
+                                        items: parcelas
+                                            .map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                    state.parcelas == -1 || state.parcelas > 12
+                                        ? const Expanded(
+                                            flex: 1,
+                                            child: SizedBox(width: 10.0))
+                                        : Container(),
+                                    // Parcelas > 12
+                                    state.parcelas == -1 || state.parcelas > 12
+                                        ? Expanded(
+                                            flex: 5,
+                                            child: TextFormField(
+                                              controller: parcelasController,
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                                  decimal: false,
+                                                  signed: false),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              decoration: const InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(
+                                                          10, 0, 10, 0),
+                                                  border: OutlineInputBorder(
+                                                    borderSide: BorderSide(),
+                                                  )),
+                                              onFieldSubmitted: (String value) {
+                                                int parcelas =
+                                                    int.tryParse(value) ?? -1;
+                                                pagamentoCubit
+                                                    .changeParcelas(parcelas);
+                                                if (parcelas >= 2 &&
+                                                    parcelas <= 12) {
+                                                  pagamentoCubit
+                                                      .changeDropdownValue(
+                                                          '$parcelas' 'x');
+                                                }
+                                              },
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                )
+                              : Container(),
 
-                      // Assinatura
-                      GestureDetector(
-                        onTap: () {
-                          pagamentoCubit.checkPagamento(2);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.width * 0.12,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: state.pagamento == 2 ? Colors.blue : Colors.white,
-                            border: Border.all(color: Colors.blue),
-                            borderRadius: BorderRadius.circular(8),
+                          const SizedBox(height: 10.0),
+                          const Text('Categoria'),
+                          CardTags(setClicado, getClicado),
+                          const SizedBox(height: 10.0),
+                          EntradaSaida(setIsIncome, getIsIncome),
+                          const SizedBox(height: 10.0),
+
+                          // Botão Salvar
+                          ElevatedButton(
+                            onPressed: () {
+                              state.pagamento == 0
+                                  ? adicionarTransacao(DateTime.now(), 0, 0)
+                                  : null;
+                              state.pagamento == 1
+                                  ? adicionarParcelas(state.parcelas)
+                                  : null;
+                            },
+                            child: const Text('Salvar'),
                           ),
-                          child: Text(
-                            "Assinatura",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: state.pagamento == 2 ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ),
+                        ],
                       )
-                    ],
-                  )
-                ],
-              )
-          ),
-        );
-      }
-    );
+                    : Container(),
+
+                const SizedBox(height: 20.0),
+                // Selecionar pagamento Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Pagamento a vista
+                    GestureDetector(
+                      onTap: () {
+                        pagamentoCubit.checkPagamento(0);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.width * 0.12,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color:
+                              state.pagamento == 0 ? Colors.blue : Colors.white,
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "A vista",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: state.pagamento == 0
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Pagamento parcelado
+                    GestureDetector(
+                      onTap: () {
+                        pagamentoCubit.checkPagamento(1);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.width * 0.12,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color:
+                              state.pagamento == 1 ? Colors.blue : Colors.white,
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "Parcelamento",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: state.pagamento == 1
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Assinatura
+                    GestureDetector(
+                      onTap: () {
+                        pagamentoCubit.checkPagamento(2);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.width * 0.12,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color:
+                              state.pagamento == 2 ? Colors.blue : Colors.white,
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "Assinatura",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: state.pagamento == 2
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            )),
+          );
+        });
   }
 
   void _showOverlay(BuildContext context, {required String text}) {
-    RenderBox renderBox = valorkey.currentContext?.findRenderObject() as RenderBox;
+    RenderBox renderBox =
+        valorkey.currentContext?.findRenderObject() as RenderBox;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     print("dx dy ${offset.dx} ${offset.dy}");
     OverlayEntry newOverlayEntry = OverlayEntry(
@@ -363,4 +428,3 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     });
   }
 }
-

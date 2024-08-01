@@ -16,8 +16,7 @@ class EditarTransacaoModal extends StatefulWidget {
   const EditarTransacaoModal(this.gasto, {super.key});
 
   @override
-  _EditarTransacaoModalState createState() =>
-      _EditarTransacaoModalState();
+  _EditarTransacaoModalState createState() => _EditarTransacaoModalState();
 }
 
 class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
@@ -30,16 +29,29 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
   OverlayEntry? overlayEntry;
   GlobalKey valorkey = GlobalKey();
   PagamentoCubit pagamentoCubit = PagamentoCubit();
-  List<String> parcelas = ['2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x', '11x', '12x', '+'];
+  List<String> parcelas = [
+    '2x',
+    '3x',
+    '4x',
+    '5x',
+    '6x',
+    '7x',
+    '8x',
+    '9x',
+    '10x',
+    '11x',
+    '12x',
+    '+'
+  ];
   String dropdownValue = '2x';
 
   @override
-  void initState(){
+  void initState() {
     amountController.updateValue(widget.gasto.quantidade);
     descriptionController.text = widget.gasto.descricao!;
     parcelasController.text = widget.gasto.parcelas.toString();
     _tagclicada = widget.gasto.tag.nome;
-    _isIncome = widget.gasto.quantidade> 0;
+    _isIncome = widget.gasto.quantidade > 0;
     super.initState();
   }
 
@@ -48,7 +60,11 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
       const Alerta(text: 'Informe um valor').show(context);
       return false;
     }
-    double amount = double.tryParse(amountController.text.replaceRange(0, 2, '').replaceAll('.', '').replaceAll(',', '.')) ?? 0.0;
+    double amount = double.tryParse(amountController.text
+            .replaceRange(0, 2, '')
+            .replaceAll('.', '')
+            .replaceAll(',', '.')) ??
+        0.0;
 
     String category = getClicado();
     String descricao = descriptionController.text;
@@ -60,7 +76,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
       return false;
     }
 
-    if (getIsIncome() == null){
+    if (getIsIncome() == null) {
       const Alerta(text: 'Informe se é entrada ou saída').show(context);
       return false;
     }
@@ -68,10 +84,17 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
       amount = amount * -1;
     }
 
-    gasto = Gasto(id: gasto.id, data: gasto.data, quantidade: amount, tag: tag, descricao: descricao, mode: gasto.mode, parcelas: gasto.parcelas);
+    gasto = Gasto(
+        id: gasto.id,
+        data: gasto.data,
+        quantidade: amount,
+        tag: tag,
+        descricao: descricao,
+        mode: gasto.mode,
+        parcelas: gasto.parcelas);
 
     // Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
-    bool update = await atualizarGasto(gasto);
+    bool update = await updateGasto(gasto);
     if (!update) {
       const Alerta(text: 'Erro ao atualizar gasto').show(context);
       return false;
@@ -86,14 +109,14 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
   }
 
   void editarParcelas() async {
-    List<Gasto> listParcelasGastos = await listarParcelasGasto(widget.gasto);
+    List<Gasto> listParcelasGastos = await getParcelasGasto(widget.gasto);
     listParcelasGastos.forEach((gasto) async {
       editarTransacao(gasto);
     });
     Navigator.pop(context);
   }
 
-  bool? getIsIncome(){
+  bool? getIsIncome() {
     return _isIncome;
   }
 
@@ -118,78 +141,81 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
                 child: Column(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Titulo
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: Text('Editar Transação', style: Theme.of(context).textTheme.titleLarge),
-                        ),
+                    // Titulo
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text('Editar Transação',
+                          style: Theme.of(context).textTheme.titleLarge),
+                    ),
 
-                        // Valor
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: TextFormField(
-                              key: valorkey,
-                              onTap: () {
-                                widget.gasto.mode == 1 ? _showOverlay(context, text: 'Informe o valor de cada parcela') : null;
-                              },
-                              controller: amountController,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                  suffixIcon: Icon(Icons.info, color: Color(0xff90CAF9)),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  )
-                              )
-                          ),
-                        ),
-
-                        // Descrição
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                          child: TextFormField(
-                            controller: descriptionController,
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: const InputDecoration(
-                                labelText: 'Descrição',
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.blue),
-                                )
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 10.0),
-                        const Text('Categoria'),
-                        CardTags(setClicado, getClicado),
-                        const SizedBox(height: 10.0),
-                        EntradaSaida(setIsIncome, getIsIncome),
-                        const SizedBox(height: 10.0),
-
-                        // Botão Salvar
-                        ElevatedButton(
-                          onPressed: () {
-                            widget.gasto.mode == 0 ? editarTransacao(widget.gasto) : null;
-                            widget.gasto.mode == 1 ? editarParcelas() : null;
+                    // Valor
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: TextFormField(
+                          key: valorkey,
+                          onTap: () {
+                            widget.gasto.mode == 1
+                                ? _showOverlay(context,
+                                    text: 'Informe o valor de cada parcela')
+                                : null;
                           },
-                          child: const Text('Salvar'),
-                        ),
-                      ],
+                          controller: amountController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                              suffixIcon:
+                                  Icon(Icons.info, color: Color(0xff90CAF9)),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                              ))),
+                    ),
+
+                    // Descrição
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                      child: TextFormField(
+                        controller: descriptionController,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: const InputDecoration(
+                            labelText: 'Descrição',
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            )),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10.0),
+                    const Text('Categoria'),
+                    CardTags(setClicado, getClicado),
+                    const SizedBox(height: 10.0),
+                    EntradaSaida(setIsIncome, getIsIncome),
+                    const SizedBox(height: 10.0),
+
+                    // Botão Salvar
+                    ElevatedButton(
+                      onPressed: () {
+                        widget.gasto.mode == 0
+                            ? editarTransacao(widget.gasto)
+                            : null;
+                        widget.gasto.mode == 1 ? editarParcelas() : null;
+                      },
+                      child: const Text('Salvar'),
                     ),
                   ],
-                )
-            ),
+                ),
+              ],
+            )),
           );
-        }
-    );
+        });
   }
 
   void _showOverlay(BuildContext context, {required String text}) {
-    RenderBox renderBox = valorkey.currentContext?.findRenderObject() as RenderBox;
+    RenderBox renderBox =
+        valorkey.currentContext?.findRenderObject() as RenderBox;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     print("dx dy ${offset.dx} ${offset.dy}");
     OverlayEntry newOverlayEntry = OverlayEntry(
@@ -228,4 +254,3 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     });
   }
 }
-

@@ -5,7 +5,8 @@ import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-Future<Gasto> novoGasto(DateTime data, double quantidade, Tag tag, String descricao, int mode, int parcelas) async {
+Future<Gasto> createGasto(DateTime data, double quantidade, Tag tag,
+    String descricao, int mode, int parcelas) async {
   final prefs = await SharedPreferences.getInstance();
   int? id = prefs.getInt('gasto_id');
   if (id == null) {
@@ -14,35 +15,42 @@ Future<Gasto> novoGasto(DateTime data, double quantidade, Tag tag, String descri
     id++;
   }
   prefs.setInt('gasto_id', id);
-  return Gasto(id: id, data: data, quantidade: quantidade, tag: tag, descricao: descricao, mode: mode, parcelas: parcelas);
+  return Gasto(
+      id: id,
+      data: data,
+      quantidade: quantidade,
+      tag: tag,
+      descricao: descricao,
+      mode: mode,
+      parcelas: parcelas);
 }
 
-Future<void> inserirGasto(Gasto gasto) async {
+Future<void> insertGasto(Gasto gasto) async {
   GastoHelper gastoHelper = GastoHelper();
-  gastoHelper.inserirGasto(gasto);
+  gastoHelper.insertGasto(gasto);
 }
 
-Future<void> removerGasto(Gasto gasto) async {
+Future<void> removeGasto(Gasto gasto) async {
   GastoHelper gastoHelper = GastoHelper();
-  gastoHelper.removerGasto(gasto);
+  gastoHelper.removeGasto(gasto);
 }
 
-Future<void> removerGastoPorId(int id) async {
+Future<void> removeGastoById(int id) async {
   GastoHelper gastoHelper = GastoHelper();
-  gastoHelper.removerGastoPorId(id);
+  gastoHelper.removeGastoById(id);
 }
 
-Future<bool> atualizarGasto(Gasto gasto) async {
+Future<bool> updateGasto(Gasto gasto) async {
   GastoHelper gastoHelper = GastoHelper();
-  return gastoHelper.atualizarGasto(gasto);
+  return gastoHelper.updateGasto(gasto);
 }
 
-Future<List<Gasto>> listarTodosGastos() async {
+Future<List<Gasto>> getAllGastos() async {
   GastoHelper gastoHelper = GastoHelper();
-  return gastoHelper.listarTodosGastos();
+  return gastoHelper.getAllGastos();
 }
 
-Future<List<Gasto>> listarGastosPorNomeTag(String tagName) async {
+Future<List<Gasto>> getGastosByTagName(String tagName) async {
   GastoHelper gastoHelper = GastoHelper();
   TagHelper tagHelper = TagHelper();
   Tag? tag = await tagHelper.getTagByNome(tagName);
@@ -50,10 +58,10 @@ Future<List<Gasto>> listarGastosPorNomeTag(String tagName) async {
     return [];
   }
 
-  return gastoHelper.listarGastosPorNomeDaTag(tagName);
+  return gastoHelper.getGastosByTagName(tagName);
 }
 
-Future<List<Gasto>> listarGastosPorIdDaTag(int tagId) async {
+Future<List<Gasto>> getGastosByTagId(int tagId) async {
   GastoHelper gastoHelper = GastoHelper();
   TagHelper tagHelper = TagHelper();
   Tag? tag = await tagHelper.getTagById(tagId);
@@ -61,58 +69,63 @@ Future<List<Gasto>> listarGastosPorIdDaTag(int tagId) async {
     return [];
   }
 
-  return gastoHelper.listarGastosPorIdDaTag(tagId);
+  return gastoHelper.getGastosByTagId(tagId);
 }
 
-Future<List<Gasto>> listarGastosDoMes(DateTime data) async {
+Future<List<Gasto>> getGastosByMonth(DateTime data) async {
   GastoHelper gastoHelper = GastoHelper();
 
-  String ano = DateFormat('y').format(data);
-  String mes = DateFormat('MM').format(data);
+  String year = DateFormat('y').format(data);
+  String month = DateFormat('MM').format(data);
 
-  return gastoHelper.listarGastosDoMes(ano, mes);
+  return gastoHelper.getGastosByMonth(year, month);
 }
 
-Future<List<Gasto>> listarGastosDoMesComQuantidadePositiva(DateTime data) {
+Future<List<Gasto>> getGastosByMonthAndPositiveExpense(DateTime data) {
   GastoHelper gastoHelper = GastoHelper();
 
-  String ano = DateFormat('y').format(data);
-  String mes = DateFormat('MM').format(data);
+  String year = DateFormat('y').format(data);
+  String month = DateFormat('MM').format(data);
 
-  return gastoHelper.listarGastosDoMesComQuantidadePositiva(ano, mes);
+  return gastoHelper.getGastosByMonthAndPositiveExpense(year, month);
 }
 
-Future<List<Gasto>> listarGastosDoMesComQuantidadeNegativa(DateTime data) {
+Future<List<Gasto>> getGastosByMonthAndNegativeExpense(DateTime data) {
   GastoHelper gastoHelper = GastoHelper();
 
-  String ano = DateFormat('y').format(data);
-  String mes = DateFormat('MM').format(data);
+  String year = DateFormat('y').format(data);
+  String month = DateFormat('MM').format(data);
 
-  return gastoHelper.listarGastosDoMesComQuantidadeNegativa(ano, mes);
+  return gastoHelper.getGastosByMonthAndNegativeExpense(year, month);
 }
 
-Future<List<Gasto>> listarParcelasGasto(Gasto gasto) async {
+Future<List<Gasto>> getParcelasGasto(Gasto gasto) async {
   GastoHelper gastoHelper = GastoHelper();
-  List<Gasto> listaParcelasGastos = [gasto];
-  Gasto? gastoAtual = gasto;
+  List<Gasto> listParcelasGastos = [gasto];
+  Gasto? actualGasto = gasto;
   while (true) {
-    DateTime data = gastoAtual!.data;
-    int parcelas = gastoAtual.parcelas! + 1;
-    int ano = data.year;
-    int mes = data.month + 1;
-    if (mes > 12){
-      mes = mes - 12;
-      ano += 1;
+    DateTime date = actualGasto!.data;
+    int parcelas = actualGasto.parcelas! + 1;
+    int year = date.year;
+    int month = date.month + 1;
+    if (month > 12) {
+      month = month - 12;
+      year += 1;
     }
-    data = DateTime(ano, mes, 1);
+    date = DateTime(year, month, 1);
 
-    gastoAtual = await gastoHelper.buscarGastoPorCriterios(data: data, tagId: gasto.tag.id!, descricao: gasto.descricao!, quantidade: gasto.quantidade, parcelas: parcelas);
-    if (gastoAtual == null) {
+    actualGasto = await gastoHelper.getGastoByCriteria(
+        data: date,
+        tagId: gasto.tag.id,
+        descricao: gasto.descricao!,
+        quantidade: gasto.quantidade,
+        parcelas: parcelas);
+    if (actualGasto == null) {
       break;
     } else {
-      listaParcelasGastos.add(gastoAtual);
+      listParcelasGastos.add(actualGasto);
     }
   }
 
-  return listaParcelasGastos;
+  return listParcelasGastos;
 }

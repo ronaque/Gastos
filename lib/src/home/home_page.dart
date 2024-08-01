@@ -7,6 +7,7 @@ import 'package:gastos/src/resumo/resumo_page.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
 import 'package:gastos/src/shared/saldo_utils.dart';
 import 'home_module.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

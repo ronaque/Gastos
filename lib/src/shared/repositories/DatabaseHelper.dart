@@ -56,7 +56,7 @@ class DatabaseHelper {
 
   Future<void> inicializarTagsPadroes() async{
     globals.tagsPadroes.forEach((key, value) async {
-      Tag tag = await novaTag(key);
+      Tag tag = await createTag(key);
       Database? db = await database;
       await db.insert('tags', tag.toMap());
     });

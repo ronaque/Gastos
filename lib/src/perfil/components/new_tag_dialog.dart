@@ -1,15 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
-import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:gastos/src/shared/tag_utils.dart';
-
-void adicionarTag(String newTagName) async {
-  TagHelper tagHelper = TagHelper();
-  Tag newTag = await novaTag(newTagName);
-  tagHelper.insertTag(newTag);
-}
 
 displayNewTagDialog(BuildContext context, tagController) async {
   String? newTag = await showDialog<String>(
@@ -18,6 +10,7 @@ displayNewTagDialog(BuildContext context, tagController) async {
       return AlertDialog(
         title: const Text('Adicionar Tag'),
         content: TextField(
+          textCapitalization: TextCapitalization.sentences,
           controller: tagController,
           onChanged: (value) {
             // Você pode adicionar validações ou manipular o valor conforme necessário
@@ -28,9 +21,9 @@ displayNewTagDialog(BuildContext context, tagController) async {
         actions: <Widget>[
           TextButton(
             child: const Text('Adicionar'),
-            onPressed: () {
+            onPressed: () async {
               if (tagController.text.isNotEmpty) {
-                adicionarTag(tagController.text);
+                insertTag(await createTag(tagController.text));
               }
               Navigator.of(context).pop();
             },
@@ -40,7 +33,5 @@ displayNewTagDialog(BuildContext context, tagController) async {
     },
   );
 
-  print('sai do dialogo');
-  print('newTag: $tagController');
   tagController.clear();
 }

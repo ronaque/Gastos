@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gastos/src/mes/blocs/mes_cubit.dart';
-import 'package:gastos/src/mes/blocs/mes_state.dart';
+import 'package:gastos/src/month/blocs/month_cubit.dart';
+import 'package:gastos/src/month/blocs/month_state.dart';
 import 'package:gastos/src/shared/data_utils.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
-import 'mes_module.dart';
+import 'month_module.dart';
 
-class Mes extends StatefulWidget {
+class Month extends StatefulWidget {
   final DateTime data;
-  const Mes(this.data, {super.key});
+  const Month(this.data, {super.key});
 
   @override
-  _MesState createState() => _MesState();
+  _MonthState createState() => _MonthState();
 }
 
-class _MesState extends State<Mes> {
+class _MonthState extends State<Month> {
   late DateTime date;
   GastoHelper gastoHelper = GastoHelper();
   Widget transactionsList = Container();

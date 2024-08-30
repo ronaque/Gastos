@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gastos/src/mes/mes_page.dart';
-import 'package:gastos/src/perfil/perfil_page.dart';
+import 'package:gastos/src/month/month_page.dart';
+import 'package:gastos/src/profile/profile_page.dart';
 import 'package:gastos/src/resumo/resumo_page.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
 import 'package:gastos/src/shared/saldo_utils.dart';
@@ -19,7 +19,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   File? _imageFile;
   Image? image;
   late TabController _tabController;
-  Widget mes = Mes(DateTime.now());
+  Widget month = Month(DateTime.now());
 
   @override
   void initState() {
@@ -43,13 +43,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   void _openProfile() async {
     var result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const Perfil()));
+        context, MaterialPageRoute(builder: (context) => const Profile()));
 
     if (result != null) {
       var resultImage = await loadImage(_imageFile, image);
       setState(() {
         image = resultImage;
-        mes = Mes(DateTime.now());
+        month = Month(DateTime.now());
       });
     }
   }
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  mes,
+                  month,
                   const Resumo(),
                 ],
               ),

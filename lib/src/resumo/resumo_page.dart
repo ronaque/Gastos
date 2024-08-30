@@ -34,8 +34,8 @@ class _ResumoState extends State<Resumo> {
           // !! Tabela mensal !!
           Container(
             margin: const EdgeInsets.fromLTRB(0, 50, 0, 20),
-            decoration:
-            BoxDecoration(border: Border.all(color: const Color(0xff0D47A1))),
+            decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xff0D47A1))),
             width: MediaQuery.of(context).size.width * 0.8,
             child: const Column(
               children: <Widget>[
@@ -95,8 +95,8 @@ class _ResumoState extends State<Resumo> {
           // !! Tabela anual !!
           Container(
             margin: const EdgeInsets.fromLTRB(0, 50, 0, 20),
-            decoration:
-            BoxDecoration(border: Border.all(color: const Color(0xff0D47A1))),
+            decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xff0D47A1))),
             width: MediaQuery.of(context).size.width * 0.8,
             child: const Padding(
               padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -117,7 +117,7 @@ class _ResumoState extends State<Resumo> {
             child: SfCartesianChart(
                 primaryXAxis: CategoryAxis(),
                 primaryYAxis:
-                NumericAxis(minimum: 0, maximum: 40, interval: 10),
+                    NumericAxis(minimum: 0, maximum: 40, interval: 10),
                 tooltipBehavior: _tooltip,
                 series: <ChartSeries<_ChartData, String>>[
                   BarSeries<_ChartData, String>(

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:gastos/src/pagamento/blocs/pagamento_cubit.dart';
-import 'package:gastos/src/pagamento/blocs/pagamento_state.dart';
-import 'package:gastos/src/pagamento/components/card_tags.dart';
-import 'package:gastos/src/pagamento/components/entrada_saida.dart';
+import 'package:gastos/src/transaction/blocs/transaction_cubit.dart';
+import 'package:gastos/src/transaction/blocs/transaction_state.dart';
+import 'package:gastos/src/transaction/components/card_tags.dart';
+import 'package:gastos/src/transaction/components/in_out.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
@@ -13,15 +13,14 @@ import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:gastos/src/shared/tag_utils.dart';
 
-class AdicionarTransacaoModal extends StatefulWidget {
-  const AdicionarTransacaoModal({super.key});
+class AddTransactionModal extends StatefulWidget {
+  const AddTransactionModal({super.key});
 
   @override
-  _AdicionarTransacaoModalState createState() =>
-      _AdicionarTransacaoModalState();
+  _AddTransactionModalState createState() => _AddTransactionModalState();
 }
 
-class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
+class _AddTransactionModalState extends State<AddTransactionModal> {
   TagHelper tagHelper = TagHelper();
   var amountController = MoneyMaskedTextController(leftSymbol: 'R\$');
   TextEditingController descriptionController = TextEditingController();
@@ -276,7 +275,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                           const Text('Categoria'),
                           CardTags(_setSelectedTag, _getSelectedTag),
                           const SizedBox(height: 10.0),
-                          EntradaSaida(_setIsIncome, getIsIncome),
+                          InOut(_setIsIncome, getIsIncome),
                           const SizedBox(height: 10.0),
 
                           // Botão Salvar

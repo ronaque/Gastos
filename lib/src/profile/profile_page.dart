@@ -9,18 +9,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'components/new_tag_dialog.dart';
-import 'perfil_module.dart';
+import 'profile_module.dart';
 
 int globalIndex = 0;
 
-class Perfil extends StatefulWidget {
-  const Perfil({super.key});
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
   @override
-  _PerfilState createState() => _PerfilState();
+  _ProfileState createState() => _ProfileState();
 }
 
-class _PerfilState extends State<Perfil> {
+class _ProfileState extends State<Profile> {
   final TextEditingController _tagController = TextEditingController();
   File? _imageFile;
   Image? image;

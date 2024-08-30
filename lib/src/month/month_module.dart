@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
-import 'package:gastos/src/mes/blocs/mes_cubit.dart';
-import 'package:gastos/src/pagamento/editar_transacao_page.dart';
-import 'package:gastos/src/pagamento/pagamento_page.dart';
+import 'package:gastos/src/month/blocs/month_cubit.dart';
+import 'package:gastos/src/transaction/edit_transactrion_page.dart';
+import 'package:gastos/src/transaction/add_transaction_page.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
@@ -111,7 +111,7 @@ void addTransaction(
   await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return const AdicionarTransacaoModal();
+      return const AddTransactionModal();
     },
   );
   mesCubit.changeGastos(data);
@@ -123,7 +123,7 @@ void updateTransaction(
   await showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return EditarTransacaoModal(gasto);
+      return EditTransactionModal(gasto);
     },
   );
   mesCubit.changeGastos(data);

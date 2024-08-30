@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:gastos/src/pagamento/blocs/pagamento_state.dart';
+import 'package:gastos/src/month/components/transaction/blocs/transaction_state.dart';
 
 class PagamentoCubit extends Cubit<PagamentoState> {
   PagamentoCubit() : super(PagamentoState());

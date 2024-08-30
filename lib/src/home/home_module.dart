@@ -1,9 +1,6 @@
-import 'package:gastos/src/shared/data_utils.dart';
+import 'package:gastos/src/shared/date_utils.dart';
 
 String getMonth() {
   DateTime now = DateTime.now();
   return getMonthName(now.month);
 }
-
-
-

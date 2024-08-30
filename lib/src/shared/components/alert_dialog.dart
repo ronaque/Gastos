@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Alerta extends StatelessWidget{
+class Alerta extends StatelessWidget {
   final String? text;
   final String? action;
   final String? cancel;
@@ -12,68 +11,65 @@ class Alerta extends StatelessWidget{
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Alerta!'),
-      content: text != null ? Text(text!) : Text('Nada a alertar'),
+      content: text != null ? Text(text!) : const Text('Nada a alertar'),
       actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            cancel != null
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          cancel != null
               ? TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(cancel!, style: const TextStyle(color: Colors.red)),
-                )
-            )
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(cancel!,
+                        style: const TextStyle(color: Colors.red)),
+                  ))
               : Container(),
-              action != null
+          action != null
               ? TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.blue),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(action!),
-                  )
-              )
-              :TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text('Ok'),
-                )
-              ),
-          ]
-        ),
+                  ))
+              : TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text('Ok'),
+                  )),
+        ]),
       ],
     );
   }
 
   Future<bool> show(BuildContext context) async {
-    bool? comfirmado = await showDialog(
+    bool? confirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return this;
       },
     );
 
-    return comfirmado ?? false;
+    return confirmed ?? false;
   }
-
 }

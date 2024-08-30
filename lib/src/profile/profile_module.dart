@@ -1,62 +1,60 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:gastos/globals.dart';
-import 'package:gastos/src/shared/saldo_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-int globalIndex = 0;
-
-void _nomeChange(String value) {
+void _updateName(String value) {
   if (value.isEmpty) {
     value = '';
   } else {
     value = value;
   }
   print('nome: $value');
-  saveNome(value);
+  _storeName(value);
 }
 
-Future<void> saveNome(String nome) async {
+Future<void> _storeName(String nome) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setString('nome', nome);
   String? nomeSalvo = prefs.getString('nome');
   print('nome salvo: $nomeSalvo');
 }
 
-Future<String> getNome() async {
+Future<String> _fetchName() async {
   final prefs = await SharedPreferences.getInstance();
-  String? nomeSalvo = prefs.getString('nome');
-  print('nome salvo recuperado: $nomeSalvo');
-  if (nomeSalvo == null) {
+  String? savedName = prefs.getString('nome');
+  print('nome salvo recuperado: $savedName');
+  if (savedName == null) {
     return '';
   }
-  return nomeSalvo;
+  return savedName;
 }
 
-Widget getNomeTextField() {
+Widget buildNameTextField() {
   return FutureBuilder(
-    future: getNome(),
+    future: _fetchName(),
     builder: (context, AsyncSnapshot<String> snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data!.isEmpty) {
           return TextField(
-            onChanged: (value) => _nomeChange(value),
+            onChanged: (value) => _updateName(value),
             keyboardType: TextInputType.name,
             decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Nome de Usuário',
+              border: OutlineInputBorder(),
+              labelText: 'Nome de Usuário',
             ),
           );
         }
         return TextFormField(
           initialValue: snapshot.data,
-          onChanged: (value) => _nomeChange(value),
+          onChanged: (value) => _updateName(value),
           keyboardType: TextInputType.name,
           decoration: const InputDecoration(border: OutlineInputBorder()),
         );
       } else {
         return TextField(
-          onChanged: (value) => _nomeChange(value),
+          onChanged: (value) => _updateName(value),
           keyboardType: TextInputType.name,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -68,11 +66,12 @@ Widget getNomeTextField() {
   );
 }
 
+/// Get the default tags Icons as Padding Widgets
 Widget getDefaultTagsWidgets() {
   List<Widget> tagWidgets = [];
-  tagsPadroes.forEach((key, value) {
-    final padding =
-    Padding(padding: const EdgeInsets.symmetric(horizontal: 5), child: Icon(value));
+  defaultTags.forEach((key, value) {
+    final padding = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5), child: Icon(value));
     tagWidgets.add(padding);
   });
   return Row(children: tagWidgets);

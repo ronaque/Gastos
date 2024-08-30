@@ -1,60 +1,51 @@
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/GastoHelper.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 
-Future<void> atualizarSaldo(double value) async {
+Future<void> updateBalance(double value) async {
   final prefs = await SharedPreferences.getInstance();
 
-  double? saldo = prefs.getDouble('saldo');
+  double? balance = prefs.getDouble('saldo');
 
-  if (saldo == null) {
+  if (balance == null) {
     prefs.setDouble('saldo', value);
     return;
   }
 
-  saldo += value;
+  balance += value;
 
-  prefs.setDouble('saldo', saldo);
+  prefs.setDouble('saldo', balance);
   return;
 }
 
-Future<double> getSaldo() async{
+Future<double> fetchBalance() async {
   final prefs = await SharedPreferences.getInstance();
 
-  double? saldo = prefs.getDouble('saldo');
+  double? balance = prefs.getDouble('saldo');
 
-  if (saldo == null) {
+  if (balance == null) {
     prefs.setDouble('saldo', 0);
     return 0;
   }
 
-  return saldo;
+  return balance;
 }
 
-Future<double> getSaldoByMonth(DateTime data) async {
-  GastoHelper gastoHelper = GastoHelper();
-
-  List<Gasto>? gastos = await gastoHelper.getGastosDoMes(DateFormat('y').format(data), DateFormat('MM').format(data));
+Future<double> getMonthBalance(DateTime data) async {
+  List<Gasto> gastos = await getGastosByMonth(data);
   double gastosTotal = 0;
-  if (gastos != null) {
-    for (int i = 0; i < gastos.length; i++) {
-      gastosTotal += gastos[i].quantidade!;
-    }
+  for (int i = 0; i < gastos.length; i++) {
+    gastosTotal += gastos[i].quantidade;
   }
 
-  double? saldo = await getSaldo();
+  double? balance = await fetchBalance();
 
-  return saldo + gastosTotal;
+  return balance + gastosTotal;
 }
 
-Future<void> atualizarSaldoNovoMes() async{
-  GastoHelper gastoHelper = GastoHelper();
-  TagHelper tagHelper = TagHelper();
-
+Future<void> updateNewMonthBalance() async {
   final prefs = await SharedPreferences.getInstance();
 
   String? ultimoLogin = prefs.getString('ultimo_login');
@@ -71,20 +62,26 @@ Future<void> atualizarSaldoNovoMes() async{
 
   if (now.month != ultimoLoginDate.month) {
     // Recuperar gastos do mes de ultimo login
-    List<Gasto>? ultimoLoginGastos = await gastoHelper.getGastosDoMes(DateFormat('y').format(ultimoLoginDate), DateFormat('MM').format(ultimoLoginDate));
+    List<Gasto> ultimoLoginGastos = await getGastosByMonth(ultimoLoginDate);
     // Somar valores totais dos gastos
-    if (ultimoLoginGastos != null) {
-      for (int i = 0; i < ultimoLoginGastos.length; i++) {
-        saldo += ultimoLoginGastos[i].quantidade!;
-      }
+    for (int i = 0; i < ultimoLoginGastos.length; i++) {
+      saldo += ultimoLoginGastos[i].quantidade;
     }
+
     // Adicionar um novo pagamento ao mês atual com o valor total dos gastos
-    Tag? tag = await tagHelper.getTagByNome('gasto');
-    Gasto gasto = await novoGasto(DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0);
-    await gastoHelper.insertGasto(gasto);
+    Tag? tag = await getTagByNome('gasto');
+    if (tag != null) {
+      insertGasto(await createGasto(
+          DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0));
+    } else {
+      print("Tag 'gasto' não encontrada");
+      Tag gastoTag = await createTag('gasto');
+      await insertTag(gastoTag);
+    }
   }
 
   prefs.setString('ultimo_login', now.toString());
 
+  print("ultimo login atualizado para: ${prefs.getString('ultimo_login')}");
   return;
 }

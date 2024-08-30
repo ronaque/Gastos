@@ -1,10 +1,14 @@
+/// Class representing a tag
+/// id: Unique identifier of the tag
+/// nome: Name of the tag
+
 class Tag {
-  int? id; // Pode ser usado como chave primária no banco de dados
-  String? nome;
+  int id; // Pode ser usado como chave primária no banco de dados
+  String nome;
 
-  Tag(this.id, this.nome);
+  Tag({required this.id, required this.nome});
 
-  // Converte um objeto Tag em um Map para persistir no banco de dados
+  // Converts a Tag object into a Map to persist in the database
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -12,15 +16,13 @@ class Tag {
     };
   }
 
-  // Construtor que converte um Map em um objeto Tag
-  Tag.fromMap(Map<String, dynamic> map) {
-    id = map['id'] ?? 0;
-    nome = map['nome'];
-  }
+  // Constructor that converts a Map into a Tag object
+  Tag.fromMap(Map<String, dynamic> map)
+      : id = map['id'] ?? 0,
+        nome = map['nome'];
 
   @override
   String toString() {
     return 'Tag{id: $id, nome: $nome}';
   }
 }
-

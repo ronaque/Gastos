@@ -1,7 +1,6 @@
 import 'package:gastos/src/shared/models/Gasto.dart';
 
-class MesState{
-
+class MesState {
   final int index_open;
 
   final List<Gasto> gastos;
@@ -25,5 +24,4 @@ class MesState{
       saldo: saldo ?? this.saldo,
     );
   }
-
 }

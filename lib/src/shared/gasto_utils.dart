@@ -127,3 +127,15 @@ Future<List<Gasto>> getParcelasGasto(Gasto gasto) async {
 
   return listParcelasGastos;
 }
+
+Future<int> getNumberOfParcelas(Gasto gasto) async {
+  GastoHelper gastoHelper = GastoHelper();
+
+  DateTime date = gasto.data;
+  int tagId = gasto.tag.id;
+  String? descricao = gasto.descricao;
+  double quantidade = gasto.quantidade;
+  int parcelasGastos = await gastoHelper.getCountParcelasofGasto(
+      data: date, tagId: tagId, descricao: descricao, quantidade: quantidade);
+  return parcelasGastos;
+}

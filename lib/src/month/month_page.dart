@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gastos/src/month/blocs/month_cubit.dart';
 import 'package:gastos/src/month/blocs/month_state.dart';
 import 'package:gastos/src/shared/date_utils.dart';
+import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 import 'month_module.dart';
 
@@ -133,12 +134,51 @@ class _MonthState extends State<Month> {
                                                           fontSize: 17.0,
                                                         ),
                                                       ),
-                                                      Text(
-                                                        '${state.gastos[index].parcelas}x',
-                                                        style: const TextStyle(
-                                                          fontSize: 11.0,
-                                                        ),
+                                                      FutureBuilder<int>(
+                                                        future:
+                                                            getNumberOfParcelasMonth(
+                                                                state.gastos[
+                                                                    index]),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return const Text(
+                                                              'Carregando...',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      11.0),
+                                                            );
+                                                          } else if (snapshot
+                                                              .hasError) {
+                                                            return const Text(
+                                                              'Erro',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      11.0,
+                                                                  color: Colors
+                                                                      .red),
+                                                            );
+                                                          } else {
+                                                            return Text(
+                                                              '${state.gastos[index].parcelas}/${snapshot.data}',
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          11.0),
+                                                            );
+                                                          }
+                                                        },
                                                       ),
+                                                      // Number of parcelas
+                                                      // Text(
+                                                      //   '${state.gastos[index].parcelas}/${getNumberOfParcelasMonth(state.gastos[index])}',
+                                                      //   style: const TextStyle(
+                                                      //     fontSize: 11.0,
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   )
                                                 : Text(
@@ -190,7 +230,7 @@ class _MonthState extends State<Month> {
                                                       ),
                                                       GestureDetector(
                                                         onTap: () {
-                                                          removeGasto(
+                                                          removeMonthGasto(
                                                               state.gastos[
                                                                   index],
                                                               context,

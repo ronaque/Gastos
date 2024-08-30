@@ -130,7 +130,7 @@ void updateTransaction(
   mesCubit.changeSaldo(data);
 }
 
-Future<void> removeGasto(
+Future<void> removeMonthGasto(
     Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
   if (gasto.mode == 1) {
     var alerta = await const Alerta(
@@ -170,4 +170,8 @@ Future<void> removeGasto(
     mesCubit.changeGastos(data);
     mesCubit.changeSaldo(data);
   }
+}
+
+Future<int> getNumberOfParcelasMonth(Gasto gasto) {
+  return getNumberOfParcelas(gasto);
 }

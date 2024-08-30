@@ -240,4 +240,44 @@ class GastoHelper {
       print('Erro ao remover gasto por ID: $e');
     }
   }
+
+  Future<int> getCountParcelasofGasto({
+    required DateTime data,
+    required int tagId,
+    String? descricao,
+    double? quantidade,
+  }) async {
+    try {
+      Database db = await database;
+
+      // Extrair o dia da data
+      String day = data.day.toString().padLeft(2, '0');
+
+      // Construir a consulta SQL dinamicamente com base nos parâmetros fornecidos
+      String query = '''
+    SELECT COUNT(*) as count
+    FROM gastos
+    LEFT JOIN tags ON gastos.tag_id = tags.id
+    WHERE gastos.tag_id = ?
+    ${descricao != null ? 'AND gastos.descricao = ?' : ''}
+    ${quantidade != null ? 'AND gastos.quantidade = ?' : ''}
+    AND gastos.parcelas IS NOT NULL
+  ''';
+
+      final List<Map<String, Object?>> resultado = await db.rawQuery(query, [
+        tagId,
+        if (descricao != null) descricao,
+        if (quantidade != null) quantidade,
+      ]);
+
+      if (resultado.isNotEmpty) {
+        return Sqflite.firstIntValue(resultado) ?? 0;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print('Erro ao contar parcelas do gasto: $e');
+      return 0;
+    }
+  }
 }

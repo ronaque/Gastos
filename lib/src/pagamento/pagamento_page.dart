@@ -26,10 +26,10 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   var amountController = MoneyMaskedTextController(leftSymbol: 'R\$');
   TextEditingController descriptionController = TextEditingController();
   TextEditingController parcelasController = TextEditingController();
-  String? _tagclicada;
+  String? _selectedTag;
   bool? _isIncome;
   OverlayEntry? overlayEntry;
-  GlobalKey valorkey = GlobalKey();
+  GlobalKey valueGlobalKey = GlobalKey();
   PagamentoCubit pagamentoCubit = PagamentoCubit();
   List<String> parcelas = [
     '2x',
@@ -47,8 +47,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
   ];
   String dropdownValue = '2x';
 
-  Future<bool?> adicionarTransacao(
-      DateTime data, int mode, int parcelas) async {
+  Future<bool> _createGasto(DateTime date, int mode, int parcelas) async {
     if (amountController.text.isEmpty) {
       const Alerta(text: 'Informe um valor').show(context);
       return false;
@@ -59,8 +58,8 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
             .replaceAll(',', '.')) ??
         0.0;
 
-    String category = getClicado();
-    String descricao = descriptionController.text;
+    String category = _getSelectedTag();
+    String description = descriptionController.text;
 
     Tag? tag = await getTagByNome(category);
     if (tag == null) {
@@ -78,7 +77,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     }
 
     Gasto gasto =
-        await createGasto(data, amount, tag, descricao, mode, parcelas);
+        await createGasto(date, amount, tag, description, mode, parcelas);
     insertGasto(gasto);
     print('Gasto inserido com sucesso: ${gasto.toString()}');
 
@@ -89,21 +88,22 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     return true;
   }
 
-  void adicionarParcelas(int numParcelas) async {
-    DateTime data = DateTime.now();
+  void addParcelas(int numParcelas) async {
+    DateTime date = DateTime.now();
     for (int i = 0; i < numParcelas; i++) {
       if (i > 0) {
-        int year = data.year;
-        int month = data.month + 1;
+        int year = date.year;
+        int month = date.month + 1;
         if (month > 12) {
           month = month - 12;
           year += 1;
         }
-        data = DateTime(year, month, 1);
+        date = DateTime(year, month, 1);
       }
-      bool? result = await adicionarTransacao(data, 1, i + 1);
+      bool result = await _createGasto(date, 1, i + 1);
       if (result == false) {
-        return null;
+        print("Erro ao adicionar parcela ${i + 1}");
+        return;
       }
     }
     Navigator.pop(context);
@@ -113,16 +113,16 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
     return _isIncome;
   }
 
-  void setIsIncome(bool value) {
+  void _setIsIncome(bool value) {
     _isIncome = value;
   }
 
-  void setClicado(String value) {
-    _tagclicada = value;
+  void _setSelectedTag(String value) {
+    _selectedTag = value;
   }
 
-  String getClicado() {
-    return _tagclicada ?? '';
+  String _getSelectedTag() {
+    return _selectedTag ?? '';
   }
 
   @override
@@ -150,7 +150,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                             child: TextFormField(
-                                key: valorkey,
+                                key: valueGlobalKey,
                                 onTap: () {
                                   state.pagamento == 1
                                       ? _showOverlay(context,
@@ -274,19 +274,19 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 
                           const SizedBox(height: 10.0),
                           const Text('Categoria'),
-                          CardTags(setClicado, getClicado),
+                          CardTags(_setSelectedTag, _getSelectedTag),
                           const SizedBox(height: 10.0),
-                          EntradaSaida(setIsIncome, getIsIncome),
+                          EntradaSaida(_setIsIncome, getIsIncome),
                           const SizedBox(height: 10.0),
 
                           // Botão Salvar
                           ElevatedButton(
                             onPressed: () {
                               state.pagamento == 0
-                                  ? adicionarTransacao(DateTime.now(), 0, 0)
+                                  ? _createGasto(DateTime.now(), 0, 0)
                                   : null;
                               state.pagamento == 1
-                                  ? adicionarParcelas(state.parcelas)
+                                  ? addParcelas(state.parcelas)
                                   : null;
                             },
                             child: const Text('Salvar'),
@@ -390,7 +390,7 @@ class _AdicionarTransacaoModalState extends State<AdicionarTransacaoModal> {
 
   void _showOverlay(BuildContext context, {required String text}) {
     RenderBox renderBox =
-        valorkey.currentContext?.findRenderObject() as RenderBox;
+        valueGlobalKey.currentContext?.findRenderObject() as RenderBox;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     print("dx dy ${offset.dx} ${offset.dy}");
     OverlayEntry newOverlayEntry = OverlayEntry(

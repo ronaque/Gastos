@@ -1,13 +1,13 @@
 import 'package:gastos/src/shared/models/Tag.dart';
 
-/// Classe que representa um gasto
-///   id: Identificador único do gasto
-///   data: Data em que o gasto foi realizado
-///   quantidade: Valor do gasto
-///   tag: Tag associada ao gasto
-///   descricao: Descrição do gasto
-///   mode: Modo de pagamento (0 - a vista, 1 - parcelado, 2 - assinatura)
-///   parcelas: Número de parcelas (caso o gasto seja parcelado)
+/// Class representing an expense
+/// id: Unique identifier of the expense
+/// data: Date on which the expense was incurred
+/// quantidade: Amount spent
+/// tag: Tag associated with the expense
+/// descricao: Description of the expense
+/// mode: Payment method (0 - cash, 1 - installment, 2 - subscription)
+/// parcelas: Number of installments (if the expense is paid in installments)
 
 class Gasto {
   int id;
@@ -40,7 +40,7 @@ class Gasto {
       'parcelas': parcelas
     };
   }
-  
+
   // Construtor que converte um Map em um objeto Gasto
   Gasto.fromMap(Map<String, dynamic> map)
       : id = map['id'],
@@ -55,6 +55,4 @@ class Gasto {
   String toString() {
     return 'Gasto{id: $id, data: $data, quantidade: $quantidade, tag: ${tag.toString()}, descricao: $descricao, mode: $mode, parcelas: $parcelas}';
   }
-
 }
-

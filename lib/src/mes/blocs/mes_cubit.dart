@@ -28,7 +28,7 @@ class MesCubit extends Cubit<MesState> {
   }
 
   Future<void> changeSaldo(DateTime data) async {
-    var saldo = await getSaldoByMonth(data);
+    var saldo = await getMonthBalance(data);
     emit(state.copyWith(saldo: saldo));
   }
 }

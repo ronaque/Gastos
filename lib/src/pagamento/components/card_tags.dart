@@ -1,39 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:gastos/src/shared/tag_utils.dart';
 
 class CardTags extends StatefulWidget {
-  final void Function(String category) setClicado;
-  final String Function() getClicado;
+  final void Function(String category) setSelected;
+  final String Function() getSelected;
 
-  const CardTags(this.setClicado, this.getClicado, {super.key});
+  const CardTags(this.setSelected, this.getSelected, {super.key});
 
   @override
   State<CardTags> createState() => _CardTagsState();
 }
 
 class _CardTagsState extends State<CardTags> {
-  TagHelper tagHelper = TagHelper();
-
-  getClicadoBoxColor(String tag) {
-    if (widget.getClicado() == tag) {
+  getSelectedBoxColor(String tag) {
+    if (widget.getSelected() == tag) {
       return Colors.blue;
     } else {
       return Colors.white;
     }
   }
 
-  getClicadoTextColor(String tag) {
-    if (widget.getClicado() == tag) {
+  getSelectedTextColor(String tag) {
+    if (widget.getSelected() == tag) {
       return Colors.white;
     } else {
       return Colors.black;
     }
   }
 
-  Future<Widget> getDBTagsTexts() async {
+  Future<Widget> _GetCustomTagsTexts() async {
     List<Tag>? dbTags = await getCustomTags();
 
     return SingleChildScrollView(
@@ -43,7 +40,7 @@ class _CardTagsState extends State<CardTags> {
           final tag = dbTags[index];
           return GestureDetector(
               onTap: () {
-                widget.setClicado(tag.nome);
+                widget.setSelected(tag.nome);
                 setState(() {});
               },
               child: Padding(
@@ -53,7 +50,7 @@ class _CardTagsState extends State<CardTags> {
                   height: MediaQuery.of(context).size.width * 0.12,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    color: getClicadoBoxColor(tag.nome),
+                    color: getSelectedBoxColor(tag.nome),
                     border: Border.all(color: Colors.blue),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -62,7 +59,7 @@ class _CardTagsState extends State<CardTags> {
                         tag.nome.substring(1),
                     style: TextStyle(
                       fontSize: 16,
-                      color: getClicadoTextColor(tag.nome),
+                      color: getSelectedTextColor(tag.nome),
                     ),
                   ),
                 ),
@@ -72,9 +69,9 @@ class _CardTagsState extends State<CardTags> {
     );
   }
 
-  Widget getDBTags() {
+  Widget _getCustomTags() {
     return FutureBuilder(
-      future: getDBTagsTexts(),
+      future: _GetCustomTagsTexts(),
       builder: (context, AsyncSnapshot<Widget> snapshot) {
         if (snapshot.hasData) {
           return snapshot.data!;
@@ -88,44 +85,11 @@ class _CardTagsState extends State<CardTags> {
     );
   }
 
-  getGasolinaIconColor() {
-    if (widget.getClicado() == 'gasolina') {
-      return const Icon(
-        Icons.local_gas_station,
-        color: Colors.white,
-      );
+  _getSelectedIcon(String tag) {
+    if (widget.getSelected() == tag) {
+      return Icon(defaultTags[tag], color: Colors.white);
     } else {
-      return const Icon(Icons.local_gas_station);
-    }
-  }
-
-  getComidaIconColor() {
-    if (widget.getClicado() == 'comida') {
-      return const Icon(
-        Icons.restaurant,
-        color: Colors.white,
-      );
-    } else {
-      return const Icon(Icons.restaurant);
-    }
-  }
-
-  getGastoIconColor() {
-    if (widget.getClicado() == 'gasto') {
-      return const Icon(
-        Icons.paid,
-        color: Colors.white,
-      );
-    } else {
-      return const Icon(Icons.paid);
-    }
-  }
-
-  getClicadoIcon(String tag) {
-    if (widget.getClicado() == tag) {
-      return Icon(tagsPadroes[tag], color: Colors.white);
-    } else {
-      return Icon(tagsPadroes[tag]);
+      return Icon(defaultTags[tag]);
     }
   }
 
@@ -133,10 +97,10 @@ class _CardTagsState extends State<CardTags> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        final tagName = tagsPadroes.keys.toList()[index];
+        final tagName = defaultTags.keys.toList()[index];
         return GestureDetector(
             onTap: () {
-              widget.setClicado(tagName);
+              widget.setSelected(tagName);
               setState(() {});
             },
             child: Padding(
@@ -146,11 +110,11 @@ class _CardTagsState extends State<CardTags> {
                 height: MediaQuery.of(context).size.width * 0.12,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: getClicadoBoxColor(tagName),
+                  color: getSelectedBoxColor(tagName),
                   border: Border.all(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: getClicadoIcon(tagName),
+                child: _getSelectedIcon(tagName),
               ),
             ));
       }),
@@ -159,7 +123,11 @@ class _CardTagsState extends State<CardTags> {
 
   Widget getTags() {
     return Column(
-      children: [getDefaultTags(), const SizedBox(height: 16.0), getDBTags()],
+      children: [
+        getDefaultTags(),
+        const SizedBox(height: 16.0),
+        _getCustomTags()
+      ],
     );
   }
 

@@ -29,7 +29,7 @@ String getMonthName(int month) {
   }
 }
 
-String retornarMesAbreviado(int mes){
+String getShortMonthStr(int mes) {
   switch (mes) {
     case 1:
       return 'Jan';

@@ -25,10 +25,10 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
   var amountController = MoneyMaskedTextController(leftSymbol: 'R\$');
   TextEditingController descriptionController = TextEditingController();
   TextEditingController parcelasController = TextEditingController();
-  String? _tagclicada;
+  String? _selectedTag;
   bool? _isIncome;
   OverlayEntry? overlayEntry;
-  GlobalKey valorkey = GlobalKey();
+  GlobalKey valueGlobalKey = GlobalKey();
   PagamentoCubit pagamentoCubit = PagamentoCubit();
   List<String> parcelas = [
     '2x',
@@ -51,12 +51,12 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     amountController.updateValue(widget.gasto.quantidade);
     descriptionController.text = widget.gasto.descricao!;
     parcelasController.text = widget.gasto.parcelas.toString();
-    _tagclicada = widget.gasto.tag.nome;
+    _selectedTag = widget.gasto.tag.nome;
     _isIncome = widget.gasto.quantidade > 0;
     super.initState();
   }
 
-  Future<bool?> editarTransacao(Gasto gasto) async {
+  Future<bool?> _updateGasto(Gasto gasto) async {
     if (amountController.text.isEmpty) {
       const Alerta(text: 'Informe um valor').show(context);
       return false;
@@ -67,7 +67,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
             .replaceAll(',', '.')) ??
         0.0;
 
-    String category = getClicado();
+    String category = _getSelectedTag();
     String descricao = descriptionController.text;
 
     Tag? tag = await getTagByNome(category);
@@ -94,7 +94,6 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
         mode: gasto.mode,
         parcelas: gasto.parcelas);
 
-    // Gasto gasto = await novoGasto(data, amount, tag, descricao, mode, parcelas);
     bool update = await updateGasto(gasto);
     if (!update) {
       const Alerta(text: 'Erro ao atualizar gasto').show(context);
@@ -109,10 +108,10 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     return true;
   }
 
-  void editarParcelas() async {
+  void _updateParcelas() async {
     List<Gasto> listParcelasGastos = await getParcelasGasto(widget.gasto);
     listParcelasGastos.forEach((gasto) async {
-      editarTransacao(gasto);
+      _updateGasto(gasto);
     });
     Navigator.pop(context);
   }
@@ -125,12 +124,12 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     _isIncome = value;
   }
 
-  void setClicado(String value) {
-    _tagclicada = value;
+  void _setSelectedTag(String value) {
+    _selectedTag = value;
   }
 
-  String getClicado() {
-    return _tagclicada ?? '';
+  String _getSelectedTag() {
+    return _selectedTag ?? '';
   }
 
   @override
@@ -157,7 +156,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                       child: TextFormField(
-                          key: valorkey,
+                          key: valueGlobalKey,
                           onTap: () {
                             widget.gasto.mode == 1
                                 ? _showOverlay(context,
@@ -191,7 +190,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
 
                     const SizedBox(height: 10.0),
                     const Text('Categoria'),
-                    CardTags(setClicado, getClicado),
+                    CardTags(_setSelectedTag, _getSelectedTag),
                     const SizedBox(height: 10.0),
                     EntradaSaida(setIsIncome, getIsIncome),
                     const SizedBox(height: 10.0),
@@ -200,9 +199,9 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
                     ElevatedButton(
                       onPressed: () {
                         widget.gasto.mode == 0
-                            ? editarTransacao(widget.gasto)
+                            ? _updateGasto(widget.gasto)
                             : null;
-                        widget.gasto.mode == 1 ? editarParcelas() : null;
+                        widget.gasto.mode == 1 ? _updateParcelas() : null;
                       },
                       child: const Text('Salvar'),
                     ),
@@ -216,7 +215,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
 
   void _showOverlay(BuildContext context, {required String text}) {
     RenderBox renderBox =
-        valorkey.currentContext?.findRenderObject() as RenderBox;
+        valueGlobalKey.currentContext?.findRenderObject() as RenderBox;
     Offset offset = renderBox.localToGlobal(Offset.zero);
     print("dx dy ${offset.dx} ${offset.dy}");
     OverlayEntry newOverlayEntry = OverlayEntry(

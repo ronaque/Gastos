@@ -24,7 +24,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      atualizarSaldoNovoMes();
+      updateNewMonthBalance();
       var resultImage = await loadImage(_imageFile, image);
       setState(() {
         image = resultImage;
@@ -41,8 +41,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void _abrirPerfil() async {
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const Perfil()));
+  void _openProfile() async {
+    var result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Perfil()));
 
     if (result != null) {
       var resultImage = await loadImage(_imageFile, image);
@@ -55,74 +56,73 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Row(
-              children: [
-                Icon(
-                  Icons.attach_money,
+    return Builder(builder: (context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Row(
+            children: [
+              Icon(
+                Icons.attach_money,
+                color: Colors.white,
+              ),
+              SizedBox(
+                  width: 8.0), // Adicione algum espaço entre o ícone e o texto
+              Text(
+                'MobiFin',
+                style: TextStyle(
                   color: Colors.white,
                 ),
-                SizedBox(
-                    width: 8.0), // Adicione algum espaço entre o ícone e o texto
-                Text(
-                  'MobiFin',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: image != null
+                  ? profileAvatar(image, context)
+                  : defaultAvatar(context),
+              onPressed: _openProfile,
             ),
-            actions: [
-              IconButton(
-                icon: image != null ? profileAvatar(image, context) : defaultAvatar(context),
-                onPressed: _abrirPerfil,
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              TabBar(
-                controller: _tabController,
-                tabs: [
-                  Tab(
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 35),
-                          Text(getMonth()),
-                          const SizedBox(width: 5),
-                          const Icon(Icons.calendar_month),
-                        ],
-                      )
-                  ),
-                  const Tab(
-                      child: Row(
-                        children: [
-                          SizedBox(width: 35),
-                          Text('Resumo'),
-                          SizedBox(width: 5),
-                          Icon(Icons.summarize),
-                        ],
-                      )),
-                ],
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
+          ],
+        ),
+        body: Column(
+          children: [
+            TabBar(
+              controller: _tabController,
+              tabs: [
+                Tab(
+                    child: Row(
                   children: [
-                    mes,
-                    const Resumo(),
+                    const SizedBox(width: 35),
+                    Text(getMonth()),
+                    const SizedBox(width: 5),
+                    const Icon(Icons.calendar_month),
                   ],
-                ),
+                )),
+                const Tab(
+                    child: Row(
+                  children: [
+                    SizedBox(width: 35),
+                    Text('Resumo'),
+                    SizedBox(width: 5),
+                    Icon(Icons.summarize),
+                  ],
+                )),
+              ],
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey,
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  mes,
+                  const Resumo(),
+                ],
               ),
-            ],
-          ),
-        );
-      }
-    );
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

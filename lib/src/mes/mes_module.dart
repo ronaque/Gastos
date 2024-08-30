@@ -9,7 +9,7 @@ import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
 
-Widget getSaldoTexto(double saldo) {
+Widget getBalanceText(double saldo) {
   return Text(
     'Saldo: \$${saldo.toStringAsFixed(2)}',
     style: const TextStyle(color: Colors.white),
@@ -19,7 +19,7 @@ Widget getSaldoTexto(double saldo) {
 Widget getCategoryTextOrIcon(Tag tag) {
   String category = tag.nome;
   var icon = null;
-  tagsPadroes.forEach((key, value) {
+  defaultTags.forEach((key, value) {
     if (key == category) {
       icon = Icon(value);
     }
@@ -37,76 +37,76 @@ Widget getCategoryTextOrIcon(Tag tag) {
   );
 }
 
-Widget getGastosPositivos() {
-  return FutureBuilder(
-    future: getGastosByMonthAndPositiveExpense(DateTime.now()),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        if (snapshot.data!.isEmpty) {
-          return const Text(
-            '\$0.0',
-            style: TextStyle(color: Colors.white),
-          );
-        }
-        double gastosTotal = 0;
-        for (int i = 0; i < snapshot.data!.length; i++) {
-          gastosTotal += snapshot.data![i].quantidade;
-        }
-        String strGastosTotal = gastosTotal.toStringAsFixed(2);
-        return Text(
-          '\$$strGastosTotal',
-          style: const TextStyle(color: Colors.green),
-        );
-      } else {
-        return const Text(
-          '\$0.0',
-          style: TextStyle(color: Colors.white),
-        );
-      }
-    },
-  );
-}
+// Widget getGastosPositivos() {
+//   return FutureBuilder(
+//     future: getGastosByMonthAndPositiveExpense(DateTime.now()),
+//     builder: (context, snapshot) {
+//       if (snapshot.hasData) {
+//         if (snapshot.data!.isEmpty) {
+//           return const Text(
+//             '\$0.0',
+//             style: TextStyle(color: Colors.white),
+//           );
+//         }
+//         double gastosTotal = 0;
+//         for (int i = 0; i < snapshot.data!.length; i++) {
+//           gastosTotal += snapshot.data![i].quantidade;
+//         }
+//         String strGastosTotal = gastosTotal.toStringAsFixed(2);
+//         return Text(
+//           '\$$strGastosTotal',
+//           style: const TextStyle(color: Colors.green),
+//         );
+//       } else {
+//         return const Text(
+//           '\$0.0',
+//           style: TextStyle(color: Colors.white),
+//         );
+//       }
+//     },
+//   );
+// }
 
-Widget getGastosNegativos() {
-  return FutureBuilder(
-    future: getGastosByMonthAndNegativeExpense(DateTime.now()),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        if (snapshot.data!.isEmpty) {
-          return const Text(
-            '\$0.0',
-            style: TextStyle(color: Colors.white),
-          );
-        }
-        double gastosTotal = 0;
-        for (int i = 0; i < snapshot.data!.length; i++) {
-          gastosTotal += snapshot.data![i].quantidade;
-        }
-        String strGastosTotal = (gastosTotal * -1).toStringAsFixed(2);
-        return Text(
-          '\$$strGastosTotal',
-          style: const TextStyle(color: Colors.red),
-        );
-      } else {
-        return const Text(
-          '\$0.0',
-          style: TextStyle(color: Colors.white),
-        );
-      }
-    },
-  );
-}
+// Widget getGastosNegativos() {
+//   return FutureBuilder(
+//     future: getGastosByMonthAndNegativeExpense(DateTime.now()),
+//     builder: (context, snapshot) {
+//       if (snapshot.hasData) {
+//         if (snapshot.data!.isEmpty) {
+//           return const Text(
+//             '\$0.0',
+//             style: TextStyle(color: Colors.white),
+//           );
+//         }
+//         double gastosTotal = 0;
+//         for (int i = 0; i < snapshot.data!.length; i++) {
+//           gastosTotal += snapshot.data![i].quantidade;
+//         }
+//         String strGastosTotal = (gastosTotal * -1).toStringAsFixed(2);
+//         return Text(
+//           '\$$strGastosTotal',
+//           style: const TextStyle(color: Colors.red),
+//         );
+//       } else {
+//         return const Text(
+//           '\$0.0',
+//           style: TextStyle(color: Colors.white),
+//         );
+//       }
+//     },
+//   );
+// }
 
-Widget buildEmptyState() {
-  return const Column(
-    children: [
-      SizedBox(height: 20.0),
-      Text('Nenhuma transação encontrada.'),
-    ],
-  );
-}
+// Widget buildEmptyState() {
+//   return const Column(
+//     children: [
+//       SizedBox(height: 20.0),
+//       Text('Nenhuma transação encontrada.'),
+//     ],
+//   );
+// }
 
-void adicionarTransacao(
+void addTransaction(
     MesCubit mesCubit, DateTime data, BuildContext context) async {
   await showModalBottomSheet(
     context: context,
@@ -118,7 +118,7 @@ void adicionarTransacao(
   mesCubit.changeSaldo(data);
 }
 
-void editarTransacao(
+void updateTransaction(
     Gasto gasto, MesCubit mesCubit, DateTime data, BuildContext context) async {
   await showModalBottomSheet(
     context: context,
@@ -130,7 +130,7 @@ void editarTransacao(
   mesCubit.changeSaldo(data);
 }
 
-Future<void> excluirGasto(
+Future<void> removeGasto(
     Gasto gasto, BuildContext context, MesCubit mesCubit, DateTime data) async {
   if (gasto.mode == 1) {
     var alerta = await const Alerta(

@@ -36,7 +36,7 @@ class _PerfilState extends State<Perfil> {
     super.initState();
   }
 
-  Future<void> _selecionarImagem() async {
+  Future<void> _selectImage() async {
     final file = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (file == null) {
       return;
@@ -60,9 +60,9 @@ class _PerfilState extends State<Perfil> {
     return;
   }
 
-  Future<Widget> getDBTagsTexts(context) async {
-    // TagHelper tagHelper = TagHelper();
-    List<Tag>? dbTags = await getCustomTags();
+  /// Create a Row with the user's custom tags text fields
+  Future<Widget> _getCustomTagsTexts(context) async {
+    List<Tag> dbTags = await getCustomTags();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -103,9 +103,10 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
-  Widget getDBTags(context) {
+  /// Await the custom tags from the database
+  Widget _getCustomTags(context) {
     return FutureBuilder(
-      future: getDBTagsTexts(context),
+      future: _getCustomTagsTexts(context),
       builder: (context, AsyncSnapshot<Widget> snapshot) {
         if (snapshot.hasData) {
           return snapshot.data!;
@@ -159,7 +160,7 @@ class _PerfilState extends State<Perfil> {
                               bottom: -10,
                               left: 80,
                               child: IconButton(
-                                  onPressed: _selecionarImagem,
+                                  onPressed: _selectImage,
                                   icon: const Icon(Icons.add_a_photo)),
                             )
                           ])
@@ -173,7 +174,7 @@ class _PerfilState extends State<Perfil> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           const Text("Nome:"),
-                          SizedBox(width: 250, child: getNomeTextField()),
+                          SizedBox(width: 250, child: buildNameTextField()),
                         ],
                       )),
                   Padding(
@@ -197,7 +198,7 @@ class _PerfilState extends State<Perfil> {
                   Padding(
                       padding: EdgeInsets.fromLTRB(
                           0, MediaQuery.of(context).size.width * 0.08, 0, 0),
-                      child: getDBTags(context)),
+                      child: _getCustomTags(context)),
                   Padding(
                       padding: EdgeInsets.fromLTRB(
                           0, MediaQuery.of(context).size.width * 0.08, 0, 0),

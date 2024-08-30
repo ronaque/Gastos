@@ -25,14 +25,14 @@ class TagHelper {
   }
 
   Future<List<Tag>> getCustomTags() async {
-    List<String> defaultTags = tagsPadroes.keys.toList();
+    List<String> defaultTagsList = defaultTags.keys.toList();
     Database? db = await database;
 
-    String defaultTagsPlaceholders = defaultTags.map((e) => '?').join(', ');
+    String defaultTagsPlaceholders = defaultTagsList.map((e) => '?').join(', ');
 
     List<Map<String, Object?>> result = await db.rawQuery(
       'SELECT * FROM tags WHERE nome NOT IN ($defaultTagsPlaceholders)',
-      defaultTags,
+      defaultTagsList,
     );
 
     return List.generate(result.length, (i) {

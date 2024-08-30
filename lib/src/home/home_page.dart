@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gastos/src/month/month_page.dart';
 import 'package:gastos/src/profile/profile_page.dart';
 import 'package:gastos/src/resumo/resumo_page.dart';
-import 'package:gastos/src/shared/imageUtils.dart';
+import 'package:gastos/src/shared/image_utils.dart';
 import 'package:gastos/src/shared/saldo_utils.dart';
 import 'home_module.dart';
 

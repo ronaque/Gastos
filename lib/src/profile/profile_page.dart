@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/imageUtils.dart';
+import 'package:gastos/src/shared/image_utils.dart';
 import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';

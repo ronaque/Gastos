@@ -69,11 +69,14 @@ Future<void> updateNewMonthBalance() async {
     }
 
     // Adicionar um novo pagamento ao mês atual com o valor total dos gastos
-    // TODO: Adicionar tratamento para caso a tag 'gasto' não exista. Criar a tag 'gasto' automaticamente, pois ela DEVE existir
     Tag? tag = await getTagByNome('gasto');
     if (tag != null) {
       insertGasto(await createGasto(
           DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0));
+    } else {
+      print("Tag 'gasto' não encontrada");
+      Tag gastoTag = await createTag('gasto');
+      await insertTag(gastoTag);
     }
   }
 

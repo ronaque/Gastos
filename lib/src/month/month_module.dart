@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
 import 'package:gastos/src/month/blocs/month_cubit.dart';
-import 'package:gastos/src/transaction/edit_transactrion_page.dart';
-import 'package:gastos/src/transaction/add_transaction_page.dart';
+import 'package:gastos/src/month/components/transaction/edit_transactrion_page.dart';
+import 'package:gastos/src/month/components/transaction/add_transaction_page.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';

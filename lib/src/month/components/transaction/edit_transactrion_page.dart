@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:gastos/src/transaction/blocs/transaction_cubit.dart';
-import 'package:gastos/src/transaction/blocs/transaction_state.dart';
-import 'package:gastos/src/transaction/components/card_tags.dart';
-import 'package:gastos/src/transaction/components/in_out.dart';
+import 'package:gastos/src/month/components/transaction/blocs/transaction_cubit.dart';
+import 'package:gastos/src/month/components/transaction/blocs/transaction_state.dart';
+import 'package:gastos/src/month/components/transaction/components/card_tags.dart';
+import 'package:gastos/src/month/components/transaction/components/in_out.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
@@ -56,7 +56,7 @@ class _EditTransactionModalState extends State<EditTransactionModal> {
     super.initState();
   }
 
-  Future<bool?> _updateGasto(Gasto gasto) async {
+  Future<bool> _updateGasto(Gasto gasto) async {
     if (amountController.text.isEmpty) {
       const Alerta(text: 'Informe um valor').show(context);
       return false;

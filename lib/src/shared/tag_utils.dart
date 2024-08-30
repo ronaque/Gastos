@@ -1,3 +1,4 @@
+import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,9 +15,15 @@ Future<Tag> createTag(String nome) async {
   return Tag(id: id, nome: nome);
 }
 
-Future<void> insertTag(Tag tag) async {
+Future<bool> insertTag(Tag tag) async {
+  if (tag.nome.isEmpty) {
+    print('Nome da tag não pode ser vazio');
+    return false;
+  }
   TagHelper tagHelper = TagHelper();
   tagHelper.insertTag(tag);
+
+  return true;
 }
 
 Future<List<Tag>> getAllTags() async {

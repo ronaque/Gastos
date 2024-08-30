@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:gastos/src/transaction/blocs/transaction_cubit.dart';
-import 'package:gastos/src/transaction/blocs/transaction_state.dart';
-import 'package:gastos/src/transaction/components/card_tags.dart';
-import 'package:gastos/src/transaction/components/in_out.dart';
+import 'package:gastos/src/month/components/transaction/blocs/transaction_cubit.dart';
+import 'package:gastos/src/month/components/transaction/blocs/transaction_state.dart';
+import 'package:gastos/src/month/components/transaction/components/card_tags.dart';
+import 'package:gastos/src/month/components/transaction/components/in_out.dart';
 import 'package:gastos/src/shared/components/alert_dialog.dart';
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
@@ -87,7 +87,7 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
     return true;
   }
 
-  void addParcelas(int numParcelas) async {
+  void _addParcelas(int numParcelas) async {
     DateTime date = DateTime.now();
     for (int i = 0; i < numParcelas; i++) {
       if (i > 0) {
@@ -285,7 +285,7 @@ class _AddTransactionModalState extends State<AddTransactionModal> {
                                   ? _createGasto(DateTime.now(), 0, 0)
                                   : null;
                               state.pagamento == 1
-                                  ? addParcelas(state.parcelas)
+                                  ? _addParcelas(state.parcelas)
                                   : null;
                             },
                             child: const Text('Salvar'),

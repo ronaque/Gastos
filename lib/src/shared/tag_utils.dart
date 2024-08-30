@@ -23,3 +23,23 @@ Future<List<Tag>> getAllTags() async {
   TagHelper tagHelper = TagHelper();
   return tagHelper.getAllTags();
 }
+
+Future<List<Tag>> getCustomTags() async {
+  TagHelper tagHelper = TagHelper();
+  return tagHelper.getCustomTags();
+}
+
+Future<Tag?> getTagByNome(String nome) async {
+  TagHelper tagHelper = TagHelper();
+  return tagHelper.getTagByNome(nome);
+}
+
+Future<Tag?> getTagById(int tagId) async {
+  TagHelper tagHelper = TagHelper();
+  return tagHelper.getTagById(tagId);
+}
+
+Future<void> deleteTagByName(String nome) async {
+  TagHelper tagHelper = TagHelper();
+  tagHelper.deleteTagByName(nome);
+}

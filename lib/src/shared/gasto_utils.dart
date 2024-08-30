@@ -1,7 +1,7 @@
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/GastoHelper.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -52,8 +52,7 @@ Future<List<Gasto>> getAllGastos() async {
 
 Future<List<Gasto>> getGastosByTagName(String tagName) async {
   GastoHelper gastoHelper = GastoHelper();
-  TagHelper tagHelper = TagHelper();
-  Tag? tag = await tagHelper.getTagByNome(tagName);
+  Tag? tag = await getTagByNome(tagName);
   if (tag == null) {
     return [];
   }
@@ -63,8 +62,7 @@ Future<List<Gasto>> getGastosByTagName(String tagName) async {
 
 Future<List<Gasto>> getGastosByTagId(int tagId) async {
   GastoHelper gastoHelper = GastoHelper();
-  TagHelper tagHelper = TagHelper();
-  Tag? tag = await tagHelper.getTagById(tagId);
+  Tag? tag = await getTagById(tagId);
   if (tag == null) {
     return [];
   }

@@ -24,20 +24,20 @@ class TagHelper {
     });
   }
 
-  Future<List<Tag>?> getCustomTags() async {
+  Future<List<Tag>> getCustomTags() async {
     List<String> defaultTags = tagsPadroes.keys.toList();
     Database? db = await database;
 
     String defaultTagsPlaceholders = defaultTags.map((e) => '?').join(', ');
 
-    List<Map<String, Object?>>? result = await db.rawQuery(
+    List<Map<String, Object?>> result = await db.rawQuery(
       'SELECT * FROM tags WHERE nome NOT IN ($defaultTagsPlaceholders)',
       defaultTags,
     );
 
-    List<Tag>? tags = result.map((map) => Tag.fromMap(map)).toList();
-
-    return tags;
+    return List.generate(result.length, (i) {
+      return Tag.fromMap(result[i]);
+    });
   }
 
   Future<Tag?> getTagByNome(String nome) async {

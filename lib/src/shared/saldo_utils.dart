@@ -1,7 +1,7 @@
 import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> atualizarSaldo(double value) async {
@@ -46,8 +46,6 @@ Future<double> getSaldoByMonth(DateTime data) async {
 }
 
 Future<void> atualizarSaldoNovoMes() async {
-  TagHelper tagHelper = TagHelper();
-
   final prefs = await SharedPreferences.getInstance();
 
   String? ultimoLogin = prefs.getString('ultimo_login');
@@ -71,7 +69,8 @@ Future<void> atualizarSaldoNovoMes() async {
     }
 
     // Adicionar um novo pagamento ao mês atual com o valor total dos gastos
-    Tag? tag = await tagHelper.getTagByNome('gasto');
+    // TODO: Adicionar tratamento para caso a tag 'gasto' não exista. Criar a tag 'gasto' automaticamente, pois ela DEVE existir
+    Tag? tag = await getTagByNome('gasto');
     if (tag != null) {
       insertGasto(await createGasto(
           DateTime(now.year, now.month, 1), saldo, tag, "Saldo", 0, 0));

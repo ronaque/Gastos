@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/imageUtils.dart';
-import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 import 'package:gastos/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,13 +61,13 @@ class _PerfilState extends State<Perfil> {
   }
 
   Future<Widget> getDBTagsTexts(context) async {
-    TagHelper tagHelper = TagHelper();
-    List<Tag>? dbTags = await tagHelper.getCustomTags();
+    // TagHelper tagHelper = TagHelper();
+    List<Tag>? dbTags = await getCustomTags();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(dbTags!.length, (index) {
+        children: List.generate(dbTags.length, (index) {
           final tag = dbTags[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -89,7 +89,7 @@ class _PerfilState extends State<Perfil> {
                   ),
                   IconButton(
                     onPressed: () {
-                      tagHelper.deleteTagByName(tag.nome);
+                      deleteTagByName(tag.nome);
                       setState(() {});
                     },
                     icon: const Icon(Icons.close),

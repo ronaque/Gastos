@@ -20,7 +20,7 @@ class GastoHelper {
   // Método para obter todos os gastos do banco de dados
   Future<List<Gasto>> getAllGastos() async {
     Database db = await database;
-    List<Map<String, Object?>>? maps = await db.query('gastos');
+    List<Map<String, Object?>> maps = await db.query('gastos');
     return List.generate(maps.length, (i) {
       return Gasto.fromMap(maps[i]);
     });
@@ -86,7 +86,7 @@ class GastoHelper {
         WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ? AND gastos.quantidade >= 0
       ''';
 
-      List<Map<String, Object?>>? resultado =
+      List<Map<String, Object?>> resultado =
           await db.rawQuery(query, [ano, mes]);
 
       return List.generate(resultado.length, (i) {
@@ -100,26 +100,20 @@ class GastoHelper {
 
   Future<List<Gasto>> getGastosByMonthAndNegativeExpense(
       String ano, String mes) async {
-    try {
-      Database db = await database;
+    Database db = await database;
 
-      String query = '''
+    String query = '''
         SELECT gastos.*, tags.id as tag_id, tags.nome as tag_nome
         FROM gastos
         LEFT JOIN tags ON gastos.tag_id = tags.id
         WHERE strftime('%Y', gastos.data) = ? AND strftime('%m', gastos.data) = ? AND gastos.quantidade < 0
       ''';
 
-      List<Map<String, Object?>>? resultado =
-          await db.rawQuery(query, [ano, mes]);
+    List<Map<String, Object?>> resultado = await db.rawQuery(query, [ano, mes]);
 
-      return List.generate(resultado.length, (i) {
-        return Gasto.fromMap(resultado[i]);
-      });
-    } catch (e) {
-      print('Erro ao obter gastos do mês com quantidade negativa: $e');
-      return [];
-    }
+    return List.generate(resultado.length, (i) {
+      return Gasto.fromMap(resultado[i]);
+    });
   }
 
   Future<List<Gasto>> getGastosListByCriteria({

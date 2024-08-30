@@ -10,6 +10,7 @@ import 'package:gastos/src/shared/gasto_utils.dart';
 import 'package:gastos/src/shared/models/Gasto.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 
 class EditarTransacaoModal extends StatefulWidget {
   final Gasto gasto;
@@ -69,7 +70,7 @@ class _EditarTransacaoModalState extends State<EditarTransacaoModal> {
     String category = getClicado();
     String descricao = descriptionController.text;
 
-    Tag? tag = await tagHelper.getTagByNome(category);
+    Tag? tag = await getTagByNome(category);
     if (tag == null) {
       // Fazer um alerta para o usuário informando que deve escolher uma tag
       const Alerta(text: 'Escolha uma categoria').show(context);

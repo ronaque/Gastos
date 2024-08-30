@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gastos/globals.dart';
 import 'package:gastos/src/shared/models/Tag.dart';
 import 'package:gastos/src/shared/repositories/TagHelper.dart';
+import 'package:gastos/src/shared/tag_utils.dart';
 
 class CardTags extends StatefulWidget {
   final void Function(String category) setClicado;
@@ -33,12 +34,12 @@ class _CardTagsState extends State<CardTags> {
   }
 
   Future<Widget> getDBTagsTexts() async {
-    List<Tag>? dbTags = await tagHelper.getCustomTags();
+    List<Tag>? dbTags = await getCustomTags();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(dbTags!.length, (index) {
+        children: List.generate(dbTags.length, (index) {
           final tag = dbTags[index];
           return GestureDetector(
               onTap: () {
